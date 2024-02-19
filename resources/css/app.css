@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --medium-slate-blue: #7A72FFff;
+        --lavender-web: #E5E3FDff;
+        --ultra-violet: #6861D1ff;
+
+        --white-smoke: #F2F2F2ff;
+        --timberwolf: #D8D8D8ff;
+        --platinum: #EAEAEAff;
+        --ghost-white: #F7F8FCff;
+        --box-shadow:
+            5px 5px 15px #c1c8d3,
+            -5px -5px 15px #ffffff;
+        --gradient-bg: linear-gradient(-45deg, #D000F7, #24BAE3);   
+    }
+    @font-face {
+        font-family: "Gotham";
+        src: url('/resources/css/Fonts/Gotham Bold.otf') ;
+        /* Add more formats if needed */
+        font-weight: normal;
+        font-style: normal;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px #ffff inset !important;
+    }
+    body {
+        @apply text-gray-700
+    }
+
+    .font-gotham {
+        font-family: "Gotham";
+    }
+
+    *:not(input,textarea,.exclude) {
+        @apply focus-visible:ring-offset-blue-400 focus-visible:ring-offset-2 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75
+    }
+}
+
+@layer utilities {
+    ::-webkit-scrollbar {
+        @apply w-[14px] bg-transparent;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        @apply bg-zinc-400/70 hover:bg-zinc-400 rounded-full border-[3.4px] border-solid border-transparent bg-clip-padding;
+    }
+
+    ::-webkit-scrollbar-button {
+        @apply bg-transparent h-0 w-0;
+    }
+
+    svg, svg>* {
+        @apply pointer-events-none
+    }
+
+    input {
+        @apply bg-transparent outline-none
+    }
+
+    .find {
+        margin-top: 50px;
+    }
+
+    .find ul {
+        padding: 0;
+        list-style: none;
+        display: flex;
+    }
+
+    .find ul li {
+        width: 50px;
+        height: 50px;
+        box-shadow: var(--box-shadow);
+        margin: 10px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.5s;
+    }
+
+    .find ul a li:hover {
+        color: #fff !important;
+        background-image: var(--gradient-bg);
+    }
+
+    @media print {
+        * {
+            @apply text-[12px]
+        }
+        body{
+            -webkit-print-color-adjust:exact !important;
+            print-color-adjust:exact !important;
+          }
+    }
+}
+
+
+@layer components {
+    .container {
+        @apply ring-1 ring-slate-200/40 bg-white rounded-md text-gray-700 !max-w-full
+    }
+
+    .list-hover {
+        @apply hover:bg-slate-100/50 ring-1 ring-inset ring-transparent hover:ring-slate-200/90 transition duration-150
+    }
+
+    .form-input-float {
+        @apply relative border-gray-300 border rounded-md transition-all duration-150 h-fit text-gray-700
+    }
+    .form-input-float:focus-within, .form-input-float-date:focus-within {
+        @apply border-blue-700
+    }
+    .form-input-float input, .form-input-float textarea, .form-input-float-date input {
+        @apply outline-none px-3 py-4 w-full grow rounded-md
+    }
+    .form-input-float textarea {
+        @apply !pb-0 min-h-[6rem] max-h-[12rem]
+    }
+
+    .form-input-float input::placeholder, .form-input-float textarea::placeholder {
+        @apply opacity-0
+    }
+
+    .form-input-float label {
+        @apply absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-150 cursor-text font-semibold
+    }
+
+    .form-input-float textarea + label {
+        @apply absolute left-3 top-7 -translate-y-[50%] transition-all duration-150 cursor-text font-semibold
+    }
+
+    .form-input-float:focus-within label, .form-input-float input:not(:placeholder-shown) + label, .form-input-float textarea:not(:placeholder-shown)  + label {
+        @apply -top-0.5 bg-white px-2 text-sm
+    }
+
+    .form-input-float:focus-within label, .form-input-float-date:focus-within label {
+        @apply text-blue-800 
+    }
+
+    .form-input-float-date {
+        @apply relative border-gray-300 border rounded-md transition-all duration-150 h-fit text-gray-700
+    }
+
+    .form-input-float-date label {
+        @apply absolute left-3 -top-0.5 bg-white px-2 text-sm -translate-y-1/2 transition-all duration-150 cursor-text font-semibold
+    }
+
+    .table-bordered, .table-bordered * {
+        @apply border-black/40
+    }
+}
