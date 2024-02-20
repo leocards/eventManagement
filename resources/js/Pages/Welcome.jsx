@@ -85,7 +85,7 @@ export default function Welcome({
                                 <ul>
                                     <a
                                         href="https://www.facebook.com/dswdfo11"
-                                        className=""
+                                        className="" target="_blank"
                                     >
                                         <li>
                                             <svg
@@ -98,7 +98,7 @@ export default function Welcome({
                                             </svg>
                                         </li>
                                     </a>
-                                    <a href="https://www.instagram.com/dswdfo11/?utm_source=ig_web_button_share_sheet&igshid=OGQ5ZDc2ODk2ZA==">
+                                    <a href="https://www.instagram.com/dswdfo11/?utm_source=ig_web_button_share_sheet&igshid=OGQ5ZDc2ODk2ZA==" target="_blank">
                                         <li>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ export default function Welcome({
                                             </svg>
                                         </li>
                                     </a>
-                                    <a href="https://twitter.com/dswdfo11?fbclid=IwAR3cUEDEik7RQFsEAarm0I8SYdEF28xjtezlCoClSIZiIB-YCqYKTx0VVXA">
+                                    <a href="https://twitter.com/dswdfo11?fbclid=IwAR3cUEDEik7RQFsEAarm0I8SYdEF28xjtezlCoClSIZiIB-YCqYKTx0VVXA" target="_blank">
                                         <li>
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"

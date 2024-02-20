@@ -40,9 +40,9 @@ export default function NewResourcePerson({ show = false, rpEdit = null, onClose
             setData({
                 name: rpEdit.name,
                 position: rpEdit.position,
-                profile: {
+                profile: rpEdit.profile?{
                     response: true, data: { base64: rpEdit.profile, extension: rpEdit.profile.split(".")[1] }
-                },
+                }:null,
             })
         }
     }, [show]);

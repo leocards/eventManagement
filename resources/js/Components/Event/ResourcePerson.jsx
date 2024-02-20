@@ -158,7 +158,7 @@ export default function ResourcePerson({
 
             { pages?.total < nRP && (<div className="text-pink-700 text-sm ">{nRP} is beyond the number of resource person list</div>)}
 
-            <div className="mt-7 overflow-y-auto max-h-[calc(100vh-17rem)] min-h-[20vh] overscroll-contain pb-2">
+            <div className="mt-7 overflow-y-auto max-h-[calc(100vh-17rem)] h-[50vh] overscroll-contain pb-2">
                 {
                     search && !loadingSearch && resourcePersons.length == 0 ? (
                         <div className="text-center">
@@ -193,7 +193,7 @@ export default function ResourcePerson({
                                             }}
                                         >
                                             <Profile>
-                                                <img src={rp.profile} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
+                                                <img src={rp.profile??"/storage/profile/profile.png"} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
                                             </Profile>
                                             <div className="pl-2 pointer-events-none">
                                                 <div className="line-clamp-1 pointer-events-none">

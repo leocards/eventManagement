@@ -161,7 +161,7 @@ export default function ResourcePersonList({
                                 >
                                     <div className="rounded-full w-12 h-12 shrink-0 overflow-hidden pointer-events-none bg-white/90">
                                         <img
-                                            src={item.profile}
+                                            src={item.profile??"/storage/profile/profile.png"}
                                             alt=""
                                             onError={(event) => event.target.src = "/storage/profile/profile.png"}
                                             className="object-cover w-full h-full"

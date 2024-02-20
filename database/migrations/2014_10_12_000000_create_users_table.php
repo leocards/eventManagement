@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('position');
             $table->string('province');
             $table->string('gender', 10);
-            $table->string('profile');
+            $table->string('profile')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('status');

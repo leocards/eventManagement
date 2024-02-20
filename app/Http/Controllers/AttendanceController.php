@@ -102,6 +102,10 @@ class AttendanceController extends Controller
                     ->where("event_id", $event->event_id)
                     ->first();
 
+                if(!$event_participant) {
+                    throw new Exception("You are not added as trainee for the event with this code");
+                }
+
                 $this->now = $this->now;
                 $timeIn = Carbon::parse($event->time_in, 'Asia/Manila');
                 $timeOut = Carbon::parse($event->time_out, 'Asia/Manila');
@@ -132,7 +136,7 @@ class AttendanceController extends Controller
                 }
 
                 // if the event is open for time in then set attendance and record the user's activity
-                if(!$this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut) && $request->session == "Time in") {
+                if($this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut) && $request->session == "Time in") {
 
                     DB::transaction(function () use ($event, $event_participant) {
                         Attendance::create([

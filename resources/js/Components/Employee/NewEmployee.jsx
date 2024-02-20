@@ -1,5 +1,4 @@
 import { useForm } from "@inertiajs/react";
-import { DatePicker } from "../DateTimePicker/DatePicker";
 import InputLabel from "../InputLabel";
 import Modal, { ModalHeader } from "../Modal";
 import TextInput from "../TextInput";
@@ -74,13 +73,15 @@ export default function NewEmployee({
                   position: data.position,
                   province: data.province,
                   gender: data.gender,
-                  profile: {
-                      response: true,
-                      data: {
-                          base64: data.profile,
-                          extension: data.profile.split(".")[1],
-                      },
-                  },
+                  profile: data.profile
+                      ? {
+                            response: true,
+                            data: {
+                                base64: data.profile,
+                                extension: data.profile.split(".")[1],
+                            },
+                        }
+                      : null,
                   status: data.status,
                   user_type: data.role,
               })
@@ -117,7 +118,10 @@ export default function NewEmployee({
     return (
         <Modal show={show} onClose={onClose} maxWidth="xl" isOverFlow>
             <div className="p-4 pr-2">
-                <ModalHeader showCloseButton={false} label={(employeeEdit ? "Update" : "New")+ " Employee"} />
+                <ModalHeader
+                    showCloseButton={false}
+                    label={(employeeEdit ? "Update" : "New") + " Employee"}
+                />
 
                 <div className="max-h-[66vh] overflow-y-auto pr-1.5 py-1 mb-10">
                     <div className="pb-3 flex items-center gap-2 text-sm">
@@ -228,7 +232,9 @@ export default function NewEmployee({
                         >
                             <AutoComplete
                                 selectedOption={data.position}
-                                onSelect={(value) => setData("position", value.name)}
+                                onSelect={(value) =>
+                                    setData("position", value.name)
+                                }
                             />
 
                             <input
@@ -265,7 +271,9 @@ export default function NewEmployee({
                                 list={provinces}
                                 maxHeight="max-h-48"
                                 selectedOption={data.province}
-                                onSelect={(value) => setData("province", value.name)}
+                                onSelect={(value) =>
+                                    setData("province", value.name)
+                                }
                             />
                             <input
                                 type="text"
@@ -301,7 +309,9 @@ export default function NewEmployee({
                                 list={roles}
                                 maxHeight="max-h-32"
                                 selectedOption={data.user_type}
-                                onSelect={(value) => setData("user_type", value.name)}
+                                onSelect={(value) =>
+                                    setData("user_type", value.name)
+                                }
                             />
 
                             <input

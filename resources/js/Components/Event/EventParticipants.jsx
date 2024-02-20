@@ -59,17 +59,17 @@ export default function EventParticipants({
             setLoadingSearch(true);
             const response = !search
                 ? await axios.get(
-                    route("employee.json", { _query: { page: pageNumber, filter: filterByProvince } })
+                    route("employee.json", { _query: { page: pageNumber, filter: filterByProvince, isTrainee: true } })
                 )
                 : await axios.get(
                     route("employee.search", {
-                        _query: { page: pageNumber, search: search, filter: filterByProvince },
+                        _query: { page: pageNumber, search: search, filter: filterByProvince, isTrainee: true },
                     })
                 );
             setParticipantData(response.data);
             setLoadingSearch(false);
         } else {
-            setParticipantData(rpPageList[pageNumber]);
+            setParticipantData(participantPageList[pageNumber]);
         }
     };
 
@@ -120,7 +120,7 @@ export default function EventParticipants({
             setLoadingSearch(true);
             async function getSearches() {
                 let response = await axios.get(
-                    route("employee.search", { _query: { search: search, filter: filterByProvince } })
+                    route("employee.search", { _query: { search: search, filter: filterByProvince, isTrainee: true } })
                 );
                 let data = response.data;
                 setParticipantData(data);
@@ -228,7 +228,7 @@ export default function EventParticipants({
                                         }
                                     >
                                         <Profile>
-                                            <img src={p.profile} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
+                                            <img src={p.profile??"/storage/profile/profile.png"} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
                                         </Profile>
                                         <div className="pl-2 pointer-events-none">
                                             <div className="line-clamp-1 pointer-events-none">
@@ -292,5 +292,5 @@ const SelectAllButton = styled.button.attrs((props) => ({
 }))``
 
 const ParticipantsContainer = styled.div.attrs((props) => ({
- className: `mt-6 overflow-y-auto max-h-[calc(100vh-17rem)] min-h-[20vh] overscroll-contain pb-2`
+ className: `mt-6 overflow-y-auto max-h-[calc(100vh-17rem)] h-[50vh] overscroll-contain pb-2`
 }))``

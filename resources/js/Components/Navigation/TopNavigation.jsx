@@ -112,7 +112,7 @@ const Profile = ({ auth }) => {
             >
                 <div className="w-10 shrink-0 h-10 rounded-full relative bg-white/90">
                     <div className="w-full h-full rounded-full overflow-hidden">
-                        <img src={auth.profile} className="object-cover w-full h-full" onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
+                        <img src={auth.profile??"/storage/profile/profile.png"} className="object-cover w-full h-full" onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
                     </div>
                     <ChevronDownIcon
                         className="-mr-1 ml-2 h-4 w-4 text-gray-400 rounded-full bg-gray-200 absolute bottom-0 right-0"

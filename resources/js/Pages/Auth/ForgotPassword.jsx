@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { SelectSecurity, SlectQuestion } from "@/Components/Event/PopOver";
 
 export default function ForgotPassword({ status, email_verified }) {
+    const [loading, setLoading] = useState(false)
     const [securityQuestions, setSecurityQuestions] = useState([]);
     const { data, setData, post, processing, errors } = useForm({
         email: email_verified ?? "",
@@ -24,8 +25,10 @@ export default function ForgotPassword({ status, email_verified }) {
 
     useEffect(() => {
         if (email_verified !== null) {
+            setLoading(true)
             axios.post(route("forgot.security"), data).then((res) => {
                 setSecurityQuestions(res.data);
+                setLoading(false)
             });
         }
     }, [email_verified]);
@@ -79,8 +82,12 @@ export default function ForgotPassword({ status, email_verified }) {
                         </div>
 
                         {
-                            securityQuestions.length === 0 && email_verified && (
-                                <div className="text-center my-4">We can't verify if it's really you, without security questions. <br /> Please add security questions first.</div>
+                            loading ? (
+                                <div className="text-center py-5">LOADING...</div>
+                            ) : (
+                                securityQuestions.length === 0 && email_verified && (
+                                    <div className="text-center my-4">We can't verify if it's really you, without security questions. <br /> Please add security questions first.</div>
+                                )
                             )
                         }
 

@@ -54,7 +54,7 @@ export default function Edit({
                         <div className="relative">
                             <div className="rounded-full w-28 h-28 overflow-hidden">
                                 <img
-                                    src={auth.user.profile}
+                                    src={auth.user.profile??"/storage/profile/profile.png"}
                                     onError={({ target }) =>
                                         (target.src =
                                             "/storage/profile/profile.png")

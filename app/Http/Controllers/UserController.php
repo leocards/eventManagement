@@ -34,8 +34,21 @@ class UserController extends Controller
 
     public function indexJson(Request $request)
     {
-        $employees = User::select("id", "first_name", "last_name", "province", "position", "profile", "status")
-            ->where('role', 'Employee')
+        $employees = User::select("id", "first_name", "last_name", "province", "position", "profile", "status", "role")
+            ->when(!$request->has('isTrainee'), function ($query) {
+                $query->when(Auth::user()->role != "Super Admin", function ($query) {
+                    $query->where('role', 'Employee');
+                })
+                ->when(Auth::user()->role == "Super Admin", function ($query) {
+                    $query->where('id', '!=', Auth::id());
+                });
+            })
+            ->when($request->has('isTrainee'), function ($query) {
+                $query->where('role', 'Employee');
+            })
+            ->when($request->filter != "All" && $request->has('filter'), function ($query) use ($request) {
+                $query->where('province', "$request->filter");
+            })
             ->latest()
             ->paginate(25);
 
@@ -185,19 +198,25 @@ class UserController extends Controller
     public function searchUser(Request $request)
     {
         try {
-            $query = User::select("id", "first_name", "last_name", "email", "province", "position", "profile", "status");
+            $query = User::select("id", "first_name", "last_name", "email", "province", "position", "profile", "status", "role");
             
             if($request->search) {
-                $query->where('first_name', 'LIKE', "%$request->search%")
-                ->where('role', 'Employee')->where('status', 'Active')
-                ->orWhere('last_name', 'LIKE', "%$request->search%")
-                ->where('role', 'Employee')->where('status', 'Active')
-                ->orWhere('email', 'LIKE', "%$request->search%")
-                ->where('role', 'Employee')->where('status', 'Active');
+                $query->where(function ($query) use ($request) {
+                    $query->where('first_name', 'LIKE', "%$request->search%")
+                        ->orWhere('last_name', 'LIKE', "%$request->search%")
+                        ->orWhere('email', 'LIKE', "%$request->search%");
+                })
+                ->when(Auth::user()->role != "Super Admin", function ($query) {
+                    $query->where('role', 'Employee');
+                })
+                ->when(Auth::user()->role == "Super Admin", function ($query) {
+                    $query->where('id', '!=', Auth::id());
+                })
+                ->where('status', 'Active');
             }
 
             if ($request->filter != "All" && $request->has('filter')) {
-                $query->where('province', "$request->filter")->where('role', 'Employee')->where('status', 'Active');
+                $query->where('province', "$request->filter");
             }
 
             $search = $query->paginate(25);

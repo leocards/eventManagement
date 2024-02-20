@@ -36,7 +36,7 @@ class DashboardController extends Controller
         $upcomingEvents = Event::with('eventCode')
             ->select("id", "platform", "title", "venue", "dateStart", "dateEnd")
             ->whereDate("dateStart", ">", $this->now->toDateString())
-            ->orderBy("dateStart", "DESC")
+            ->orderBy("dateStart", "ASC")
             ->paginate(25);
 
         $gender = User::groupBy('gender')

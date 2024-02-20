@@ -35,7 +35,7 @@ export default function ViewEventAddedResourcePerson({
                                 }
                             >
                                 <Profile>
-                                    <img src={rp.profile} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
+                                    <img src={rp.profile??"/storage/profile/profile.png"} onError={(event) => event.target.src = "/storage/profile/profile.png"} alt="" />
                                 </Profile>
                                 <div className="pl-2 pointer-events-none">
                                     <div className="line-clamp-1 pointer-events-none">

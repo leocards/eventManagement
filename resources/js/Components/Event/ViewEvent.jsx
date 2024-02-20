@@ -324,7 +324,8 @@ export default function ViewEvent({
                                                     <Card key={index}>
                                                         <Profile>
                                                             <img
-                                                                src={rp.profile}
+                                                                src={rp.profile??"/storage/profile/profile.png"}
+                                                                onError={(event) => event.target.src = "/storage/profile/profile.png"}
                                                             />
                                                         </Profile>
                                                         <div className="pl-2 pointer-events-none">
@@ -362,9 +363,8 @@ export default function ViewEvent({
                                                     <Card key={index}>
                                                         <Profile>
                                                             <img
-                                                                src={
-                                                                    participant.profile
-                                                                }
+                                                                src={ participant.profile??"/storage/profile/profile.png" }
+                                                                onError={(event) => event.target.src = "/storage/profile/profile.png"}
                                                             />
                                                         </Profile>
                                                         <div className="pl-2 pointer-events-none text-sm">

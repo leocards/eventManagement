@@ -180,7 +180,7 @@ export default function EventList({
     };
 
     async function getSearches() {
-        let response = await sendRequest(pages.current_page);
+        let response = await sendRequest(1);
 
         let data = response.data;
         setEventData(data);
@@ -213,7 +213,7 @@ export default function EventList({
 
     return (
         <>
-            <div className="grid grid-cols-[12rem,8rem,1fr] border-b mt-3">
+            <div className="grid grid-cols-[15rem,8rem,1fr] border-b mt-3">
                 <div className="font-bold font-open p-1.5 px-3">Code</div>
                 <div className="font-bold font-open p-1.5 px-3">Status</div>
                 <div className="font-bold font-open p-1.5 px-3">Name</div>
@@ -228,12 +228,12 @@ export default function EventList({
                     events.map((item, index) => (
                         <div
                             key={index}
-                            className="grid grid-cols-[12rem,8rem,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+                            className="grid grid-cols-[15rem,8rem,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
                             hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group"
                             onClick={() => setSelected(item)}
                         >
                             <div className="px-3 py-1.5 flex items-center text-sm font-semibold">
-                                <div className="whitespace-pre-wrap break-words max-w-[10rem]">
+                                <div className="whitespace-pre-wrap break-words max-w-[14rem]">
                                     {getEventCode(item)}
                                 </div>
                             </div>
@@ -388,7 +388,7 @@ const LoadingList = () => {
                 <div
                     key={index}
                     className={
-                        "grid grid-cols-[8rem,8rem,1fr] h-12 rounded-md bg-gray-100/40 animate-pulse items-center mb-1 " +
+                        "grid grid-cols-[15rem,8rem,1fr] h-12 rounded-md bg-gray-100/40 animate-pulse items-center mb-1 " +
                         delay
                     }
                 >
