@@ -102,7 +102,7 @@ class UserController extends Controller
                     "position" => $request->position,
                     "province" => $request->province,
                     "gender" => $request->gender,
-                    "profile" => $filename ?? "/storage/profile/profile.png",
+                    "profile" => $filename ?? null,
                     "password" => Hash::make("12345678"),
                     "status" => "Active",
                     "role" => $request->user_type ?? "Employee",

@@ -4,7 +4,7 @@ import { Bar } from "react-chartjs-2";
 
 Chart.register(CategoryScale);
 
-export default function ConsolidatedDataChart({ consolidated }) {
+export default function ConsolidatedDataChart({ consolidated, animation = true }) {
     const data = {
         labels: [
             "Objective is met",
@@ -99,6 +99,7 @@ export default function ConsolidatedDataChart({ consolidated }) {
                 position: "bottom",
             },
         },
+        animation: animation
     };
 
     return <Bar data={data} options={options} />;

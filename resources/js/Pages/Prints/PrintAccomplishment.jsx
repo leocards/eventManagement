@@ -17,6 +17,7 @@ export default function PrintAccomplishment({
         @media print {
             @page {
                 size: landscape;
+                margin-top: 4rem;
             }
 
             * {

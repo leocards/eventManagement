@@ -114,7 +114,7 @@ export default function Attendance({ auth, events }) {
 
             <SelectEventList eventList={events} onSelectEvent={setSelectedEvent} />
 
-            <div className="container p-3 h-[calc(100vh-6rem)] text-gray-700 mt-3">
+            <div className="container p-3 text-gray-700 mt-3">
                 <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
                     <div className="w-56">
                         <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(true)} />
@@ -130,7 +130,7 @@ export default function Attendance({ auth, events }) {
                     <div className="capitalize px-2 text-center">remarks</div>
                 </div>
 
-                <div className="overflow-y-auto py-2">
+                <div className="overflow-y-auto h-[calc(100vh-16rem)] py-2">
                     {
                         search && !loadingSearch && attendance.length === 0 ? (
                             <div className="text-center">

@@ -167,7 +167,7 @@ export default function Evaluation({
             }
         }), {
             onSuccess: () => {
-                setEvaluationComplete(true);
+                setIsCompleteEvaluation(true);
                 localStorage.removeItem('steps')
                 localStorage.removeItem('evaluation')
             },

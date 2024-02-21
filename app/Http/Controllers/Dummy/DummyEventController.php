@@ -109,7 +109,7 @@ class DummyEventController extends Controller
     function events()
     {
         $events = collect([]);
-        $dates = $this->generateDates(200);
+        $dates = $this->generateDates(100);
         $platform = collect([ "Face-to-face", "Virtual" ]);
         $venues = collect([
             'Convention Center',
@@ -307,7 +307,7 @@ class DummyEventController extends Controller
         ]);
 
         $dates->each(function ($item, $key) use ($events, $platform, $venues, $eventTitles, $eventObjectives, $rpLists, $participants) {
-            if($key == 40) return false;
+            if($key == 10) return false;
 
             $randomRpNumber = rand(2, 8);
             $eventPlatform = $platform->random();

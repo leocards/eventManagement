@@ -31,11 +31,17 @@ class EvaluationReportController extends Controller
             $event_rp_rate = $this->getRpRatingSummary($event, $event_rp->id);
             $sexDesaggregeted = QuantitativeAssessmentRP::join('users as u', 'u.id', '=', 'quantitative_assessment_r_p_s.user_id')
                 ->where('event_id', $event->id)
-                ->selectRaw('COUNT(u.id) as count, u.gender')
-                ->groupBy('u.gender')
-                ->get()
-                ->pluck('count', 'gender')
-                ->toArray();
+                ->select('u.id', 'u.gender')
+                ->groupBy('u.id', 'u.gender')
+                ->get();
+
+            $genders = collect(["Male"=>0, "Female"=>0]);
+
+            $sexDesaggregeted->each(function ($gender) use (&$genders) {
+                    if($gender->gender == 'Male') {$genders["Male"] +=1;}
+                    if($gender->gender == 'Female') {$genders["Female"]+=1;}
+                });
+            
             $eventRP = EventResourcePerson::join('resource_people as rp', 'rp.id', '=', 'event_resource_people.rp_id')
                 ->where('event_id', $event->id)
                 ->select('rp.id', 'rp.name')
@@ -59,7 +65,7 @@ class EvaluationReportController extends Controller
                 "trainingActivityRatingSummary" => $trainingActivityRatingSummary,
                 "rpRatingSummary" => collect($event_rp_rate),
                 "resourcePersonList" => $eventRP,
-                "gender" => $sexDesaggregeted,
+                "gender" => $genders,
                 "ratings" => $ratings,
                 "consolidated" => $consolidated,
                 "eventAssessment" => $trainingAssessment,

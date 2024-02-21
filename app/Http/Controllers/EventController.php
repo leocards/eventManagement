@@ -202,10 +202,10 @@ class EventController extends Controller
         $end = Carbon::parse($event->dateEnd, 'Asia/Manila');
         $userDateStart = Carbon::parse($request->date['start'], 'Asia/Manila');
         $userDateEnd = Carbon::parse($range ? $request->date['end'] : $request->date['start'], 'Asia/Manila');
-
+        
         // check changes of the event dates
         if($userDateEnd->toDateString() != $end->toDateString() || 
-            $event->isRange != $range || $userDateStart->toDateString() != $start->toDateString())
+            $event->is_range != $range || $userDateStart->toDateString() != $start->toDateString())
         {
             if($start->isYesterday()) {
                 return redirect()->back()->withErrors("Cannot update event date when event is active");
@@ -213,7 +213,7 @@ class EventController extends Controller
             if($start->isSameDay($this->now)) {
                 $time = Str::of($event->eventCode->first()->time_in)->explode(' ')[1];
     
-                if(Carbon::parse($start.' '.$time, 'Asia/Manila')->lte($this->now)) {
+                if(Carbon::parse($start->toDateString().' '.$time, 'Asia/Manila')->lte($this->now)) {
                     if($request->timeIn != Carbon::parse($time)->format("H:i")) {
                         return redirect()->back()->withErrors("Cannot update date or time when event is active");
                     }

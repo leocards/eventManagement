@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 
-export default function TrainingActivitySummary({ summary }) {
+export default function TrainingActivitySummary({ summary, animation = true }) {
     const data = {
         labels: [
             "Excellent",
@@ -68,6 +68,7 @@ export default function TrainingActivitySummary({ summary }) {
                 position: "bottom",
             },
         },
+        animation: animation
     };
 
     useEffect(() => {

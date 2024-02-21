@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 
-export default function ResourcePersonResultChart({ evaluation_ratings, name = "" }) {
+export default function ResourcePersonResultChart({ evaluation_ratings, name = "", animation = true }) {
     const data = {
         labels: [
             "Excellent",
@@ -68,6 +68,7 @@ export default function ResourcePersonResultChart({ evaluation_ratings, name = "
                 position: "bottom",
             },
         },
+        animation: animation
     };
 
     return <Bar data={data} options={options} />;

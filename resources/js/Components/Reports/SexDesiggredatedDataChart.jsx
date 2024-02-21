@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Doughnut } from "react-chartjs-2";
 
-export default function SexDesiggredatedDataChart({ gender = {Male: 0, Female: 0} }) {
+export default function SexDesiggredatedDataChart({ gender = {Male: 0, Female: 0}, animation = true }) {
     const Female = gender.hasOwnProperty("Female") ? gender.Female : 0
     const Male = gender.hasOwnProperty("Male") ? gender.Male : 0
 
@@ -35,6 +35,7 @@ export default function SexDesiggredatedDataChart({ gender = {Male: 0, Female: 0
                 position: "bottom",
             }
         },
+        animation: animation
     };
 
     return <Doughnut data={data} options={options} />;

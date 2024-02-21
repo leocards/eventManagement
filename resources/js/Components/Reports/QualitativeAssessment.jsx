@@ -106,7 +106,7 @@ export default function QualitativeAssessment({ isPrintable = false, eventId, in
                     ) : (
                         assessment?.map((item, index) => (
                             <div key={index} className="grid grid-cols-[5rem,6rem,repeat(8,1fr)] mb-1 rounded-md list-hover cursor-default">
-                                <div className="px-2 py-2">{++index}</div>
+                                <div className="px-2 py-2">{pages.from + index}</div>
                                 <div className="px-2 py-2">{item.gender.gender}</div>
                                 <div className="px-2 py-2 text-center">{item.q1}</div>
                                 <div className="px-2 py-2 text-center">{item.q2}</div>

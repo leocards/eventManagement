@@ -31,9 +31,12 @@ export default function ViewEvent({
     });
 
     const copyCode = (e, isTimeIn = true) => {
-        if ((isTimeIn && !code.time_in) || (!isTimeIn && !code.time_out))
-            return;
-
+        if(isTimeIn){
+            if(!code.time_in) return;
+        }
+        if(!isTimeIn){
+            if(!code.time_out) return;
+        }
         navigator.clipboard.writeText(
             e.target.textContent.split("copied").join("")
         );
@@ -67,8 +70,8 @@ export default function ViewEvent({
             } else return null;
         } else {
             if (
-                new Date() <= new Date(activeCode.time_out) ||
-                new Date() <= new Date(activeCode.time_out_cutoff)
+                new Date().setHours(0,0,0,0) <= new Date(activeCode.time_out).setHours(0,0,0,0) /* ||
+                new Date() <= new Date(activeCode.time_out_cutoff) */
             ) {
                 return activeCode.time_out_code;
             } else return null;
@@ -282,7 +285,7 @@ export default function ViewEvent({
                                                 out code
                                             </button>
                                             <div
-                                                onClick={(e) => copyCode(e)}
+                                                onClick={(e) => copyCode(e, false)}
                                                 className={"cursor-pointer hover:text-blue-700 break-words relative rounded p-1 px-1.5 "+(data.time_out?'bg-slate-100':'')}
                                             >
                                                 <span className="pointer-events-none">

@@ -203,5 +203,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::get('/add-dummy-event', [DummyEventController::class, 'index']); employee.json
+// Route::get('/add-dummy-event', [DummyEventController::class, 'index']);
 require __DIR__.'/auth.php';

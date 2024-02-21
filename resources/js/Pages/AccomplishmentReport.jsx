@@ -65,14 +65,10 @@ export default function AccomplishmentReport({ auth, report, years }) {
     const getNextAndPrevPages = async (pageNumber, persist = false) => {
         // when clicking next or previous pages or when the persist is true
         // request data in the current page
-        if (!rpPageList.hasOwnProperty(pageNumber) || persist) {
-            setLoadingSearch(true);
-            const response = await sendRequest(pageNumber);
-            setAccomplishmentData(response.data);
-            setLoadingSearch(false);
-        } else {
-            setAccomplishmentData(accomplishmentPageList[pageNumber]);
-        }
+        setLoadingSearch(true);
+        const response = await sendRequest(pageNumber);
+        setAccomplishmentData(response.data);
+        setLoadingSearch(false);
     };
 
     useEffect(() => {
@@ -175,10 +171,10 @@ export default function AccomplishmentReport({ auth, report, years }) {
                                         }}
                                         className="grid grid-cols-[5vw,15vw,1fr,9vw,12vw] py-2 mb-1 rounded-md list-hover cursor-pointer hover:bg-blue-100/50 hover:ring-blue-100"
                                     >
-                                        <div className="px-2 self-center text-center">{++index}</div>
+                                        <div className="px-2 self-center text-center">{pages.current_page+index}</div>
                                         <div className="px-2 self-center line-clamp-3">{acc.title}</div>
                                         <div className="px-2 self-center line-clamp-3">{acc.objective}</div>
-                                        <div className="px-2 self-center">{convertDate(acc.dateStart, acc.dateEnd)}</div>
+                                        <div className="px-2 self-center">{convertDate(acc.dateStart, acc.dateEnd, null,null, true)}</div>
                                         <div className="px-2 self-center break-words text-sm">
                                             {
                                                 acc.evaluation_rates.map((rates, index) => (

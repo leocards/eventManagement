@@ -2,28 +2,67 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 import { Head, router } from "@inertiajs/react";
 import PrintHeader from "./PrintHeader";
 import { SelectByYear } from "@/Components/Event/PopOver";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-export default function PrintCBU({ years, printYear }) {
+export default function PrintCBU({ years, printYear, layout, eventCount }) {
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [trainees, setTrainees] = useState([]);
-    const [layout, setLayout] = useState("portrait");
+    const [styleScale, setStyleScale] = useState(null);
+    const printConctentRef = useRef(null);
+    const [printStyle, setPrintStyle] = useState()
 
-    const printStyle = `
-        @media print {
-            @page {
-                size: auto;
-            }
-
-            * {
-                font-size: 12px;
-            }
-        }
-    `;
+    //console.log(printStyle)
 
     useEffect(() => {
+        if(styleScale) {
+            setPrintStyle(`
+                @media print {
+                    @page {
+                        size: ${layout};
+                    }
+
+                    #print_content {
+                        transform-origin: top left;
+                        ${styleScale}
+                    }
+
+                    * {
+                        font-size: 12px;
+                    }
+                }
+            `);
+        }
+    }, [styleScale])
+
+    useEffect(() => {
+        const calculateScale = () => {
+            const size = layout == 'portrait' ? 0.3 : 0.35
+            console.log(size)
+
+            const printableWidth = window.innerWidth * size; // 80% of the window width
+            const printableHeight = window.innerHeight * size; // 80% of the window height
+
+            const contentWidth =
+                printConctentRef.current.offsetWidth;
+            const contentHeight =
+                printConctentRef.current.offsetHeight;
+
+            const scaleWidth = printableWidth / contentWidth;
+            const scaleHeight = printableHeight / contentHeight;
+
+            // Use the smaller scale value to ensure content fits within printable area
+            const newScale = Math.min(scaleWidth, scaleHeight);
+            setStyleScale(`transform: scale(${newScale});`)
+        };
+
+        // Call the calculateScale function initially and when the window is resized
+        if(eventCount >= 10) {
+            calculateScale();
+            window.addEventListener("resize", calculateScale);
+        }
+
         async function getCBUList() {
             setLoading(true);
             let response = await axios.get(
@@ -37,8 +76,11 @@ export default function PrintCBU({ years, printYear }) {
             setTrainees(data.users);
             setLoading(false);
         }
-
         getCBUList();
+
+        return () => {
+            window.removeEventListener("resize", calculateScale);
+        };
     }, []);
 
     return (
@@ -46,10 +88,12 @@ export default function PrintCBU({ years, printYear }) {
             <Head title="CBU-print" />
             <style dangerouslySetInnerHTML={{ __html: printStyle }}></style>
             <div
+                ref={printConctentRef}
                 className={
-                    "w-full mx-auto my-auto bg- white h-full pb-4 " +
-                    (layout == "portrait" ? " max-w-5xl" : " max-w-7xl")
+                    "w-fit mx-auto my-auto bg- white h-full pb-4 "
+                    /* (layout == "portrait" ? " max-w-5xl" : " max-w-7xl") */
                 }
+                id="print_content"
             >
                 <div className="print:hidden my-4 pb-3 flex">
                     <div className="rounded ml-auto bg-white">
@@ -70,7 +114,7 @@ export default function PrintCBU({ years, printYear }) {
                 <PrintHeader />
 
                 <div className="my-5">
-                    <h1 className="font-gotham text-3xl w-fit mx-auto mb-5">
+                    <h1 className="font-gotham text-3xl w-full text-center mb-5">
                         CBU Training Monitoring
                     </h1>
                 </div>

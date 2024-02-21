@@ -24,10 +24,21 @@ class CBUController extends Controller
             ->distinct()
             ->get(['year']);
 
-        $cbu = User::select('id', 'first_name', 'last_name', 'status') // Select the columns you need from User model
-        ->has('trainingsAttended.attendance')
-        ->withCount('trainingsAttended')
-        ->paginate(20);
+        $cbu = User::with(['trainingsAttended' => function ($query) {
+            $query->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
+                ->whereNotNull('a.time_in')
+                //->whereNotNull('a.time_out')
+                ->leftJoin('events AS e', function ($join) {
+                    $join->on('e.id', '=', 'event_participants.event_id');
+                })
+                ->selectRaw('count(*) as trainings, user_id')
+                ->groupBy('user_id');
+        }])
+        ->where('role', 'Employee')
+        ->select('id', 'first_name', 'last_name', 'status')
+        ->paginate(25);
+
+        // return response()->json($cbu);
 
         return Inertia::render('CBUMonitoring', [
             "cbu_summary" => $cbu,
@@ -37,7 +48,19 @@ class CBUController extends Controller
 
     public function indexJson(Request $request)
     {
-        $cbu = User::select('id', 'first_name', 'last_name', 'status')
+        $cbu = User::with(['trainingsAttended' => function ($query) use ($request) {
+            $query->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
+                ->whereNotNull('a.time_in')
+                //->whereNotNull('a.time_out')
+                ->leftJoin('events AS e', function ($join) {
+                    $join->on('e.id', '=', 'event_participants.event_id');
+                })
+                ->when($request->year, function ($query) use ($request) {
+                    $query->whereYear('e.dateStart', $request->year);
+                })
+                ->selectRaw('count(*) as trainings, user_id')
+                ->groupBy('user_id');
+        }])
         ->when($request->search, function ($query) use ($request) {
             $query->where(function ($subquery) use ($request) {
                 $subquery->where('first_name', 'LIKE', "%$request->search%")
@@ -46,14 +69,9 @@ class CBUController extends Controller
                 $subquery->where('title', 'LIKE', "%$request->search%");
             });
         })
-        ->when($request->year, function ($query) use ($request) {
-            $query->whereHas('trainingsAttended.event', function ($query) use ($request) {
-                $query->whereYear('dateStart', $request->year);
-            });
-        })
-        ->has('trainingsAttended.attendance')
-        ->withCount('trainingsAttended')
-        ->paginate(20);
+        ->where('role', 'Employee')
+        ->select('id', 'first_name', 'last_name', 'status')
+        ->paginate(25);
 
         return response()->json($cbu);  
     }
@@ -64,5 +82,10 @@ class CBUController extends Controller
             ->get(['year', 'title']);
 
         return response()->json($years);
+    }
+
+    function checkEmployeeInactivity(User $user)
+    {
+        
     }
 }

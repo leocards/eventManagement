@@ -237,6 +237,8 @@ export default function ResourcePerson({
             />
 
             <NewResourcePerson show={addRP} onClose={() => setAddRP(false)} onSuccess={() => {
+                setRpPageList(null)
+                setRPData(initialListOfRP)
                 setAddRP(false)
                 MySwal.fire({
                     text: `Resource person successfully added`,

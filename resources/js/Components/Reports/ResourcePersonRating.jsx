@@ -146,7 +146,7 @@ export default function ResourcePersonRating({
                             className="grid grid-cols-[5rem,6rem,repeat(7,1fr),20rem] mb-1 rounded-md list-hover cursor-default"
                         >
                             <div className="px-2 py-2 text-center">
-                                {pages.from++}
+                                {pages.from + index}
                             </div>
                             <div className="px-2 py-2">
                                 {item.gender.gender}

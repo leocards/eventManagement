@@ -189,13 +189,15 @@ class AttendanceController extends Controller
             $event_participant = EventParticipants::where("user_id", Auth::id())
                 ->where("event_id", $event->id)
                 ->first();
-    
+            
             $notEevaluated = Attendance::where('event_participant_id', $event_participant->id)
                 ->whereDate('time_in', $this->now->toDateString())
                 ->whereNull('time_out')
                 ->first();
     
-            if(!$notEevaluated) {
+            //dd($notEevaluated);
+
+            if($notEevaluated) {
                 $event = Event::find($event->id);
                 $event_rp = Event::find($event->id)->resourcePerson;
         

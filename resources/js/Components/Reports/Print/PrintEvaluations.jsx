@@ -1,17 +1,32 @@
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import SecondaryButton from "@/Components/Buttons/SecondaryButton";
+import { ListSelector } from "@/Components/Event/PopOver";
 import { LoadOnSubmit } from "@/Components/LoadingSearch";
 import Modal from "@/Components/Modal";
 import { useEffect, useRef, useState } from "react";
 
-export default function PrintEvaluations({ src, show, onCancel = () => {} }) {
+export default function PrintEvaluations({ src, show, withLayout = false, onCancel = () => {} }) {
     const frameRef = useRef(null);
     const [loading, setLoading] = useState(true)
+    const [layout, setLayout] = useState('portrait')
+    const layouts = [
+        {option: "portrait"},
+        {option: "landscape"}
+    ]
+    const [iframeSrc, setIframeSrc] = useState(src)
+    const checkParameters = src.split('?').length
+
+    const onChnageLayout = (size) => {
+        setLayout(size)
+        setIframeSrc(checkParameters > 1?'&layout='+size:'?layout='+size)
+        frameRef.current.contentWindow.location.reload()
+    }
 
     useEffect(() => {
         if(show) {
             setLoading(true)
         }
+        setIframeSrc(checkParameters > 1?'&layout='+layout:'?layout='+layout)
         // return () => setTimeout(() => {setLoading(true)}, 10)
     }, [show])
 
@@ -21,7 +36,7 @@ export default function PrintEvaluations({ src, show, onCancel = () => {} }) {
                 <div className="overflow-y-auto h-[75vh] rounded-md ring-1 ring-slate-200/80 relative">
                     <iframe
                         ref={frameRef}
-                        src={src}
+                        src={src+iframeSrc}
                         className="w-full h-full"
                         onLoad={() => setLoading(false)}
                     />
@@ -33,6 +48,9 @@ export default function PrintEvaluations({ src, show, onCancel = () => {} }) {
                     </div>}
                 </div>
                 <div className="flex gap-3 justify-end mt-4">
+                    {withLayout && <div className="w-48">
+                        <ListSelector list={layouts} defaultLabel="Select Layout" selectedOption={layout} onSelect={(selected) => onChnageLayout(selected)} />
+                    </div>}
                     <SecondaryButton
                         onClick={onCancel}
                         className="w-28 justify-center py-3"

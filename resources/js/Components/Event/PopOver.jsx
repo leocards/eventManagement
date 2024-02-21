@@ -197,7 +197,10 @@ export function Sort({
     const sortList = ["Title", "Date created", "Event date"];
     return (
         <div className="w-44 select-none shrink-0 flex items-center rounded-md border border-gr ay-200 text-right mr-1">
-            <Menu as="div" className="relative inline-block text-left grow h-[2.20rem]">
+            <Menu
+                as="div"
+                className="relative inline-block text-left grow h-[2.20rem]"
+            >
                 <div className=" h-full">
                     <Menu.Button className="inline-flex items-center w-full h-full text-left text-nowrap relative focus:outline-none">
                         <i className="bi bi-sort-down text-lg mt-0.5 ml-2.5 shrink-0"></i>
@@ -305,7 +308,10 @@ export function Filter({
     ];
     return (
         <div className="w-44 select-none shrink-0 flex items-center rounded-md border border-gr ay-200 text-right mr-1">
-            <Menu as="div" className="relative inline-block text-left grow h-[2.20rem]">
+            <Menu
+                as="div"
+                className="relative inline-block text-left grow h-[2.20rem]"
+            >
                 <div className=" h-full">
                     <Menu.Button className="inline-flex items-center w-full h-full text-left text-nowrap relative focus:outline-none">
                         <FilterIcon className=" mt-0.5 ml-2.5 shrink-0" />
@@ -899,7 +905,7 @@ export function AutoComplete({
 
     const onChnageAutoComplete = (value) => {
         setSelected(value);
-        onSelect(value)
+        onSelect(value);
     };
 
     useEffect(() => {
@@ -1003,20 +1009,32 @@ export function AutoComplete({
     );
 }
 
-const people = [
-    { name: "Male" },
-    { name: "Female" },
-];
+const people = [{ name: "Male" }, { name: "Female" }];
 
-export function GenderSelection({ list = people,  selectedOption = null, onSelect = () => {} }) {
-    const [selected, setSelected] = useState(selectedOption ? list.find(({name}) => name == selectedOption) : ({name: null}));
+export function GenderSelection({
+    list = people,
+    selectedOption = null,
+    onSelect = () => {},
+}) {
+    const [selected, setSelected] = useState(
+        selectedOption
+            ? list.find(({ name }) => name == selectedOption)
+            : { name: null }
+    );
 
     return (
         <div className="">
             <Listbox value={selected} onChange={setSelected}>
                 <div className="relative">
                     <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-4 pl-3 pr-10 text-left focus:outline-none">
-                        <span className={"block truncate "+(!selected.name ? "opacity-0" : "")}>{selected.name??"select"}</span>
+                        <span
+                            className={
+                                "block truncate " +
+                                (!selected.name ? "opacity-0" : "")
+                            }
+                        >
+                            {selected.name ?? "select"}
+                        </span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronDownIcon
                                 className="h-5 w-5 text-gray-400"
@@ -1054,6 +1072,95 @@ export function GenderSelection({ list = people,  selectedOption = null, onSelec
                                                 }`}
                                             >
                                                 {gender.name}
+                                            </span>
+                                            {selected ? (
+                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                                                    <CheckIcon
+                                                        className="h-5 w-5"
+                                                        aria-hidden="true"
+                                                    />
+                                                </span>
+                                            ) : null}
+                                        </>
+                                    )}
+                                </Listbox.Option>
+                            ))}
+                        </Listbox.Options>
+                    </Transition>
+                </div>
+            </Listbox>
+        </div>
+    );
+}
+
+export function ListSelector({
+    list = [{ option: null }],
+    defaultLabel = "Select",
+    optionPosition = "top",
+    borderColor = "border-gray-300",
+    selectedOption = null,
+    onSelect = () => {},
+}) {
+    const [selected, setSelected] = useState(
+        selectedOption
+            ? list.find(({ option }) => option == selectedOption)
+            : { option: null }
+    );
+
+    const position = {
+        top: "bottom-11",
+    }[optionPosition];
+
+    return (
+        <div className="w-full">
+            <Listbox value={selected} onChange={setSelected}>
+                <div className="relative">
+                    <Listbox.Button
+                        className={`relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left focus:outline-none capitalize ${borderColor}`}
+                    >
+                        <span className={"block truncate "}>
+                            {selected.option ?? defaultLabel}
+                        </span>
+                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                            <ChevronDownIcon
+                                className="h-5 w-5 text-gray-400"
+                                aria-hidden="true"
+                            />
+                        </span>
+                    </Listbox.Button>
+                    <Transition
+                        as={Fragment}
+                        leave="transition ease-in duration-100"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <Listbox.Options
+                            className={`absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md capitalize
+                        bg-white py-1 text-base shadow-md ring-1 ring-slate-200 focus:outline-none sm:text-sm ${position}`}
+                        >
+                            {list.map((option, optionIdx) => (
+                                <Listbox.Option
+                                    key={optionIdx}
+                                    className={({ active }) =>
+                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                            active
+                                                ? "bg-blue-100 text-blue-900"
+                                                : "text-gray-900"
+                                        }`
+                                    }
+                                    value={option}
+                                    onClick={() => onSelect(option.option)}
+                                >
+                                    {({ selected }) => (
+                                        <>
+                                            <span
+                                                className={`block truncate ${
+                                                    selected
+                                                        ? "font-medium"
+                                                        : "font-normal"
+                                                }`}
+                                            >
+                                                {option.option}
                                             </span>
                                             {selected ? (
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">

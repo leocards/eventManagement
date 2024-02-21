@@ -15,7 +15,7 @@ export default function Paginate({ contentList, disabled, onNext = () => {}, onP
 
     return (
         <div className="border-t pt-2.5 flex items-center">
-            <div className="ml-auto flex items-center gap-3">
+            <div className="min-w-[12rem] justify-between ml-auto flex items-center gap-3">
                 <button disabled={!previous} onClick={() => onClickButton("prev")} className="px-1 py-1 hover:bg-gray-200 rounded disabled:opacity-40 disabled:pointer-events-none">
                     <ChevronLeftIcon className="w-5 h-5" />
                 </button>

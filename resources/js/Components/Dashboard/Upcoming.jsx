@@ -109,7 +109,7 @@ export default function Upcoming({ initialList }) {
                 </div>
             </div>
 
-            <div className="mt-3">
+            <div className="mt-3 h-full">
                 <div className="grid grid-cols-[7rem,7rem,12rem,1fr] font-open font-bold border-b pb-2">
                     <div className="px-2">Date</div>
                     <div className="px-2">Time</div>
@@ -158,24 +158,24 @@ export default function Upcoming({ initialList }) {
                     
                     }
                 </div>
+                {pages?.last_page > 1 && (
+                    <Paginate
+                        disabled={{
+                            next: pages?.next_page_url ? true : false,
+                            previous: pages?.prev_page_url ? true : false,
+                        }}
+                        contentList={pages}
+                        onPrevious={() =>
+                            getNextAndPrevPages(pages.current_page - 1)
+                        }
+                        onNext={() =>
+                            getNextAndPrevPages(pages.current_page + 1)
+                        }
+                    />
+                )}
             </div>
 
 
-            {pages?.last_page > 1 && (
-                <Paginate
-                    disabled={{
-                        next: pages?.next_page_url ? true : false,
-                        previous: pages?.prev_page_url ? true : false,
-                    }}
-                    contentList={pages}
-                    onPrevious={() =>
-                        getNextAndPrevPages(pages.current_page - 1)
-                    }
-                    onNext={() =>
-                        getNextAndPrevPages(pages.current_page + 1)
-                    }
-                />
-            )}
         </div>
     );
 }

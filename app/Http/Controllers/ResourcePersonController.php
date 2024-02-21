@@ -53,7 +53,7 @@ class ResourcePersonController extends Controller
                 ResourcePerson::create([
                     'name' => $request->name,
                     'position' => $request->position,
-                    'profile' => $filename??"/storage/profile/profile.png"
+                    'profile' => $filename??null
                 ]);
             });
 

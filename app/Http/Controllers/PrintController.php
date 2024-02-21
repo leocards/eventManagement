@@ -69,10 +69,21 @@ class PrintController extends Controller
         $years = Event::select(DB::raw('YEAR(dateStart) as year'))
             ->distinct()
             ->get(['year']);    
+        
+        $events = Event::with(['participant' => function ($query) use ($request) {
+                $query->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
+                    ->selectRaw('COUNT(*) as total, event_id')
+                    ->groupBy('event_id');
+            }])
+            ->whereYear('dateStart', $request->year)
+            ->orWhereYear('dateEnd', $request->year)
+            ->count();
 
         return Inertia::render("Prints/PrintCBU", [
             'years' => $years,
-            'printYear' => $request->year
+            'printYear' => $request->year,
+            'layout' => $request->layout,
+            'eventCount' => $events
         ]);
     }
 

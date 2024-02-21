@@ -15,7 +15,7 @@ export const DisplayRP = ({ selectedRp }) => {
             </div>
             <div className="w-80 h-80 mx-auto mt-4">
                 <img
-                    src={selectedRp?.profile}
+                    src={selectedRp?.profile??"/storage/profile/profile.png"}
                     className="w-full h-full rounded-md object-contain"
                     alt=""
                 />

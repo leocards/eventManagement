@@ -24,6 +24,11 @@ class EventParticipants extends Model
             ->select(["id", "title", "venue", "platform", "is_range", "dateStart", "dateEnd"]);
     }
 
+    public function event2(): BelongsTo
+    {
+        return $this->belongsTo(Event::class, 'event_id', 'id');
+    }
+
     public function eventSelect(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id', 'id')

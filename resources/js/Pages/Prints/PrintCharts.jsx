@@ -114,13 +114,13 @@ export default function PrintCharts({
             <div className="grid grid-cols-[50rem] gap-10 mx-auto w-fit mt-5">
                 <div>
                     <ChartContainer>
-                        <TrainingActivitySummary summary={trainingActivity} />
+                        <TrainingActivitySummary animation={false} summary={trainingActivity} />
                     </ChartContainer>
                 </div>
                 
                 <div>
                     <ChartContainer className="">
-                        <ConsolidatedDataChart consolidated={consolidated} />
+                        <ConsolidatedDataChart animation={false} consolidated={consolidated} />
                     </ChartContainer>
                     <div className="text-sm text-center mt-3">
                         The chart shows that the majority of participants gave the
@@ -134,7 +134,7 @@ export default function PrintCharts({
                 
                 <div>
                     <ChartContainer>
-                        <SexDesiggredatedDataChart gender={genders} />
+                        <SexDesiggredatedDataChart animation={false} gender={genders} />
                     </ChartContainer>
                     <div className="flex gap-5 justify-center">
                         <div className="">Male: {genders.Male}</div>
@@ -146,7 +146,7 @@ export default function PrintCharts({
                     resource.map((rp, index) => (
                         <div key={index}>
                             <ChartContainer>
-                                <ResourcePersonResultChart evaluation_ratings={rp.summary} name={rp.rp.name} />
+                                <ResourcePersonResultChart animation={false} evaluation_ratings={rp.summary} name={rp.rp.name} />
                             </ChartContainer>
                         </div>
                     ))

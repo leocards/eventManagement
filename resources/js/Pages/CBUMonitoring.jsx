@@ -67,13 +67,18 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
         // request data in the current page
         if (!cbuPageList.hasOwnProperty(pageNumber) || persist) {
             setLoadingSearch(true);
-            const response = sendRequest(pageNumber);
+            const response = await sendRequest(pageNumber);
             setCBUData(response.data);
             setLoadingSearch(false);
         } else {
-            setCBUData(rpPageList[pageNumber]);
+            setCBUData(cbuPageList[pageNumber]);
         }
     };
+
+    const onSelectYearCbu = year => {
+        setCbuPageList(null)
+        setSelectedYear(year)
+    }
 
     useEffect(() => {
         if (search) {
@@ -131,7 +136,7 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                     <div className="ml-auto">
                         <SelectByYear
                             eventYears={years}
-                            onSelectYear={setSelectedYear}
+                            onSelectYear={onSelectYearCbu}
                             selectedYear={selectedYear}
                         />
                     </div>
@@ -153,14 +158,14 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                 )}
             </div>
 
-            <div className="container p-3 h-[calc(100vh-6rem)] mt-3">
+            <div className="container p-3 mt-3">
                 <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
                     <div className="w-56">
                         <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(input)} />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-[7rem,1fr,15rem,14rem] font-bold font-open mt-3 pb-2 border-b">
+                <div className="grid grid-cols-[5rem,1fr,15rem,14rem] font-bold font-open mt-3 pb-2 border-b">
                     <div className="px-2">No.</div>
                     <div className="px-2">Trainee</div>
                     <div className="px-2 text-center">Remarks</div>
@@ -168,11 +173,11 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                         Total Trainings Attended
                     </div>
                 </div>
-                <div className="overflow-y-auto pt-2 pb-1">
+                <div className="overflow-y-auto h-[calc(100vh-15rem)] pt-2 pb-1">
                     {loadingSearch ? (
                         <LoadingList
                             column={4}
-                            grid="grid-cols-[7rem,1fr,15rem,14rem]"
+                            grid="grid-cols-[5rem,1fr,15rem,14rem]"
                         />
                     ) : !loadingSearch && search && CBUs.length === 0 ? (
                         <div className="text-center my-5">No results found for "{search}"</div>
@@ -182,10 +187,10 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                         CBUs.map((cbu, index) => (
                             <div
                                 key={index}
-                                className="grid grid-cols-[7rem,1fr,15rem,14rem] h-12 mb-1 rounded-md list-hover cursor-default"
+                                className="grid grid-cols-[5rem,1fr,15rem,14rem] h-12 mb-1 rounded-md list-hover cursor-default"
                             >
                                 <div className="px-4 flex items-center">
-                                    {index + 1}
+                                    {pages.from + index}
                                 </div>
                                 <div className="px-2 flex items-center">
                                     <div className="line-clamp-1">
@@ -196,8 +201,7 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                                     {cbu.status !== "Active" ? cbu.status : ""}
                                 </div>
                                 <div className="px-2 flex items-center justify-center">
-                                    {cbu.trainings_attended_count ||
-                                        "0"}
+                                    {cbu.trainings_attended?(cbu.trainings_attended[0]?.trainings||"0") : "0"}
                                 </div>
                             </div>
                         ))
@@ -221,7 +225,7 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                 )}
             </div>
 
-            {selectedYear && <PrintEvaluations show={isPrint} onCancel={() => setIsPrint(false)} src={route('print.cbu', { _query: { year:  selectedYear} })} />}
+            {selectedYear && <PrintEvaluations show={isPrint} withLayout onCancel={() => setIsPrint(false)} src={route('print.cbu', { _query: { year:  selectedYear} })} />}
         </Authenticated>
     );
 }
