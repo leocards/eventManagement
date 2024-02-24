@@ -192,6 +192,7 @@ Route::middleware(['auth', 'role:Employee', 'verified'])->group(function () {
             Route::get('/all-notifications/json', 'NotificationJson')->name('trainee.allNotification.json');
         });
 
+        Route::get('/inactive/{user}', [CBUController::class, 'checkEmployeeInactivity']);
     });
 });
 

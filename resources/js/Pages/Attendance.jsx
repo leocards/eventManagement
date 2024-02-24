@@ -194,7 +194,7 @@ const AttendanceList = ({ attendance }) => {
                     }
                 >
                     <div className="capitalize px-2.5 flex items-center ">
-                        {moment.utc(attendance.updated_at).locale('Asia/Manila').format('ll')}
+                        {moment(attendance.updated_at).format('ll')}
                     </div>
                     <div className="px-2.5 flex items-center ">
                         <div className="line-clamp-1">

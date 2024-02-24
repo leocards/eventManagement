@@ -369,10 +369,11 @@ class EventController extends Controller
                     if ($request->filterEvent != "All") {
                         if ($request->filterEvent == "Active") {
                             // Today
-                            $query->orWhereDate('dateStart', $this->now->toDateString())
-                                ->where("is_range", "=", true)
-                                ->orWhereDate('dateEnd', $this->now->toDateString())
-                                ->where("is_range", "=", true)
+                            $query->where(function ($query) {
+                                $query->whereDate('dateStart', '<=', $this->now->toDateString())
+                                        ->whereDate('dateEnd', '>=', $this->now->toDateString())
+                                        ->where('is_range', true);
+                                })
                                 ->orWhereDate('dateStart', $this->now->toDateString())
                                 ->where("is_range", "=", false);
                         } else if ($request->filterEvent == "Upcoming") {

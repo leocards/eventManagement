@@ -3,7 +3,7 @@ import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 
 export default function TopCards({ onTimeIn, onTimeOut, numberOfEvents}) {
-    const [filterEventTotal, setFilterEventTotal] = useState("Total")
+    const [filterEventTotal, setFilterEventTotal] = useState("Today")
 
     /* const getEvntsFilter = filterEvent => {
         setFilterEventTotal(filterEvent)
@@ -42,7 +42,7 @@ export default function TopCards({ onTimeIn, onTimeOut, numberOfEvents}) {
                 </div>
                 <FilterButton 
                     onClick={setFilterEventTotal}
-                    list={["Total", "Upcoming"]}
+                    list={["Today", "Upcoming", "Total"]}
                 />
             </div>
         </div>

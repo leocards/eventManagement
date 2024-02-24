@@ -36,7 +36,7 @@ export default function NewEmployee({
         province: "",
         gender: "",
         profile: null,
-        user_type: "",
+        user_type: "Employee",
         status: "",
     });
     const [updateData, setUpdateData] = useState(null);
@@ -308,7 +308,7 @@ export default function NewEmployee({
                             <AutoComplete
                                 list={roles}
                                 maxHeight="max-h-32"
-                                selectedOption={data.user_type}
+                                selectedOption={data.user_type??"Employee"}
                                 onSelect={(value) =>
                                     setData("user_type", value.name)
                                 }

@@ -93,16 +93,26 @@ class DashboardController extends Controller
             ->whereNull('ep.deleted_at')
             ->orderBy("events.dateStart", "ASC")
             ->paginate(25);
-
+        
+        $todayEvents = EventParticipants::where("user_id", Auth::id())->whereHas('event', function ($event) {
+            $event->where(function ($query) {
+                $query->whereDate('dateStart', '<=', $this->now->toDateString())
+                        ->whereDate('dateEnd', '>=', $this->now->toDateString())
+                        ->where('is_range', true);
+                })
+                ->orWhereDate('dateStart', $this->now->toDateString())
+                ->where("is_range", "=", false);
+        })->count();
         $totalEvents = EventParticipants::where("user_id", Auth::id())->count();
         $totalUpcomming = Event::leftJoin('event_participants AS ep', 'ep.event_id', '=', 'events.id')
             ->where('ep.user_id', Auth::id())
             ->whereDate('events.dateStart', '>', $this->now->toDateString())
             ->count();
-
+        
         return Inertia::render('Trainee/Dashboard', [
             'upcoming' => $upcomingEvents,
             'totalevents' => collect([
+                'Today' => $todayEvents,
                 'Total' => $totalEvents,
                 'Upcoming' => $totalUpcomming,
             ])

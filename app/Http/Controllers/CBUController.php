@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\User;
 use Carbon\Carbon;
@@ -37,6 +38,15 @@ class CBUController extends Controller
         ->where('role', 'Employee')
         ->select('id', 'first_name', 'last_name', 'status')
         ->paginate(25);
+
+        $cbu = $cbu->map(function ($user) {
+            $consecutive = $this->checkEmployeeInactivity($user);
+            if($consecutive >= 10) {
+                $user->status = 'Inactive';
+                return $user;
+            }
+            return $user;
+        });
 
         // return response()->json($cbu);
 
@@ -84,8 +94,25 @@ class CBUController extends Controller
         return response()->json($years);
     }
 
-    function checkEmployeeInactivity(User $user)
+    function checkEmployeeInactivity(User $user, $eventList = [])
     {
-        
+        $participant = $user->attendedEvent;
+        $participant = $participant->filter(function ($event) {
+            if(Attendance::where('event_participant_id', $event->id)->first()) {
+                return ['id' => $event->id, 'event_id' => $event->event_id];
+            }
+        });
+        $consecutive = 0;
+
+        $events = Event::get(['id'])->pluck('id')->values();
+
+        $events->each(function ($event) use ($consecutive, $participant) {
+            if(!$participant->contains('event_id', 3)) {
+                $consecutive += 1;
+            } else $consecutive = 0;
+        });
+
+
+        return $consecutive;
     }
 }

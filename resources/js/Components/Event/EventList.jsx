@@ -127,9 +127,9 @@ export default function EventList({
                     1
                 );
             else if (
-                startDate.getTime() <= currentDate.getTime() &&
-                endDate.getTime() >= currentDate.getTime() &&
-                timeOut.getTime() >= currentDateTime.getTime()
+                currentDate.getTime() >= startDate.getTime() &&
+                currentDate.getTime() <= endDate.getTime() &&
+                timeOut.getTime() <= currentDateTime.getTime()
             )
                 return !returnValue ? (
                     <EventStatus $status="bg-green-100 text-green-600">

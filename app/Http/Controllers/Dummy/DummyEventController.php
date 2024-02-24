@@ -307,7 +307,7 @@ class DummyEventController extends Controller
         ]);
 
         $dates->each(function ($item, $key) use ($events, $platform, $venues, $eventTitles, $eventObjectives, $rpLists, $participants) {
-            if($key == 10) return false;
+            if($key == 6) return false;
 
             $randomRpNumber = rand(2, 8);
             $eventPlatform = $platform->random();
