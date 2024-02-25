@@ -205,15 +205,15 @@ class UserController extends Controller
                     $query->where('first_name', 'LIKE', "%$request->search%")
                         ->orWhere('last_name', 'LIKE', "%$request->search%")
                         ->orWhere('email', 'LIKE', "%$request->search%");
-                })
-                ->when(Auth::user()->role != "Super Admin", function ($query) {
-                    $query->where('role', 'Employee');
-                })
-                ->when(Auth::user()->role == "Super Admin", function ($query) {
-                    $query->where('id', '!=', Auth::id());
-                })
-                ->where('status', 'Active');
+                });
             }
+            $query->when(Auth::user()->role == "Admin", function ($query) {
+                $query->where('role', 'Employee');
+            })
+            ->when(Auth::user()->role == "Super Admin", function ($query) {
+                $query->where('id', '!=', Auth::id());
+            })
+            ->where('status', 'Active');
 
             if ($request->filter != "All" && $request->has('filter')) {
                 $query->where('province', "$request->filter");

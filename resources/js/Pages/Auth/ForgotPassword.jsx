@@ -6,11 +6,13 @@ import { Head, Link, router, useForm } from "@inertiajs/react";
 import InputLabel from "@/Components/InputLabel";
 import { useEffect, useState } from "react";
 import { SelectSecurity, SlectQuestion } from "@/Components/Event/PopOver";
+import NavLink from "@/Components/NavLink";
+import { ArrowUturnLeftIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 export default function ForgotPassword({ status, email_verified }) {
     const [loading, setLoading] = useState(false)
     const [securityQuestions, setSecurityQuestions] = useState([]);
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, setError } = useForm({
         email: email_verified ?? "",
         question: "",
         answer: "",
@@ -20,8 +22,22 @@ export default function ForgotPassword({ status, email_verified }) {
         e.preventDefault();
 
         !email_verified && post(route("password.email"), {replace:true});
-        email_verified && post(route('password.verifyAnswer'), {replace:true});
+        email_verified && post(route('password.verifyAnswer'), {
+            replace:true,
+            onError: error => {
+                if(typeof error.answer == "Object") {
+                    return setError('answer', error.answer.answer['0'])
+                } else return error
+            }
+        });
     };
+
+    const renderErrorAnswer = (error) => {
+        error = error?JSON.parse(error):null
+        if(typeof error == "Object") {
+            return error['0']
+        } else return error
+    }
 
     useEffect(() => {
         if (email_verified !== null) {
@@ -155,12 +171,21 @@ export default function ForgotPassword({ status, email_verified }) {
                         )}
 
                         <div className="flex items-center justify-end mt-4">
-                            <PrimaryButton
-                                className="ms-4"
-                                disabled={processing}
-                            >
-                                {email_verified?'Verify':'Verify email'}
-                            </PrimaryButton>
+                            {
+                                securityQuestions.length === 0 && email_verified ? (
+                                    <NavLink href={route('/')} className="px-4 pr-5 h-9 rounded flex items-center gap-2" >
+                                        <ChevronLeftIcon className="w-5 h-5" />
+                                        Back
+                                    </NavLink>
+                                ) : (
+                                    <PrimaryButton
+                                        className="ms-4"
+                                        disabled={processing}
+                                    >
+                                        {email_verified?'Verify':'Verify email'}
+                                    </PrimaryButton>
+                                )
+                            }
                         </div>
                     </form>
                 </div>

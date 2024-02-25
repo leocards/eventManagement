@@ -41,7 +41,15 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
                         <div className="">
                             <div className="flex items-center w-full justify-center">
                                 <div className="h-[4rem] w-[4rem] rounded-full overflow-hidden bg-white shrink-0">
-                                    <img src={employee.profile} alt="" />
+                                    <img 
+                                        src={employee.profile ??
+                                            "/storage/profile/profile.png"} 
+                                        onError={(event) =>
+                                            (event.target.src =
+                                                "/storage/profile/profile.png")
+                                        }
+                                        alt="" 
+                                    />
                                 </div>
                                 <div className="max-w-[20rem] ml-3">
                                     <div className="font-bold">

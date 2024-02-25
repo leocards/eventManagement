@@ -71,7 +71,7 @@ export default function ResetPassword({ token = '', email = '' }) {
                                     type="email"
                                     name="email"
                                     value={data.email}
-                                    className="mt-1 block w-full"
+                                    className="mt-1 block w-full disabled:opacity-50"
                                     autoComplete="username"
                                     onInput={(e) => setData('email', e.target.value)}
                                     readOnly
@@ -81,6 +81,14 @@ export default function ResetPassword({ token = '', email = '' }) {
                             </div>
                             
                             <InputError message={errors.email} className="mt-2" />
+                        </div>
+
+                        <div className='text-sm mt-10'>Password must contain:</div>
+                        <div className='text-sm pl-3.5'>
+                            <div className="list-item">numbers</div>
+                            <div className="list-item">at least 8 characters</div>
+                            <div className="list-item">at least 1 lowercase and uppercase</div>
+                            <div className="list-item">special characters, ex: @!#$</div>
                         </div>
 
                         <div>

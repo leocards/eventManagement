@@ -150,7 +150,7 @@ export default function SideNavigation({ auth, showSideBar }) {
                 </li>
 
                 <li className="lg:mt-3 w-fit lg:w-full">
-                    <NavLink className="lg:w-full p-2.5 md:w-fit rounded-md">
+                    <NavLink method="post" as="button" href={route("logout")} className="lg:w-full p-2.5 md:w-fit rounded-md">
                         <ArrowLeftStartOnRectangleIcon className="w-5 h-5" />
                         <div className="font-semibold text-base ml-3.5 lg:block hidden">
                             Logout

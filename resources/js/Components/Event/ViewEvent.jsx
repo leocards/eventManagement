@@ -222,7 +222,7 @@ export default function ViewEvent({
                                             </pre>
                                         </div>
                                         <div className="text-sm my-1">
-                                            <button
+                                            {code.time_in && <button
                                                 onClick={() =>
                                                     getTemporaryUrl(true)
                                                 }
@@ -230,7 +230,7 @@ export default function ViewEvent({
                                             >
                                                 Generate temporary URL for time
                                                 in code
-                                            </button>
+                                            </button>}
                                             <div
                                                 onClick={(e) => copyCode(e)}
                                                 className={"cursor-pointer hover:text-blue-700 break-words relative rounded p-1 px-1.5 "+(data.time_in?'bg-slate-100':'')}
@@ -275,7 +275,7 @@ export default function ViewEvent({
                                             </pre>
                                         </div>
                                         <div className="text-sm my-1">
-                                            <button
+                                            {code.time_out && <button
                                                 onClick={() =>
                                                     getTemporaryUrl(false)
                                                 }
@@ -283,7 +283,7 @@ export default function ViewEvent({
                                             >
                                                 Generate temporary URL for time
                                                 out code
-                                            </button>
+                                            </button>}
                                             <div
                                                 onClick={(e) => copyCode(e, false)}
                                                 className={"cursor-pointer hover:text-blue-700 break-words relative rounded p-1 px-1.5 "+(data.time_out?'bg-slate-100':'')}

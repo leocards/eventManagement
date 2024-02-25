@@ -57,4 +57,9 @@ export const roles = [
     { name: "Super Admin" }
 ];
 
+export const roles2 = [
+    { name: "Employee" },
+    { name: "Admin" },
+];
+
 export default PositionsTitles;

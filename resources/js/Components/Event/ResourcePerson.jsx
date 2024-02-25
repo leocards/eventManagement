@@ -121,7 +121,7 @@ export default function ResourcePerson({
             </div>
 
             <div className="flex items-end mt-3">
-                <div className="flex">
+                <div className="flex relative">
                     <label htmlFor="rp">Number of resource person:</label>
                     <input
                         type="text"
@@ -158,7 +158,10 @@ export default function ResourcePerson({
 
             { pages?.total < nRP && (<div className="text-pink-700 text-sm ">{nRP} is beyond the number of resource person list</div>)}
 
-            <div className="mt-7 overflow-y-auto max-h-[calc(100vh-17rem)] h-[50vh] overscroll-contain pb-2">
+            <div className={"mt-7  max-h-[calc(100vh-17rem)] h-[50vh] overscroll-contain pb-2 relative "+(nRP?"overflow-y-auto":"overflow-y-hidden")}>
+                {!nRP && <div className="absolute top-0 left-0 w-full h-full bg-black/40 flex rounded">
+                    <div className="mx-auto my-auto font-bold text-white tracking-wide">Please input number of resource person first.</div>
+                </div>}
                 {
                     search && !loadingSearch && resourcePersons.length == 0 ? (
                         <div className="text-center">

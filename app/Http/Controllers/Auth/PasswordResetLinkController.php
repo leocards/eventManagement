@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -76,18 +77,22 @@ class PasswordResetLinkController extends Controller
 
     public function verifyAnswer(Request $request)
     {
+        Validator::extend('valid_security_question', function ($attribute, $value, $parameters, $validator) {
+            $questions = SecurityQuestion::where('question', $parameters[0])
+                ->where('answer', $value)
+                ->exists();
+            
+            return $questions;
+        });
+
         $request->validate([
             'email' => 'required|email',
             'question' => 'required',
-            'answer' => 'required'
+            'answer' => 'required|valid_security_question:' . $request->question . ',' . $request->answer
+        ], [
+            'answer.valid_security_question' => 'The provided answer is invalid for the selected security question.'
         ]);
 
-        $questions = SecurityQuestion::where('question', $request->question)
-            ->where('answer', $request->answer)
-            ->first();
-
-        if($questions) {
-            return redirect()->route('password.reset', ['email' => $request->email, 'token' => Str::random(32)]);
-        } else return back()->withErrors("Failed to verify");
+        return redirect()->route('password.reset', ['email' => $request->email, 'token' => Str::random(32)]);
     }
 }

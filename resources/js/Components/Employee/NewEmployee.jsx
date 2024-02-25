@@ -1,4 +1,4 @@
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import InputLabel from "../InputLabel";
 import Modal, { ModalHeader } from "../Modal";
 import TextInput from "../TextInput";
@@ -8,7 +8,7 @@ import ImageUploader from "../ImageUploader";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { AutoComplete } from "../Event/PopOver";
-import { provinces, roles } from "@/js/Position";
+import { provinces, roles, roles2 } from "@/js/Position";
 
 export default function NewEmployee({
     show,
@@ -16,6 +16,8 @@ export default function NewEmployee({
     onClose = () => {},
     onSuccess = () => {},
 }) {
+    const { auth:{user} } = usePage().props
+
     const {
         data,
         setData,
@@ -306,7 +308,7 @@ export default function NewEmployee({
                             }
                         >
                             <AutoComplete
-                                list={roles}
+                                list={user.role == 'Admin' ? roles2:roles}
                                 maxHeight="max-h-32"
                                 selectedOption={data.user_type??"Employee"}
                                 onSelect={(value) =>
