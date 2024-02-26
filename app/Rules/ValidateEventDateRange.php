@@ -41,7 +41,9 @@ class ValidateEventDateRange implements ValidationRule
 
             if(!$startDate) {
                 $fail('The date field is required.');
-            }else if(Carbon::parse($startDate)->lt(now()) && Carbon::now()->gt($timeIn) && !$event) {
+            }else if(Carbon::parse($startDate)->today('Asia/Manila') && Carbon::now('Asia/Manila')->gt($timeIn) && !$event) {
+                $fail('The date time in must be later than the current time.');
+            }else if(Carbon::parse($startDate)->lt(now()) && Carbon::parse($startDate)->today('Asia/Manila') && Carbon::now('Asia/Manila')->gt($timeIn) && !$event) {
                 $fail('The date must be future dates.');
             }
         }
