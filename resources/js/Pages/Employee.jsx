@@ -285,6 +285,26 @@ export default function Employee({ auth, initialEmployeeList }) {
                     setShowNewEmployee(false);
                     setSelected(null);
                 }}
+                onError={(error) => {
+                    MySwal.fire({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        allowOutsideClick: false,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        showDenyButton: false,
+                        confirmButtonText: "OK",
+                        customClass: {
+                            confirmButton:
+                                "!text-sm px-10 uppercase focus:!ring-0",
+                            cancelButton:
+                                "!text-sm px-10 uppercase focus:!ring-0",
+                            denyButton:
+                                "!text-sm px-10 uppercase focus:!ring-0",
+                        },
+                    });
+                }}
             />
 
             <ViewEmployee

@@ -88,13 +88,13 @@ class AttendanceController extends Controller
 
             //verify the code for the event
             $event = EventCode::when($request->session == "Time in", function ($query) use ($request) {
-                return $query->where('time_in_code', $request->code)
-                    ->whereDate('time_in', $this->now->toDateString());
-            })->when($request->session == "Time out", function ($query) use ($request) {
-                return $query->where('time_out_code', $request->code)
-                    ->whereDate('time_out', $this->now->toDateString());
-            })
-            ->first();
+                    return $query->where('time_in_code', $request->code)
+                        ->whereDate('time_in', $this->now->toDateString());
+                })->when($request->session == "Time out", function ($query) use ($request) {
+                    return $query->where('time_out_code', $request->code)
+                        ->whereDate('time_out', $this->now->toDateString());
+                })
+                ->first();
 
             // if the code is valid then check if the event is open
             if($event) {
@@ -185,7 +185,7 @@ class AttendanceController extends Controller
 
     public function evaluation(Event $event)
     {
-        if(Session::has('evaluation')) {
+        if(Session::has('evaluation') && Session::get('evaluation') == Auth::id()) {
             $event_participant = EventParticipants::where("user_id", Auth::id())
                 ->where("event_id", $event->id)
                 ->first();
@@ -213,7 +213,7 @@ class AttendanceController extends Controller
                     'participant_id' => $event_participant->id
                 ]);
             } else {
-                Session::forget('key');
+                Session::forget('evaluation');
                 return Inertia::render("Trainee/Evaluation", [
                     'event' => null,
                     'resourcePersons' => [],
