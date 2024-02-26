@@ -19,6 +19,7 @@ class ValidateEventDateRange implements ValidationRule
 
         $startDate = request()->input('date.start');
         $endDate = request()->input('date.end');
+        $timeIn = request()->input('timeIn');
 
         if(request()->input('date.isRange')) {
             if(!$startDate) {
@@ -40,7 +41,7 @@ class ValidateEventDateRange implements ValidationRule
 
             if(!$startDate) {
                 $fail('The date field is required.');
-            }else if(Carbon::parse($startDate)->lt(now()) && !$event) {
+            }else if(Carbon::parse($startDate)->lt(now()) && Carbon::now()->gt($timeIn) && !$event) {
                 $fail('The date must be future dates.');
             }
         }
