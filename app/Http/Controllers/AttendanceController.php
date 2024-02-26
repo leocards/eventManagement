@@ -166,6 +166,9 @@ class AttendanceController extends Controller
                 // if the user is about to log out, redirect to evaluation page, else send error
                 if ($this->now->gte($timeOut) && $request->session == "Time out") {
                     if($this->now->toDateString() == $timeOut->toDateString()) {
+                        if(!Attendance::where('event_participant_id', $event_participant->id)->exists()) {
+                            throw new Exception("You have not logged your time in.");
+                        }
                         Session::put('evaluation', Auth::id());
                         return redirect()->route("trainee.evaluation", ["event" => $event->event_id]);
                     } else {
