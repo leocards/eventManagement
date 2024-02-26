@@ -78,7 +78,7 @@ export default function Notifications({ show = false, getUnread = () => {} }) {
                                                     "font-semibold line-clamp-2"
                                                 }
                                             >
-                                                {item.event_select.title}
+                                                {item.event_select?.title}
                                             </div>
                                         </div>
 

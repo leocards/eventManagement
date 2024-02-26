@@ -116,14 +116,16 @@ class PrintController extends Controller
 
         $consec = new CBUController();
 
-        $users = $users->map(function ($user) use ($consec) {
-            $consecutive = $consec->checkEmployeeInactivity($user);
+        $events = Event::get(['id', 'dateStart']);
+
+        $inactives = $users->map(function ($user) use ($consec, $events) {
+            $consecutive = $consec->checkEmployeeInactivity($user, $events);
             if($consecutive >= 10) {
-                $user->status = 'Inactive';
-                return $user;
+                return $user->id;
             }
-            return $user;
-        });
+        })->filter(function ($inactive) {
+            if($inactive) return $inactive;
+        })->values();
 
         $events = Event::with(['participant' => function ($query) use ($request) {
                 $query->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
@@ -136,6 +138,7 @@ class PrintController extends Controller
         
         return response()->json(collect([
             'users' => $users,
+            'inactiveUser' => $inactives,
             'events' => $events
         ]));
     }

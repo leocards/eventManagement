@@ -10,7 +10,7 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-export default function CBUMonitoring({ auth, cbu_summary, years }) {
+export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }) {
     const [selectedYear, setSelectedYear] = useState(null);
     const [yearEvents, setYearEvents] = useState([]);
     const [showMore, setShowMore] = useState(false);
@@ -20,6 +20,7 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
     const [loadingSearch, setLoadingSearch] = useState(null);
     const [search, setSearch] = useState("");
     const [isPrint, setIsPrint] = useState(false)
+    const [inactives, setInactives] = useState([])
 
     const setCBUData = (initialData) => {
         let initial = { ...initialData };
@@ -58,7 +59,8 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
         setLoadingSearch(true);
         let response = await sendRequest(1);
         let data = response.data;
-        setCBUData(data);
+        setCBUData(data.cbu_data);
+        setInactives(data.inactives)
         setLoadingSearch(false);
     }
 
@@ -68,7 +70,8 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
         if (!cbuPageList.hasOwnProperty(pageNumber) || persist) {
             setLoadingSearch(true);
             const response = await sendRequest(pageNumber);
-            setCBUData(response.data);
+            setCBUData(response.data.cbu_data);
+            setInactives(response.data.inactives)
             setLoadingSearch(false);
         } else {
             setCBUData(cbuPageList[pageNumber]);
@@ -84,7 +87,10 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
         if (search) {
             getCbu()
         } else if(selectedYear) getCbu()
-        else setCBUData(cbu_summary)
+        else {
+            setCBUData(cbu_summary)
+            setInactives(inactiveUser)
+        }
     }, [search]);
 
     useEffect(() => {
@@ -198,7 +204,7 @@ export default function CBUMonitoring({ auth, cbu_summary, years }) {
                                     </div>
                                 </div>
                                 <div className="px-2 flex items-center justify-center">
-                                    {cbu.status !== "Active" ? cbu.status : ""}
+                                    {inactives.includes(cbu.id)?"Inactive":""}
                                 </div>
                                 <div className="px-2 flex items-center justify-center">
                                     {cbu.trainings_attended?(cbu.trainings_attended[0]?.trainings||"0") : "0"}

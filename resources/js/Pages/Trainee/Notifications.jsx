@@ -139,21 +139,21 @@ const OpenedNotification = ({ event, convertDate = () => {} }) => {
             </div>
             <div className="mb-7">
                 <LabelText>Title</LabelText>
-                <div className="">{event.title}</div>
+                <div className="">{event?.title}</div>
             </div>
             <div className="mb-7">
                 <LabelText>Objective</LabelText>
                 <div className="whitespace-pre-wrap break-words">
-                    {event.objective}
+                    {event?.objective}
                 </div>
             </div>
             <div className="mb-7">
                 <LabelText>Venue / Link</LabelText>
                 {event.platform == "Face-to-face" ? (
-                    <div className="">{event.venue}</div>
+                    <div className="">{event?.venue}</div>
                 ) : (
-                    <a href={event.venue} className="hover:text-blue-500">
-                        {event.venue}
+                    <a href={event?.venue} className="hover:text-blue-500">
+                        {event?.venue}
                     </a>
                 )}
             </div>

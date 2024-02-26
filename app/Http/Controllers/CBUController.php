@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Event;
+use App\Models\EventParticipants;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class CBUController extends Controller
         $this->now = Carbon::now('Asia/Manila');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $years = Event::select(DB::raw('YEAR(dateStart) as year'))
             ->distinct()
@@ -36,22 +37,23 @@ class CBUController extends Controller
                 ->groupBy('user_id');
         }])
         ->where('role', 'Employee')
-        ->select('id', 'first_name', 'last_name', 'status')
+        ->select('id', 'first_name', 'last_name', 'status', 'created_at')
         ->paginate(25);
 
-        $cbu = $cbu->map(function ($user) {
-            $consecutive = $this->checkEmployeeInactivity($user);
+        $events = Event::get(['id', 'dateStart']);
+        
+        $inactives = $cbu->map(function ($user) use ($events) {
+            $consecutive = $this->checkEmployeeInactivity($user, $events);
             if($consecutive >= 10) {
-                $user->status = 'Inactive';
-                return $user;
+                return $user->id;
             }
-            return $user;
-        });
-
-        // return response()->json($cbu);
+        })->filter(function ($inactive) {
+            if($inactive) return $inactive;
+        })->values();
 
         return Inertia::render('CBUMonitoring', [
             "cbu_summary" => $cbu,
+            "inactiveUser" => $inactives,
             "years" => $years->prepend(['year'=>null])
         ]);
     }
@@ -75,15 +77,29 @@ class CBUController extends Controller
             $query->where(function ($subquery) use ($request) {
                 $subquery->where('first_name', 'LIKE', "%$request->search%")
                     ->orWhere('last_name', 'LIKE', "%$request->search%");
-            })->orWhereHas('trainingsAttended.event', function ($subquery) use ($request) {
+            })
+            ->where('role', 'Employee')
+            ->orWhereHas('trainingsAttended.event', function ($subquery) use ($request) {
                 $subquery->where('title', 'LIKE', "%$request->search%");
-            });
+            })
+            ->where('role', 'Employee');
         })
         ->where('role', 'Employee')
-        ->select('id', 'first_name', 'last_name', 'status')
+        ->select('id', 'first_name', 'last_name', 'status', 'created_at')
         ->paginate(25);
 
-        return response()->json($cbu);  
+        $events = Event::get(['id', 'dateStart']);
+        
+        $inactives = $cbu->map(function ($user) use ($events) {
+            $consecutive = $this->checkEmployeeInactivity($user, $events);
+            if($consecutive >= 10) {
+                return $user->id;
+            }
+        })->filter(function ($inactive) {
+            if($inactive) return $inactive;
+        })->values();
+
+        return response()->json(collect(["cbu_data" => $cbu, "inactives" => $inactives]));  
     }
 
     public function eventsPerYear()
@@ -94,25 +110,30 @@ class CBUController extends Controller
         return response()->json($years);
     }
 
-    function checkEmployeeInactivity(User $user, $eventList = [])
+    function checkEmployeeInactivity(User $user, $eventList)
     {
-        $participant = $user->attendedEvent;
-        $participant = $participant->filter(function ($event) {
-            if(Attendance::where('event_participant_id', $event->id)->first()) {
-                return ['id' => $event->id, 'event_id' => $event->event_id];
+        $use_created_at = Carbon::parse($user->created_at);
+
+        $consecutiveAbsent = 0;
+        $eventList->each(function ($event) use (&$consecutiveAbsent, $use_created_at, $user) {
+            $eventDate = Carbon::parse($event->dateStart);
+
+            // check if the event is create later than the employee has been created
+            if($eventDate->format('Ym') >= $use_created_at->format('Ym') && $eventDate->isBefore($this->now)) {
+                // check if the user is part of the event
+                $trainee = EventParticipants::where('user_id', $user->id)->where('event_id', $event->id)->first('id');
+                if($trainee) {
+                    // if the user is part of the event and has not attended count as inactive
+                    $attended = Attendance::where('event_participant_id', $trainee->id)->exists();
+                    if(!$attended) {
+                        $consecutiveAbsent += 1;
+                    } else {
+                        $consecutiveAbsent = 0;
+                    }
+                }
             }
         });
-        $consecutive = 0;
 
-        $events = Event::get(['id'])->pluck('id')->values();
-
-        $events->each(function ($event) use ($consecutive, $participant) {
-            if(!$participant->contains('event_id', 3)) {
-                $consecutive += 1;
-            } else $consecutive = 0;
-        });
-
-
-        return $consecutive;
+        return $consecutiveAbsent;
     }
 }
