@@ -29,7 +29,7 @@ export default function TimeInTimeOut({
     const codeInput = useRef(null);
 
     useEffect(() => {
-        if (data.code.length === 36) {
+        if (data.code.length === 5) {
             post(route("trainee.timeIn", { _query: { session: session } }), {
                 onSuccess: ({ props: { message } }) => {
                     message == '1' && onSuccess("You've successfully logged your time in.");
@@ -83,10 +83,10 @@ export default function TimeInTimeOut({
                                         id="timeInOut"
                                         value={data.code}
                                         onInput={({ target }) =>
-                                            data.code.length <= 36 &&
+                                            data.code.length <= 5 &&
                                             setData("code", target.value)
                                         }
-                                        readOnly={data.code.length === 36}
+                                        readOnly={data.code.length === 5}
                                     />
 
                                     <InputLabel

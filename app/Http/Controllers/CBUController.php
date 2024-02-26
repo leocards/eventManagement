@@ -40,7 +40,7 @@ class CBUController extends Controller
         ->select('id', 'first_name', 'last_name', 'status', 'created_at')
         ->paginate(25);
 
-        $events = Event::get(['id', 'dateStart']);
+        /* $events = Event::get(['id', 'dateStart']);
         
         $inactives = $cbu->map(function ($user) use ($events) {
             $consecutive = $this->checkEmployeeInactivity($user, $events);
@@ -49,11 +49,11 @@ class CBUController extends Controller
             }
         })->filter(function ($inactive) {
             if($inactive) return $inactive;
-        })->values();
+        })->values(); */
 
         return Inertia::render('CBUMonitoring', [
             "cbu_summary" => $cbu,
-            "inactiveUser" => $inactives,
+            //"inactiveUser" => $inactives,
             "years" => $years->prepend(['year'=>null])
         ]);
     }
@@ -88,7 +88,7 @@ class CBUController extends Controller
         ->select('id', 'first_name', 'last_name', 'status', 'created_at')
         ->paginate(25);
 
-        $events = Event::get(['id', 'dateStart']);
+        /* $events = Event::get(['id', 'dateStart']);
         
         $inactives = $cbu->map(function ($user) use ($events) {
             $consecutive = $this->checkEmployeeInactivity($user, $events);
@@ -97,9 +97,9 @@ class CBUController extends Controller
             }
         })->filter(function ($inactive) {
             if($inactive) return $inactive;
-        })->values();
+        })->values(); */
 
-        return response()->json(collect(["cbu_data" => $cbu, "inactives" => $inactives]));  
+        return response()->json($cbu);
     }
 
     public function eventsPerYear()

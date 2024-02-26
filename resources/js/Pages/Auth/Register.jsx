@@ -267,6 +267,14 @@ export default function Register({ show, onClose }) {
                         Create password
                     </div>
 
+                    <div className='text-sm mt-5'>Password must contain:</div>
+                    <div className='text-sm pl-3.5 mb-5'>
+                        <div className="list-item">numbers</div>
+                        <div className="list-item">at least 8 characters</div>
+                        <div className="list-item">at least 1 lowercase and uppercase</div>
+                        <div className="list-item">special characters, ex: @!#$</div>
+                    </div>
+
                     <InputText
                         id="password"
                         className="flex"

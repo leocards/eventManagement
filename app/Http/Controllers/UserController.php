@@ -49,6 +49,7 @@ class UserController extends Controller
             ->when($request->filter != "All" && $request->has('filter'), function ($query) use ($request) {
                 $query->where('province', "$request->filter");
             })
+            ->where('status', 'Active')
             ->latest()
             ->paginate(25);
 
@@ -171,7 +172,7 @@ class UserController extends Controller
                     "gender" => $request->gender,
                     "profile" => $filename ?? "/storage/profile/profile.png",
                     "password" => Hash::make("12345678"),
-                    "status" => $request->status ?? "Active",
+                    "status" => !$request->status ? "Active" : $request->status,
                     "role" => $request->user_type ?? "Employee",
                 ]);
             });

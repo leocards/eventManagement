@@ -114,7 +114,7 @@ class PrintController extends Controller
             ->select('id', 'first_name', 'last_name', 'status')
             ->get();
 
-        $consec = new CBUController();
+        /* $consec = new CBUController();
 
         $events = Event::get(['id', 'dateStart']);
 
@@ -125,7 +125,7 @@ class PrintController extends Controller
             }
         })->filter(function ($inactive) {
             if($inactive) return $inactive;
-        })->values();
+        })->values(); */
 
         $events = Event::with(['participant' => function ($query) use ($request) {
                 $query->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
@@ -138,7 +138,7 @@ class PrintController extends Controller
         
         return response()->json(collect([
             'users' => $users,
-            'inactiveUser' => $inactives,
+            // 'inactiveUser' => $inactives,
             'events' => $events
         ]));
     }

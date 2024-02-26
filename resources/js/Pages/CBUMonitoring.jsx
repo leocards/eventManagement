@@ -20,7 +20,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
     const [loadingSearch, setLoadingSearch] = useState(null);
     const [search, setSearch] = useState("");
     const [isPrint, setIsPrint] = useState(false)
-    const [inactives, setInactives] = useState([])
+    //const [inactives, setInactives] = useState([])
 
     const setCBUData = (initialData) => {
         let initial = { ...initialData };
@@ -59,8 +59,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
         setLoadingSearch(true);
         let response = await sendRequest(1);
         let data = response.data;
-        setCBUData(data.cbu_data);
-        setInactives(data.inactives)
+        setCBUData(data);
         setLoadingSearch(false);
     }
 
@@ -70,8 +69,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
         if (!cbuPageList.hasOwnProperty(pageNumber) || persist) {
             setLoadingSearch(true);
             const response = await sendRequest(pageNumber);
-            setCBUData(response.data.cbu_data);
-            setInactives(response.data.inactives)
+            setCBUData(response.data);
             setLoadingSearch(false);
         } else {
             setCBUData(cbuPageList[pageNumber]);
@@ -89,7 +87,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
         } else if(selectedYear) getCbu()
         else {
             setCBUData(cbu_summary)
-            setInactives(inactiveUser)
+            //setInactives(inactiveUser)
         }
     }, [search]);
 
@@ -204,7 +202,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
                                     </div>
                                 </div>
                                 <div className="px-2 flex items-center justify-center">
-                                    {inactives.includes(cbu.id)?"Inactive":""}
+                                    {cbu.status != "Active" ?cbu.status:""}
                                 </div>
                                 <div className="px-2 flex items-center justify-center">
                                     {cbu.trainings_attended?(cbu.trainings_attended[0]?.trainings||"0") : "0"}

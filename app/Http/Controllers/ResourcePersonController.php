@@ -22,7 +22,7 @@ class ResourcePersonController extends Controller
 
     public function indexJson()
     {
-        $resource_persons = ResourcePerson::select("id", "name", "position", "profile")->paginate(25);
+        $resource_persons = ResourcePerson::select("id", "name", "position", "profile")->latest()->paginate(25);
         // dd($resource_persons);
         return response()->json($resource_persons);
     }

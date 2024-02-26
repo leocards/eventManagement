@@ -12,7 +12,7 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
     const [styleScale, setStyleScale] = useState(null);
     const printConctentRef = useRef(null);
     const [printStyle, setPrintStyle] = useState()
-    const [inactive, setInactive] = useState([])
+    //const [inactive, setInactive] = useState([])
 
     //console.log(printStyle)
 
@@ -75,7 +75,6 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
 
             setEvents(data.events);
             setTrainees(data.users);
-            setInactive(data.inactiveUser)
             setLoading(false);
         }
         getCBUList();
@@ -209,7 +208,7 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
                                             $center
                                             className="w-20"
                                         >
-                                            {inactive.includes(user.id)?"Inactive":""}
+                                            {user.status != "Active" ? user.status : ""}
                                         </Columns>
                                         <Columns
                                             $bordered

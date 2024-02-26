@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import ImageUploader from "../ImageUploader";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import PrimaryButton from "../Buttons/PrimaryButton";
-import { AutoComplete } from "../Event/PopOver";
+import { AutoComplete, ListSelector } from "../Event/PopOver";
 import { provinces, roles, roles2 } from "@/js/Position";
 
 export default function NewEmployee({
@@ -16,7 +16,9 @@ export default function NewEmployee({
     onClose = () => {},
     onSuccess = () => {},
 }) {
-    const { auth:{user} } = usePage().props
+    const {
+        auth: { user },
+    } = usePage().props;
 
     const {
         data,
@@ -84,7 +86,7 @@ export default function NewEmployee({
                             },
                         }
                       : null,
-                  status: data.status,
+                  status: data.status == "Active" ? "" : data.status,
                   user_type: data.role,
               })
             : "";
@@ -139,12 +141,27 @@ export default function NewEmployee({
                                         "border-pink-600 focus-within:border-pink-600 ")
                                 }
                             >
-                                <TextInput
-                                    id="status"
+                                <ListSelector
+                                    paddingHeight="py-4"
+                                    list={[
+                                        { option: "" },
+                                        { option: "Resigned" },
+                                        { option: "Non-renewal" },
+                                        { option: "Transfer program" },
+                                    ]}
+                                    optionPosition="bottom"
+                                    borderColor=""
+                                    opacityOnEmpty
+                                    selectedOption={data.status}
+                                    onSelect={selectedStatus => setData('status', selectedStatus)}
+                                />
+                                <input
+                                    type="text"
+                                    readOnly
                                     value={data.status}
-                                    onInput={({ target }) =>
-                                        setData("status", target.value)
-                                    }
+                                    id="status"
+                                    placeholder=""
+                                    hidden
                                 />
                                 <InputLabel
                                     htmlFor="status"
@@ -308,9 +325,9 @@ export default function NewEmployee({
                             }
                         >
                             <AutoComplete
-                                list={user.role == 'Admin' ? roles2:roles}
+                                list={user.role == "Admin" ? roles2 : roles}
                                 maxHeight="max-h-32"
-                                selectedOption={data.user_type??"Employee"}
+                                selectedOption={data.user_type ?? "Employee"}
                                 onSelect={(value) =>
                                     setData("user_type", value.name)
                                 }
@@ -521,3 +538,34 @@ const InputBox = ({
         </div>
     );
 };
+
+{
+    /* <div className="mb-4">
+                            <div
+                                className={
+                                    "form-input-float " +
+                                    (errors.status &&
+                                        "border-pink-600 focus-within:border-pink-600 ")
+                                }
+                            >
+                                <TextInput
+                                    id="status"
+                                    value={data.status}
+                                    onInput={({ target }) =>
+                                        setData("status", target.value)
+                                    }
+                                />
+                                <InputLabel
+                                    htmlFor="status"
+                                    value="Employee Status"
+                                    className={
+                                        "after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                                        (errors.status && "!text-pink-600")
+                                    }
+                                />
+                            </div>
+                            <div className="text-sm text-pink-700">
+                                {errors.status}
+                            </div>
+                        </div> */
+}

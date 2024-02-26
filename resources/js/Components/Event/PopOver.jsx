@@ -1094,32 +1094,55 @@ export function GenderSelection({
 }
 
 export function ListSelector({
-    list = [{ option: null }],
-    defaultLabel = "Select",
+    list = [{ option: "" }],
+    defaultLabel = "--Select--",
     optionPosition = "top",
-    borderColor = "border-gray-300",
+    paddingHeight = "py-2",
+    borderColor = "ring-1 ring-slate-300",
     selectedOption = null,
+    opacityOnEmpty = false,
     onSelect = () => {},
 }) {
-    const [selected, setSelected] = useState(
-        selectedOption
-            ? list.find(({ option }) => option == selectedOption)
-            : { option: null }
-    );
+    const [isInvisible, setIsInvisible] = useState(opacityOnEmpty);
+    const [selected, setSelected] = useState({ option: "" });
 
     const position = {
         top: "bottom-11",
+        bottom: "",
     }[optionPosition];
+
+    useEffect(() => {
+        if(selected) {
+            onSelect(selected.option)
+        }
+    }, [selected])
+
+    useEffect(() => {
+        selectedOption
+            ? setSelected(list.find(({ option }) => option == selectedOption))
+            : setSelected({ option: "" })
+    }, [selectedOption])
 
     return (
         <div className="w-full">
-            <Listbox value={selected} onChange={setSelected}>
+            <Listbox
+                onFocus={() => opacityOnEmpty && setIsInvisible(false)}
+                onBlur={() => opacityOnEmpty && setIsInvisible(true)}
+                value={selected}
+                onChange={setSelected}
+            >
                 <div className="relative">
                     <Listbox.Button
-                        className={`relative w-full cursor-default rounded-md border bg-white py-2 pl-3 pr-10 text-left focus:outline-none capitalize ${borderColor}`}
+                        className={`relative w-full cursor-default rounded-md bg-white pl-3 pr-10 text-left focus:outline-none capitalize ${paddingHeight} ${borderColor}`}
                     >
-                        <span className={"block truncate "}>
-                            {selected.option ?? defaultLabel}
+                        <span
+                            className={`block truncate ${
+                                isInvisible && !selected.option
+                                    ? "opacity-0"
+                                    : ""
+                            } `}
+                        >
+                            {selected.option ? selected.option : defaultLabel}
                         </span>
                         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                             <ChevronDownIcon
@@ -1149,7 +1172,6 @@ export function ListSelector({
                                         }`
                                     }
                                     value={option}
-                                    onClick={() => onSelect(option.option)}
                                 >
                                     {({ selected }) => (
                                         <>
@@ -1160,7 +1182,10 @@ export function ListSelector({
                                                         : "font-normal"
                                                 }`}
                                             >
-                                                {option.option}
+                                                {option.option &&
+                                                option.option != ""
+                                                    ? option.option
+                                                    : "--select--"}
                                             </span>
                                             {selected ? (
                                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">

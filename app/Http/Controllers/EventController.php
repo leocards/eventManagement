@@ -147,15 +147,17 @@ class EventController extends Controller
                 ]);
 
                 foreach ($dateRange as $date) {
+                    $codes = $this->generateEventCode($date);
+
                     EventCode::create([
                         "event_id" => $event->id,
                         "time_in" => $date . ' ' . $request->timeIn . ':00',
                         "time_in_cutoff" => $date . ' ' . $request->timeInCutoff . ':00',
-                        "time_in_code" => Uuid::uuid4()->toString(),
+                        "time_in_code" => $codes['in'],
                         "time_in_code_exp" => $date . ' ' . $request->timeInCutoff . ':00',
                         "time_out" => $date . ' ' . $request->timeOut . ':00',
                         "time_out_cutoff" => $date . ' ' . $request->timeOutCutoff . ':00',
-                        "time_out_code" => Uuid::uuid4()->toString(),
+                        "time_out_code" => $codes['out'],
                         "time_out_code_exp" => $date . ' ' . $request->timeOutCutoff . ':00',
                     ]);
                 }
@@ -303,7 +305,7 @@ class EventController extends Controller
                                 $eventDate->time_in_cutoff = $dateRange[$key]['time_in_cutoff'];
                                 $eventDate->time_in_code_exp = $dateRange[$key]['time_in_cutoff'];
                                 $eventDate->time_out = $dateRange[$key]['time_out'];
-                                $eventDate->time_time_out_cutoffin = $dateRange[$key]['time_out_cutoff'];
+                                $eventDate->time_out_cutoff = $dateRange[$key]['time_out_cutoff'];
                                 $eventDate->time_out_code_exp = $dateRange[$key]['time_out_cutoff'];
                                 $eventDate->save();
                             }
@@ -592,5 +594,32 @@ class EventController extends Controller
         foreach ($deleted_participants as $participant) {
             $participant->delete();
         }
+    }
+
+    function generateEventCode($date)
+    {
+        do {
+            $inCode = Str::limit(base64_encode(random_bytes(5)), 5, '');
+            $outCode = Str::limit(base64_encode(random_bytes(5)), 5, '');
+        } while ($inCode == $outCode);
+
+        $existingCodes = EventCode::where('time_in_code', $inCode)
+            ->orWhere('time_out_code', $outCode)
+            ->whereDate('time_in', $date)
+            ->whereNull('deleted_at')
+            ->pluck('time_in_code', 'time_out_code');
+
+        while ($existingCodes->has($inCode)) {
+            $inCode = Str::limit(base64_encode(random_bytes(5)), 5, '');
+        }
+    
+        while ($existingCodes->has($outCode)) {
+            $outCode = Str::limit(base64_encode(random_bytes(5)), 5, '');
+        }
+
+        return collect([
+            "in" => $inCode,
+            "out" => $outCode
+        ]);
     }
 }
