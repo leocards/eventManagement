@@ -18,6 +18,16 @@ class EventParticipants extends Model
         "seen"
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When an event is being deleted, also soft delete related event participants
+        static::deleting(function($participants) {
+            $participants->attendance()->delete();
+        });
+    }
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id', 'id')

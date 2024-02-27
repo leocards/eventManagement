@@ -588,9 +588,9 @@ export function SelectByYear({
                             <div className="grow ml-[1.20rem]">
                                 {selected && selected.year
                                     ? selected.year
-                                    : "All"}
-                                {eventYears.length === 0 &&
-                                    "You have no events yet"}
+                                    : ""}
+                                {(eventYears.length == 0 || !eventYears[0].year) &&
+                                    "No events"}
                             </div>
                             <ChevronDownIcon
                                 className="h-5 w-5 text-gray-500 absolute right-1.5"
@@ -630,11 +630,28 @@ export function SelectByYear({
                                                         ""
                                                     )}
                                                 </div>
-                                                {event.year || "All"}
+                                                {event.year || (eventYears.length === 1 && !event.year ? "No events" :"All")}
                                             </button>
                                         )}
                                     </Menu.Item>
                                 ))}
+                                {
+                                    eventYears.length == 0 &&
+                                    (
+                                        <Menu.Item>
+                                            {({ close }) => (
+                                                <button
+                                                    disabled
+                                                    className={`flex w-full items-center px-2 py-1.5`}
+                                                >
+                                                    <div className=" shrink-0 mr-2 text-sm">
+                                                        No events
+                                                    </div>
+                                                </button>
+                                            )}
+                                        </Menu.Item>
+                                    )
+                                }
                             </div>
                         </Menu.Items>
                     </Transition>
@@ -1104,23 +1121,18 @@ export function ListSelector({
     onSelect = () => {},
 }) {
     const [isInvisible, setIsInvisible] = useState(opacityOnEmpty);
-    const [selected, setSelected] = useState({ option: "" });
+    const [selected, setSelected] = useState(list[0]);
+
+    const onChange = (option) => {
+        onSelect(option.option)
+    }
 
     const position = {
         top: "bottom-11",
-        bottom: "",
     }[optionPosition];
 
     useEffect(() => {
-        if(selected) {
-            onSelect(selected.option)
-        }
-    }, [selected])
-
-    useEffect(() => {
-        selectedOption
-            ? setSelected(list.find(({ option }) => option == selectedOption))
-            : setSelected({ option: "" })
+        setSelected(list.find(({option}) => option == selectedOption))
     }, [selectedOption])
 
     return (
@@ -1129,7 +1141,7 @@ export function ListSelector({
                 onFocus={() => opacityOnEmpty && setIsInvisible(false)}
                 onBlur={() => opacityOnEmpty && setIsInvisible(true)}
                 value={selected}
-                onChange={setSelected}
+                onChange={onChange}
             >
                 <div className="relative">
                     <Listbox.Button

@@ -55,6 +55,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When an event is being deleted, also soft delete related event participants
+        static::deleting(function($user) {
+            $user->trainingsAttended()->delete();
+            $user->quantitativeRate()->delete();
+            $user->quantitativeRpRate()->delete();
+            $user->qualitativeRate()->delete();
+        });
+    }
+
     public function scopeSearch($query, $search, $filter = "All")
     {
         if($filter != "All") {
@@ -78,6 +91,21 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         return $this->role == $role;
+    }
+
+    public function quantitativeRate(): HasMany
+    {
+        return $this->hasMany(QuantitativeAssessment::class, 'user_id', 'id');
+    }
+
+    public function quantitativeRpRate(): HasMany
+    {
+        return $this->hasMany(QuantitativeAssessmentRP::class, 'user_id', 'id');
+    }
+
+    public function qualitativeRate(): HasMany
+    {
+        return $this->hasMany(QualitativeAssessment::class, 'user_id', 'id');
     }
 
     public function trainingsAttended(): HasMany

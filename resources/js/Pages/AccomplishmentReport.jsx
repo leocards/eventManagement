@@ -127,10 +127,10 @@ export default function AccomplishmentReport({ auth, report, years }) {
                             selectedYear={yearSelected}
                             onSelectYear={setYearSelected}
                         />
-                        <FilterByQuarter
+                        {years.length > 0 && <FilterByQuarter
                             selectedQurter={quarterSelected}
                             onSelect={setQuarterSelected}
-                        />
+                        />}
                     </div>
                     <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
                         <div className="w-56">

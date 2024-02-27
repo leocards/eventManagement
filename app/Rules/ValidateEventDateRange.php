@@ -22,8 +22,10 @@ class ValidateEventDateRange implements ValidationRule
 
         if(request()->input('date.isRange')) {
 
-            if(Carbon::parse($event->dateEnd)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate || $event->dateEnd != $endDate)) {
-                $fail('Cannot update event date when ended.');
+            if($event) {
+                if(Carbon::parse($event->dateEnd)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate || $event->dateEnd != $endDate)) {
+                    $fail('Cannot update event date when ended.');
+                }
             }
 
             if(!$startDate) {
@@ -43,9 +45,12 @@ class ValidateEventDateRange implements ValidationRule
                 $fail('');
             } */
 
-            if(Carbon::parse($event->dateStart)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate)) {
-                $fail('Cannot update event date when ended.');
+            if($event) {
+                if(Carbon::parse($event->dateStart)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate)) {
+                    $fail('Cannot update event date when ended.');
+                }
             }
+
 
             if(!$startDate) {
                 $fail('The date field is required.');

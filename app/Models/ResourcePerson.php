@@ -15,6 +15,17 @@ class ResourcePerson extends Model
         "name", "position", "profile"
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // When an event is being deleted, also soft delete related event participants
+        static::deleting(function($rp) {
+            $rp->rp_ratings()->delete();
+            $rp->event_rps()->delete();
+        });
+    }
+
     public function scopeSearch($query, $search)
     {
         return $query->select("id", "name", "position", "profile")->where('name', 'LIKE', "%$search%");
@@ -25,5 +36,15 @@ class ResourcePerson extends Model
     {
         return $this->hasMany(QuantitativeAssessmentRP::class, 'rps_id', 'id')
             ->with('gender');
+    }
+
+    public function rp_ratings(): HasMany
+    {
+        return $this->hasMany(QuantitativeAssessmentRP::class, 'rps_id', 'id');
+    }
+
+    public function event_rps(): HasMany
+    {
+        return $this->hasMany(EventResourcePerson::class, 'rp_id', 'id');
     }
 }

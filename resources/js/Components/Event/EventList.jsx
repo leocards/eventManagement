@@ -322,7 +322,21 @@ export default function EventList({
                 processing={processing}
                 onCancel={setShowDeleteConfirmation}
                 onConfirmDelete={() => {
-                    post(route("event.delete", [selected?.id]));
+                    post(route("event.delete", [selected?.id]), {
+                        onSuccess: ({props:{events}}) => {
+                            setEventData(events)
+                            setShowDeleteConfirmation(false)
+                            MySwal.fire({
+                                text: `Event has been deleted.`,
+                                icon: "success",
+                                toast: true,
+                                position: "top-right",
+                                timerProgressBar: true,
+                                timer: 3000,
+                                showConfirmButton: false,
+                            });
+                        }
+                    });
                 }}
             >
                 <div className="font-semibold text-lg text-red-700 flex items-center gap-2 justify-center">

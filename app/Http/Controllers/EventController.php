@@ -412,7 +412,15 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         try {
-            $event->delete();
+            DB::transaction(function () use ($event) {
+                UserLog::create([
+                    "event_id" => $event->id,
+                    "user_id" => Auth::id(),
+                    "description" => "deleted an event"
+                ]);
+
+                $event->delete();
+            });
 
             return back();
         } catch (\Throwable $th) {

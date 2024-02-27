@@ -153,7 +153,9 @@ class DashboardController extends Controller
     {
         try {
             if (Auth::user()->role === "Employee") {
-                $recentActivity = Activity::with('event')
+                $recentActivity = Activity::with(['event' => function ($query) {
+                        $query->withTrashed();
+                    }])
                     ->where("user_id", Auth::id())
                     ->when($request->filter, function ($query) use ($request) {
                         if ($request->filter == "Today") {
@@ -168,7 +170,9 @@ class DashboardController extends Controller
                     ->limit(15)
                     ->get();
             } else {
-                $recentActivity = UserLog::with('event')
+                $recentActivity = UserLog::with(['event' => function ($query) {
+                        $query->withTrashed();
+                    }])
                     ->with(['user' => function ($query) {
                         $query->select('id', 'first_name', 'last_name');
                     }])
@@ -195,12 +199,16 @@ class DashboardController extends Controller
     public function activities()
     {
         if (Auth::user()->role === "Employee") {
-            $activity = Activity::with('event')
+            $activity = Activity::with(['event' => function ($query) {
+                    $query->withTrashed();
+                }])
                 ->where("user_id", Auth::id())
                 ->orderBy('created_at', 'DESC')
                 ->paginate(50);
         } else {
-            $activity = UserLog::with('event')
+            $activity = UserLog::with(['event' => function ($query) {
+                    $query->withTrashed();
+                }])
                 ->with(['user' => function ($query) {
                     $query->select('id', 'first_name', 'last_name');
                 }])
