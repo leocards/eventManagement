@@ -51,6 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/activities', 'activities')->name('dashboard.activities');
 
         Route::get('/activity', 'getActivity')->name('dashboard.activity');
+
+        Route::get('/active-events', 'activeEvents')->name('dashboard.active_events');
     });
 
     Route::controller(SecurityQuestionController::class)->group(function () {

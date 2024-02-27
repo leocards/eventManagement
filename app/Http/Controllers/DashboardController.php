@@ -19,7 +19,7 @@ class DashboardController extends Controller
 
     function __construct()
     {
-        $this->now = Carbon::now("Asia/Manila");
+        $this->now = Carbon::now();
     }
 
     public function index()
@@ -79,7 +79,8 @@ class DashboardController extends Controller
                 'Today' => $attendace_today,
                 'This month' => $attendace_month,
                 'This year' => $attendace_year,
-            ])
+            ]),
+            'active' => $this->activeEvents()
         ]);
     }
 
@@ -115,7 +116,8 @@ class DashboardController extends Controller
                 'Today' => $todayEvents,
                 'Total' => $totalEvents,
                 'Upcoming' => $totalUpcomming,
-            ])
+            ]),
+            'active' => $this->activeEvents()
         ]);
     }
 
@@ -306,9 +308,41 @@ class DashboardController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function activeEvents()
     {
-        //
+        $active = null;
+        if(Auth::user()->role != 'Employee') {
+            $active = Event::with(['eventCode' => function ($query) {
+                    $query->select('id', 'event_id', 'time_in', 'time_out');
+                }])
+                ->where(function ($query) {
+                    $query->whereDate('dateStart', '<=', $this->now->toDateString())
+                        ->whereDate('dateEnd', '>=', $this->now->toDateString())
+                        ->where('is_range', true);
+                })
+                ->orWhereDate('dateStart', $this->now->toDateString())
+                ->where("is_range", "=", false)
+                ->select('id', 'title', 'venue', 'platform', 'dateStart', 'dateEnd', 'is_range')
+                ->get();
+        } else {
+            $active = Event::join('event_participants AS ep', 'ep.event_id', '=', 'events.id')
+            ->with(['eventCode' => function ($query) {
+                $query->select('id', 'event_id', 'time_in', 'time_out');
+            }])
+            ->where(function ($query) {
+                $query->whereDate('dateStart', '<=', $this->now->toDateString())
+                    ->whereDate('dateEnd', '>=', $this->now->toDateString())
+                    ->where('is_range', true)
+                    ->where('ep.user_id', Auth::id());
+            })
+            ->orWhereDate('dateStart', $this->now->toDateString())
+            ->where("is_range", "=", false)
+            ->where('ep.user_id', Auth::id())
+            ->select('events.id', 'title', 'venue', 'platform', 'dateStart', 'dateEnd', 'is_range')
+            ->get();
+        }
+
+        return $active;
     }
 
     public function show(string $id)

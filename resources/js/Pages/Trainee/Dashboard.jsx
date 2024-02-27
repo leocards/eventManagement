@@ -16,7 +16,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-export default function Dashboard({ auth, upcoming, totalevents }) {
+export default function Dashboard({ auth, upcoming, totalevents, active }) {
     const MySwal = withReactContent(Swal);
     const [showTimeInOutModal, setShowTimeInOutModal] = useState(false);
     const [session, setSession] = useState("Time in");
@@ -41,8 +41,8 @@ export default function Dashboard({ auth, upcoming, totalevents }) {
                 numberOfEvents={totalevents}
             />
 
-            <div className="grid grid-cols-[2fr,1fr] gap-3 mt-6 h-[27.5rem]">
-                <Upcoming initialList={upcoming} />
+            <div className="grid grid-cols-[2fr,1fr] gap-3 mt-6 h-[32rem]">
+                <Upcoming initialList={upcoming} active={active} />
                 <RecentActivity user={auth.user} />
             </div>
 

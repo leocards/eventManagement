@@ -10,7 +10,7 @@ import { Head } from '@inertiajs/react';
 import { defaults } from "chart.js/auto"; //keept this imported, required for chart
 import { useEffect, useRef, useState } from 'react';
 
-export default function Dashboard({ auth, upcoming, gender, totalEmployee, numberOfEvents, attendance }) {
+export default function Dashboard({ auth, upcoming, gender, totalEmployee, numberOfEvents, attendance, active }) {
     const chartDoughnut = useRef()
 
     const setChartWidth = size => {
@@ -33,7 +33,7 @@ export default function Dashboard({ auth, upcoming, gender, totalEmployee, numbe
             <Statistics totalEmployee={totalEmployee} numberOfEvents={numberOfEvents} attendance={attendance} />
 
             <div className='grid grid-cols-[2fr,1fr] gap-3 mt-6 h-[27.5rem]'>
-                <Upcomming initialList={upcoming} />
+                <Upcomming initialList={upcoming} active={active} />
                 <RecentActivity user={auth.user} onResizeValue={setChartWidth} />
             </div>
             

@@ -19,25 +19,33 @@ class ValidateEventDateRange implements ValidationRule
 
         $startDate = request()->input('date.start');
         $endDate = request()->input('date.end');
-        $timeIn = request()->input('timeIn');
 
         if(request()->input('date.isRange')) {
+
+            if(Carbon::parse($event->dateEnd)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate || $event->dateEnd != $endDate)) {
+                $fail('Cannot update event date when ended.');
+            }
+
             if(!$startDate) {
                 $fail('The "date from" field is required.');
             }else if(!$endDate) {
                 $fail('The "date to" field is required.');
-            }else if(Carbon::parse($startDate)->lt(now()) && !$event) {
+            }else if(Carbon::parse($startDate)->lt(Carbon::now()->format('Y-m-d')) && !$event) {
                 $fail('The "date from" must be future dates.');
             }else if($startDate == $endDate) {
                 $fail('The "date to" should not be equal to "date from"');
             } else if($startDate > $endDate) {
                 $fail('The "date to" should not be before "date from"');
-            }
+            } 
         } else {
             // if the date to be updated is now not a date range, notify user of the possible error
             /* if(Carbon::parse($startDate)->gte(now())) {
                 $fail('');
             } */
+
+            if(Carbon::parse($event->dateStart)->lt(Carbon::now()->format('Y-m-d')) && ($event->dateStart != $startDate)) {
+                $fail('Cannot update event date when ended.');
+            }
 
             if(!$startDate) {
                 $fail('The date field is required.');

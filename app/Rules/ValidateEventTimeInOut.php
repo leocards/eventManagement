@@ -16,7 +16,6 @@ class ValidateEventTimeInOut implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $event = request()->route('event');
-
         $currentTime = Carbon::now();
         $timeIn = request()->input('timeIn');
         $timeInCutoff = request()->input('timeInCutoff');
@@ -30,14 +29,23 @@ class ValidateEventTimeInOut implements ValidationRule
 
         // check if the validation is from update request by checking if event is not null
         if($event) {
-            $eventTimeIn = $event->eventCode->first();
+            $eventTimeIn = $event->eventCode->first(function ($event) use ($currentTime) {
+                return Carbon::parse($event->time_in)->isSameAs('Y-m-d', $currentTime->toDateString());
+            });
+            
+            if(!$eventTimeIn) {
+                $eventTimeIn = $event->eventCode->first();
+            }
+            //$dateTimeEvent = 
             $timeInEvent = Carbon::parse($eventTimeIn->time_in)->format('H:i');
 
             //dd($formattedCurrent->gt($eventDateTime));
-            if($timeInEvent != $timeIn && $attribute == 'timeIn' && $formattedCurrent->gte($eventDateTime)) {
+            if($timeInEvent != $timeIn && $attribute == 'timeIn' && $formattedCurrent->gte(Carbon::parse($eventTimeIn->time_in))) {
                 $fail('Cannot update time in when event is ongoing.');
-            }else if($formattedCurrent->lt($eventDateTime) && $attribute == 'timeIn' && $timeInEvent != $timeIn) {
-                $fail('Invalid time in, must be future time.');
+            }else if(Carbon::parse($eventTimeIn->time_in)->isToday()) {
+                if(Carbon::parse($timeIn)->lt($currentTime) && $attribute == 'timeIn' && $timeInEvent != $timeIn) {
+                    $fail('Invalid time in, must be future time.');
+                }
             }
         } else {
             if($attribute == 'timeIn' && $eventDateTime->isToday()) {

@@ -13,6 +13,7 @@ import ViewEvent from "./ViewEvent";
 import styled from "styled-components";
 import DeleteConfirmation from "../DeleteConfirmation";
 import AddRemarks from "./AddRemarks";
+import moment from "moment";
 
 export default function EventList({
     MySwal,
@@ -80,11 +81,13 @@ export default function EventList({
         { dateStart, dateEnd, is_range, event_code },
         returnValue = false
     ) => {
+        const outTime = event_code[0].time_out.split(' ')[1]
+        
         const currentDate = new Date();
         const currentDateTime = new Date();
         const endDate = new Date(dateEnd);
         const startDate = new Date(dateStart);
-        const timeOut = new Date(event_code[0].time_out);
+        const timeOut = new Date(moment().format('Y-MM-D')+ ' ' +outTime);
 
         startDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
@@ -127,9 +130,8 @@ export default function EventList({
                     1
                 );
             else if (
-                currentDate.getTime() >= startDate.getTime() &&
-                currentDate.getTime() <= endDate.getTime() &&
-                timeOut.getTime() <= currentDateTime.getTime()
+                (currentDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) &&
+                timeOut.getTime() >= currentDateTime.getTime()
             )
                 return !returnValue ? (
                     <EventStatus $status="bg-green-100 text-green-600">
