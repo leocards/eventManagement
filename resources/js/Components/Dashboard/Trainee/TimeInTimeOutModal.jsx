@@ -55,7 +55,7 @@ export default function TimeInTimeOut({
 
     return (
         <>
-            <Modal show={show} maxWidth="md" onClose={onClose}>
+            <Modal closeable={false} show={show} maxWidth="md" onClose={onClose}>
                 <div className="p-4">
                     <div className="flex items-center mb-5 font-semibold uppercase">
                         {session}

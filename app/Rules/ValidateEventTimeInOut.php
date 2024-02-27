@@ -40,9 +40,9 @@ class ValidateEventTimeInOut implements ValidationRule
             $timeInEvent = Carbon::parse($eventTimeIn->time_in)->format('H:i');
 
             //dd($formattedCurrent->gt($eventDateTime));
-            if($timeInEvent != $timeIn && $attribute == 'timeIn' && $formattedCurrent->gte(Carbon::parse($eventTimeIn->time_in))) {
+            /* if($timeInEvent != $timeIn && $attribute == 'timeIn' && $formattedCurrent->gte(Carbon::parse($eventTimeIn->time_in))) {
                 $fail('Cannot update time in when event is ongoing.');
-            }else if(Carbon::parse($eventTimeIn->time_in)->isToday()) {
+            }else  */if(Carbon::parse($eventTimeIn->time_in)->isToday()) {
                 if(Carbon::parse($timeIn)->lt($currentTime) && $attribute == 'timeIn' && $timeInEvent != $timeIn) {
                     $fail('Invalid time in, must be future time.');
                 }

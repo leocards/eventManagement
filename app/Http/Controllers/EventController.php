@@ -254,15 +254,16 @@ class EventController extends Controller
                         if ($request->initialDate['withDateChanges']) {
                             EventCode::where('event_id', $event->id)->delete();
                             foreach ($dateRange as $date) {
+                                $codes = $this->generateEventCode($date);
                                 EventCode::create([
                                     "event_id" => $event->id,
                                     "time_in" => $date['time_in'],
                                     "time_in_cutoff" => $date['time_in_cutoff'],
-                                    "time_in_code" => Uuid::uuid4()->toString(),
+                                    "time_in_code" => $codes['in'],
                                     "time_in_code_exp" => $date['time_in_cutoff'],
                                     "time_out" => $date['time_out'],
                                     "time_out_cutoff" => $date['time_out_cutoff'],
-                                    "time_out_code" => Uuid::uuid4()->toString(),
+                                    "time_out_code" => $codes['out'],
                                     "time_out_code_exp" => $date['time_out_cutoff'],
                                 ]);
                             }
@@ -285,15 +286,16 @@ class EventController extends Controller
                         if ($request->initialDate['withDateChanges']) {
                             EventCode::where('event_id', $event->id)->delete();
                             foreach ($dateRange as $date) {
+                                $codes = $this->generateEventCode($date.'');
                                 EventCode::create([
                                     "event_id" => $event->id,
                                     "time_in" => $date['time_in'],
                                     "time_in_cutoff" => $date['time_in_cutoff'],
-                                    "time_in_code" => Uuid::uuid4()->toString(),
+                                    "time_in_code" => $codes['in'],
                                     "time_in_code_exp" => $date['time_in_cutoff'],
                                     "time_out" => $date['time_out'],
                                     "time_out_cutoff" => $date['time_out_cutoff'],
-                                    "time_out_code" => Uuid::uuid4()->toString(),
+                                    "time_out_code" => $codes['out'],
                                     "time_out_code_exp" => $date['time_out_cutoff'],
                                 ]);
                             }

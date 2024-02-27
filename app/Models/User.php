@@ -61,7 +61,7 @@ class User extends Authenticatable
 
         // When an event is being deleted, also soft delete related event participants
         static::deleting(function($user) {
-            $user->trainingsAttended()->delete();
+            $user->attendedEvent()->delete();
             $user->quantitativeRate()->delete();
             $user->quantitativeRpRate()->delete();
             $user->qualitativeRate()->delete();

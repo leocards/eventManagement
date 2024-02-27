@@ -23,8 +23,8 @@ class EventParticipants extends Model
         parent::boot();
 
         // When an event is being deleted, also soft delete related event participants
-        static::deleting(function($participants) {
-            $participants->attendance()->delete();
+        static::deleting(function($participant) {
+            $participant->attendance()->delete();
         });
     }
 

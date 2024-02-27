@@ -136,46 +136,61 @@ class AttendanceController extends Controller
                 }
 
                 // if the event is open for time in then set attendance and record the user's activity
-                if($this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut) && $request->session == "Time in") {
-
-                    DB::transaction(function () use ($event, $event_participant) {
-                        Attendance::create([
-                            'event_participant_id' => $event_participant->id,
-                            'time_in' => $this->now,
-                        ]);
-                            
-                        Activity::create([
-                            "event_id" => $event->event_id,
-                            "user_id" => Auth::id(),
-                            "description" => "Your time in for the event has been recorded"
-                        ]);
-                    });
-
-                    return redirect()->back()->with("message", "1");
-
-                // if the event is not yet open for the time in then respond with the remaining time before time in
-                } else if($this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut) && $request->session == "Time in") {
-                    $remaining = $this->now->diff($oneHourBeforeTimeIn);
-
-                    throw new Exception($remaining->h . " " . ($remaining->h > 1 ? 'hrs' : 'hr') . " " . $remaining->i . " " . 
-                        ($remaining->i > 1 ? 'mins' : 'min') . " " . $remaining->i . " sec remain before time in starts.");
+                if($request->session == "Time in") {
+                    if($this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut)) {
+    
+                        DB::transaction(function () use ($event, $event_participant) {
+                            Attendance::create([
+                                'event_participant_id' => $event_participant->id,
+                                'time_in' => $this->now,
+                            ]);
+                                
+                            Activity::create([
+                                "event_id" => $event->event_id,
+                                "user_id" => Auth::id(),
+                                "description" => "Your time in for the event has been recorded"
+                            ]);
+                        });
+    
+                        return redirect()->back()->with("message", "1");
+    
+                    // if the event is not yet open for the time in then respond with the remaining time before time in
+                    } else if($this->now->gte($oneHourBeforeTimeIn) && $this->now->lt($timeOut)) {
+                        $remaining = $this->now->diff($oneHourBeforeTimeIn);
+    
+                        throw new Exception($remaining->h . " " . ($remaining->h > 1 ? 'hrs' : 'hr') . " " . $remaining->i . " " . 
+                            ($remaining->i > 1 ? 'mins' : 'min') . " " . $remaining->i . " sec remain before time in starts.");
+                    } else {
+                        throw new Exception('Event has ended, try logging out to record your time in.');
+                    }
                 }
 
                 // dd($this->now->gte($timeOut), $timeOut, $this->now);
                 
                 // if the user is about to log out, redirect to evaluation page, else send error
-                if ($this->now->gte($timeOut) && $request->session == "Time out") {
-                    if($this->now->toDateString() == $timeOut->toDateString()) {
-                        if(!Attendance::where('event_participant_id', $event_participant->id)->exists()) {
-                            throw new Exception("You have not logged your time in.");
+                if($request->session == "Time out") {
+                    if ($this->now->gte($timeOut)) {
+                        if($this->now->toDateString() == $timeOut->toDateString()) {
+                            if(!Attendance::where('event_participant_id', $event_participant->id)->exists()) {
+                                Attendance::create([
+                                    'event_participant_id' => $event_participant->id,
+                                    'time_in' => $this->now,
+                                ]);
+                                    
+                                Activity::create([
+                                    "event_id" => $event->event_id,
+                                    "user_id" => Auth::id(),
+                                    "description" => "Your time in for the event has been recorded"
+                                ]);
+                            }
+                            Session::put('evaluation', Auth::id());
+                            return redirect()->route("trainee.evaluation", ["event" => $event->event_id]);
+                        } else {
+                            throw new Exception("The event timeout has ended.");
                         }
-                        Session::put('evaluation', Auth::id());
-                        return redirect()->route("trainee.evaluation", ["event" => $event->event_id]);
                     } else {
-                        throw new Exception("The event timeout has ended.");
+                        throw new Exception("Event is not yet open for time out.");
                     }
-                } else {
-                    throw new Exception("Event is not yet open for time out.");
                 }
             } else {
                 throw new Exception("Invalid code for ".$request->session);
