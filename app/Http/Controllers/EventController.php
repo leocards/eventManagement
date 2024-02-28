@@ -191,35 +191,32 @@ class EventController extends Controller
 
     public function updateEvent(Request $request, Event $event)
     {
-        $validate = $this->eventValidator($request, $event->id);
+        $range = $request->date['isRange'];
+        $start = Carbon::parse($event->dateStart);
+        $end = Carbon::parse($event->dateEnd);
+        $userDateStart = Carbon::parse($request->date['start']);
+        $userDateEnd = Carbon::parse($range ? $request->date['end'] : $request->date['start']);
+
+        $validate = $this->eventValidator(
+            $request, 
+            $event, 
+            (object) [
+                "range" => $range,
+                "start" => $start,
+                "end" => $end,
+                "userDateStart" => $userDateStart,
+                "userDateEnd" => $userDateEnd,
+            ]
+        );
 
         if($validate && $validate->get('error') === 'resourcePerson') {
             return redirect()->back()->withErrors($validate->get('message'), "resourcePerson");
         } else if($validate && $validate->get('error') === 'participant') {
             return redirect()->back()->withErrors($validate->get('message'), "participant");
+        } else if ($validate && $validate->get('error') === 'eventEnded') {
+            return redirect()->back()->withErrors($validate->get('message'), "eventEnded");
         }
 
-        $range = $request->date['isRange'];
-        $start = Carbon::parse($event->dateStart, 'Asia/Manila');
-        $end = Carbon::parse($event->dateEnd, 'Asia/Manila');
-        $userDateStart = Carbon::parse($request->date['start'], 'Asia/Manila');
-        $userDateEnd = Carbon::parse($range ? $request->date['end'] : $request->date['start'], 'Asia/Manila');
-        
-        // check changes of the event dates
-        if($userDateEnd->toDateString() != $end->toDateString() || 
-            $event->is_range != $range || $userDateStart->toDateString() != $start->toDateString())
-        {
-            if($event->isRange) {
-                if($this->now->gt($end) && $userDateEnd->toDateString() != $end->toDateString()) {
-                    return redirect()->back()->withErrors("Event has been ended, cannot update the event.", "event_status");
-                }
-            } else {
-                if($this->now->gt($start) && $userDateStart->toDateString() != $start->toDateString()) {
-                    return redirect()->back()->withErrors("Event has been ended, cannot update the event.", "event_status");
-                }
-            }
-        }
-        
         try {
             DB::transaction(function () use ($request, $event, $range, $userDateStart, $userDateEnd) {
                 $this->checkUpdatedRp($request, $event);
@@ -257,10 +254,8 @@ class EventController extends Controller
                             }
                         } else if ($request->initialDate['withTimeChanges']) {
                             $eventTime = $event->eventCode;
-                            foreach ($eventTime as $key => $eventDate) {
-                                /* dd($eventDate);
-                                $updateEvent = EventCode::find($eventDate->id); */
 
+                            foreach ($eventTime as $key => $eventDate) {
                                 $eventDate->time_in = $dateRange[$key]['time_in'];
                                 $eventDate->time_in_cutoff = $dateRange[$key]['time_in_cutoff'];
                                 $eventDate->time_in_code_exp = $dateRange[$key]['time_in_cutoff'];
@@ -319,6 +314,7 @@ class EventController extends Controller
         } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }
+
     }
 
     public function getEventRPParticipant(Event $event)
@@ -452,13 +448,64 @@ class EventController extends Controller
         }
     }
 
-    function eventValidator(Request $request, $event_id = null)
+    function eventValidator(Request $request, Event $event = null, $collection = null)
     {
+        // if the validation is for update, validate if there is chnages in dates
+        if($collection) {
+            // check if there is changes in date range
+            if( ((bool) $event->is_range) != $collection->range ) {
+                if($collection->userDateEnd->toDateString() != $collection->end->toDateString() || 
+                ((bool) $event->is_range) != $collection->range || $collection->userDateStart->toDateString() != $collection->start->toDateString())
+                {
+                    // get event time for time out
+                    $eventTimeOut = $event->eventCode->first();
+                    $timeOut = Carbon::parse(explode(' ', $eventTimeOut->time_out)[1]);
+    
+                    if($event->is_range) {
+                        // Restrict update of event if it has been ended
+                        if($collection->end->isBefore($this->now->toDateString()) || 
+                            ($collection->end->isToday() && $timeOut->lt($this->now))) {
+                            // throw an error if event has ended
+                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                        }
+                    } else {
+                        if($collection->start->isBefore($this->now->toDateString()) || 
+                            ($collection->start->isToday() && $timeOut->lt($this->now))) {
+                            // throw an error if event has ended
+                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                        }
+                    }
+                }
+            } else {
+                if(((bool) $event->is_range) != $collection->range || $collection->userDateStart->toDateString() != $collection->start->toDateString())
+                {
+                    // get event time for time out
+                    $eventTimeOut = $event->eventCode->first();
+                    $timeOut = Carbon::parse(explode(' ', $eventTimeOut->time_out)[1]);
+    
+                    if($event->is_range) {
+                        // Restrict update of event if it has been ended
+                        if($collection->end->isBefore($this->now->toDateString()) || 
+                            ($collection->end->isToday() && $timeOut->lt($this->now))) {
+                            // throw an error if event has ended
+                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                        }
+                    } else {
+                        if($collection->start->isBefore($this->now->toDateString()) || 
+                            ($collection->start->isToday() && $timeOut->lt($this->now))) {
+                            // throw an error if event has ended
+                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                        }
+                    }
+                }
+            }
+        }
+
         $rp_validator = $this->ValidateRPConflictSchedule(
             $request->rp_list,
             $request->date['start'],
             $request->date['end'] ?? $request->date['start'],
-            $event_id
+            $event?->id
         );
 
         if ($rp_validator->isNotEmpty()) { 
@@ -469,7 +516,7 @@ class EventController extends Controller
             $request->trainee_list['list'],
             $request->date['start'],
             $request->date['end'] ?? $request->date['start'],
-            $event_id
+            $event?->id
         );
 
         if ($participantValidator->isNotEmpty()) {
@@ -484,7 +531,7 @@ class EventController extends Controller
         $validator = Validator::make($request->all(), [
             "venue" => [new ValidVirtualVenueUrl, "required"],
             "platform" => ["required", "in:Virtual,Face-to-face"],
-            "title" => ["required", $event_id ? Rule::unique('events')->ignore($event_id) : "unique:events,title"],
+            "title" => ["required", $event ? Rule::unique('events')->ignore($event->id) : "unique:events,title"],
             "objective" => ["required"],
             "fund" => ["required", "numeric"],
             "date" => [new ValidateEventDateRange],

@@ -4,6 +4,7 @@ import PageHeader from "@/Components/PageHeader";
 import Paginate from "@/Components/Paginate";
 import SearchInput from "@/Components/SearchInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
+import { convertDate } from "@/js/DateFormatter";
 import { Head } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -68,40 +69,6 @@ const TraineeList = ({ initialList }) => {
         setLoadingSearch(false);
     };
 
-    const convertDate = (
-        start = null,
-        end = null,
-        time_in = null,
-        time_out = null
-    ) => {
-        if (start && !end && !time_in && !time_out) {
-            return moment(start).format("ll");
-        } else if (start && end && !time_in && !time_out) {
-            if (
-                moment(start).format("YYYY") == moment(end).format("YYYY") &&
-                moment(start).format("MMMM") == moment(end).format("MMMM")
-            ) {
-                return (
-                    moment(start).format("MMM D") +
-                    " - " +
-                    moment(end).format("D YYYY")
-                );
-            } else {
-                return (
-                    moment(start).format("MMM D YYYY") +
-                    " - " +
-                    moment(end).format("MMM D YYYY")
-                );
-            }
-        } else if (!start && !end && time_in && time_out) {
-            return (
-                moment(time_in).format("LT") +
-                " - " +
-                moment(time_out).format("LT")
-            );
-        }
-    };
-
     useEffect(() => {
         if (!pages) {
             setTrainingData(initialList);
@@ -138,7 +105,7 @@ const TraineeList = ({ initialList }) => {
                         training.map((train, index) => (
                             <TableContent key={index}>
                                 <div className="px-3 py-1.5 flex items-center">
-                                    {convertDate(train.event.dateStart,train.event.dateEnd)}
+                                    {convertDate(train.event.dateStart,train.event.dateEnd,null,null,true)}
                                 </div>
                                 <div className="px-3 py-1.5 flex items-center">
                                     <div className="line-clamp-1">{train.event.title}</div>

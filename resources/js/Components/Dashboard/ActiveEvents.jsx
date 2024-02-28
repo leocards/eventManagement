@@ -1,7 +1,9 @@
 import { convertDate } from "@/js/DateFormatter";
+import ViewActiveEvent from "./ViewActiveEvent";
+import { useState } from "react";
 
 export default function ActiveEvent({ active }) {
-
+    const [selected, setSelected] = useState(null)
     return (
         <div className="mt-3 h-full">
             <div className="text-blue-800 font-semibold text-lg mb-2">
@@ -19,6 +21,7 @@ export default function ActiveEvent({ active }) {
                         <div
                             key={index}
                             className="grid grid-cols-[7rem,7rem,12rem,1fr] h-14 cursor-default rounded-md overflow-hidden list-hover mb-1"
+                            onClick={() => setSelected(list)}
                         >
                             <div className="px-2 flex items-center text-sm">
                                 {convertDate(list.dateStart,list.dateEnd,null,null,true)}
@@ -46,7 +49,7 @@ export default function ActiveEvent({ active }) {
                     ))
                 }
             </div>
-            
+            <ViewActiveEvent show={selected?true:false} event={selected} onClose={() => setSelected(null)} />
         </div>
     )
 }

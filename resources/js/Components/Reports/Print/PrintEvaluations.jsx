@@ -17,7 +17,6 @@ export default function PrintEvaluations({ src, show, withLayout = false, onCanc
     const checkParameters = src.split('?').length
 
     const onChnageLayout = (size) => {
-        console.log(size)
         setLayout(size)
         setIframeSrc(checkParameters > 1?'&layout='+size:'?layout='+size)
         frameRef.current.contentWindow.location.reload()

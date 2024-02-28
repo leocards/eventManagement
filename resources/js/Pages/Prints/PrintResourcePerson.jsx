@@ -16,10 +16,6 @@ export default function PrintResourcePerson({ rp, event, ratings }) {
         }
     `;
 
-    useEffect(() => {
-        console.log(ratings)
-    }, [])
-
     return (
         <div className="p-2">
             <style dangerouslySetInnerHTML={{ __html: printStyle }}></style>

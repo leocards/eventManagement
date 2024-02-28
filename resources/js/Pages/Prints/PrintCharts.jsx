@@ -84,7 +84,6 @@ export default function PrintCharts({
 
     useEffect(() => {
         getConsolidatedPercentage();
-        console.table(resource)
     }, []);
 
     return (

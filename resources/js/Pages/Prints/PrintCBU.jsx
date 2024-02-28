@@ -40,7 +40,6 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
     useEffect(() => {
         const calculateScale = () => {
             const size = layout == 'portrait' ? 0.3 : 0.35
-            console.log(size)
 
             const printableWidth = window.innerWidth * size; // 80% of the window width
             const printableHeight = window.innerHeight * size; // 80% of the window height

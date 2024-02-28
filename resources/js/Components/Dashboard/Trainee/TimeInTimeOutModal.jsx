@@ -82,11 +82,13 @@ export default function TimeInTimeOut({
                                         type="text"
                                         id="timeInOut"
                                         value={data.code}
-                                        onInput={({ target }) =>
-                                            data.code.length <= 5 &&
+                                        onInput={({ target }) =>{
                                             setData("code", target.value)
-                                        }
-                                        readOnly={data.code.length === 5}
+
+                                            target.value.length > 5 &&
+                                                setError('code', 'Code must be 5 characters long')
+                                        }}
+                                        readOnly={data.code.length >= 5}
                                     />
 
                                     <InputLabel

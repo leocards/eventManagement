@@ -321,7 +321,7 @@ class DashboardController extends Controller
         $active = null;
         if(Auth::user()->role != 'Employee') {
             $active = Event::with(['eventCode' => function ($query) {
-                    $query->select('id', 'event_id', 'time_in', 'time_out');
+                    $query->select('id', 'event_id', 'time_in', 'time_in_cutoff', 'time_out', 'time_out_cutoff')->first();
                 }])
                 ->where(function ($query) {
                     $query->whereDate('dateStart', '<=', $this->now->toDateString())
@@ -335,7 +335,7 @@ class DashboardController extends Controller
         } else {
             $active = Event::join('event_participants AS ep', 'ep.event_id', '=', 'events.id')
             ->with(['eventCode' => function ($query) {
-                $query->select('id', 'event_id', 'time_in', 'time_out');
+                $query->select('id', 'event_id', 'time_in', 'time_in_cutoff', 'time_out', 'time_out_cutoff')->first();
             }])
             ->where(function ($query) {
                 $query->whereDate('dateStart', '<=', $this->now->toDateString())

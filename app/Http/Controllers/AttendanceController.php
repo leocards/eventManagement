@@ -88,10 +88,10 @@ class AttendanceController extends Controller
 
             //verify the code for the event
             $event = EventCode::when($request->session == "Time in", function ($query) use ($request) {
-                    return $query->where('time_in_code', $request->code)
+                    return $query->whereRaw('BINARY time_in_code = ?', [$request->code])
                         ->whereDate('time_in', $this->now->toDateString());
                 })->when($request->session == "Time out", function ($query) use ($request) {
-                    return $query->where('time_out_code', $request->code)
+                    return $query->whereRaw('BINARY time_out_code = ?', [$request->code])
                         ->whereDate('time_out', $this->now->toDateString());
                 })
                 ->first();

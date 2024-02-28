@@ -99,7 +99,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
             onError: (err) => {
                 let keys = Object.keys(err)
                 let doc = document.getElementById(keys[0])
-                console.log(err)
+                //console.log(err)
                 if(doc) {
                     doc.scrollIntoView({
                         behavior: 'smooth',
@@ -120,6 +120,8 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                             setError("trainee_list.list", errorMessage)
                         }
 
+                    } else if(keys[0] == "eventEnded") {
+                        errorMessage += err.eventEnded["0"]
                     } else {
                         errorMessage += `Unable to ${editId?'update':'create'} event.`
                     }
@@ -142,7 +144,8 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                                 "!text-sm px-10 uppercase focus:!ring-0",
                         },
                     }).then(() => {
-                        keys.length > 0 && setListOfConflictSchedule(JSON.parse(err[keys[0]][0]))
+                        if(keys[0] != "eventEnded")
+                            keys.length > 0 && setListOfConflictSchedule(JSON.parse(err[keys[0]][0]))
                     });
                 }
             },
