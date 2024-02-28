@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
             $table->string("question", 2000);
-            $table->string("answer", 2000);
+            $table->string("answer", 2000)->index();
             $table->timestamps();
         });
     }

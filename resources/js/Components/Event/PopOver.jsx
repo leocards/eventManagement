@@ -588,8 +588,8 @@ export function SelectByYear({
                             <div className="grow ml-[1.20rem]">
                                 {selected && selected.year
                                     ? selected.year
-                                    : ""}
-                                {(eventYears.length == 0 || !eventYears[0].year) &&
+                                    : eventYears.length > 1 && "All"}
+                                {(eventYears.length == 0 || (eventYears.length == 1 && !eventYears[0].year)) &&
                                     "No events"}
                             </div>
                             <ChevronDownIcon

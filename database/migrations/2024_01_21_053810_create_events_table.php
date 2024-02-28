@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string("platform", 100);
             $table->string("venue", 1000);
-            $table->string("title", 1000);
+            $table->string("title", 1000)->index();
             $table->mediumText("objective");
             $table->string("fund");
             $table->boolean("is_range");
-            $table->date("dateStart");
-            $table->date("dateEnd")->nullable();
+            $table->date("dateStart")->index();
+            $table->date("dateEnd")->index()->nullable();
             $table->integer("total_rp");
             $table->text("remarks")->nullable();
             $table->timestamps();

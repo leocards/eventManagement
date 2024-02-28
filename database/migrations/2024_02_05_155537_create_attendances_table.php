@@ -18,8 +18,8 @@ return new class extends Migration
                     table: 'event_participants', indexName: 'event_participants_event_participant_id_fk'
                 )
                 ->cascadeOnDelete();
-            $table->dateTime("time_in");
-            $table->dateTime("time_out")->nullable();
+            $table->dateTime("time_in")->index();
+            $table->dateTime("time_out")->index()->nullable();
             $table->boolean('evaluated')->nullable();
             $table->timestamps();
             $table->softDeletes();

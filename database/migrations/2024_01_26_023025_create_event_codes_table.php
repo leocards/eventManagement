@@ -18,11 +18,11 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->dateTime("time_in");
             $table->dateTime("time_in_cutoff");
-            $table->string("time_in_code");
+            $table->string("time_in_code")->index();
             $table->dateTime("time_in_code_exp");
             $table->dateTime("time_out");
             $table->dateTime("time_out_cutoff");
-            $table->string("time_out_code");
+            $table->string("time_out_code")->index();
             $table->dateTime("time_out_code_exp");
             $table->timestamps();
             $table->softDeletes();
