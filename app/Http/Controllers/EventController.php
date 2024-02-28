@@ -209,25 +209,13 @@ class EventController extends Controller
         if($userDateEnd->toDateString() != $end->toDateString() || 
             $event->is_range != $range || $userDateStart->toDateString() != $start->toDateString())
         {
-            if($start->isYesterday()) {
-                return redirect()->back()->withErrors("Cannot update event date when event is active");
-            }
-            if($start->isSameDay($this->now)) {
-                $time = Str::of($event->eventCode->first()->time_in)->explode(' ')[1];
-    
-                if(Carbon::parse($start->toDateString().' '.$time, 'Asia/Manila')->lte($this->now)) {
-                    if($request->timeIn != Carbon::parse($time)->format("H:i")) {
-                        return redirect()->back()->withErrors("Cannot update date or time when event is active");
-                    }
-                }
-            } else if($event->isRange) {
-                if($this->now->between($start, $end)) {
-    
-                }
-                 
-                // check if the event has eneded and if the user has change the end date of the date range
+            if($event->isRange) {
                 if($this->now->gt($end) && $userDateEnd->toDateString() != $end->toDateString()) {
-                    return redirect()->back()->withErrors("Event has been ended, cannot update the date.", "event_status");
+                    return redirect()->back()->withErrors("Event has been ended, cannot update the event.", "event_status");
+                }
+            } else {
+                if($this->now->gt($start) && $userDateStart->toDateString() != $start->toDateString()) {
+                    return redirect()->back()->withErrors("Event has been ended, cannot update the event.", "event_status");
                 }
             }
         }
