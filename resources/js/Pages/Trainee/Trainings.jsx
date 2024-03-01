@@ -5,12 +5,13 @@ import Paginate from "@/Components/Paginate";
 import SearchInput from "@/Components/SearchInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { convertDate } from "@/js/DateFormatter";
+import { CheckIcon, MinusIcon } from "@heroicons/react/20/solid";
 import { Head } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-export default function Trainings({ auth, trainings }) {
+export default function Trainings({ auth, trainings, attends }) {
 
     return (
         <Authenticated user={auth.user}>
@@ -21,17 +22,18 @@ export default function Trainings({ auth, trainings }) {
             <div className="container p-4">
                 <div className="font-semibold text-lg mb-4">Capability Developer Trainings</div>
 
-                <TraineeList initialList={trainings} />
+                <TraineeList initialList={trainings} attends={attends} />
             </div>
         </Authenticated>
     );
 }
 
-const TraineeList = ({ initialList }) => {
+const TraineeList = ({ initialList, attends }) => {
     const [search, setSearch] = useState("");
     const [pages, setPages] = useState(null);
     const [training, setTraining] = useState([]);
     const [loadingSearch, setLoadingSearch] = useState(false);
+    const [attendedEvents, setAttendedEvents] = useState(attends)
 
     const setTrainingData = (initialData) => {
         let initial = { ...initialData };
@@ -65,7 +67,8 @@ const TraineeList = ({ initialList }) => {
     const getNextAndPrevPages = async (pageNumber) => {
         setLoadingSearch(true);
         const response = await sendRequest(pageNumber);
-        setTrainingData(response.data);
+        setTrainingData(response.data.trainings);
+        setAttendedEvents(response.data.attends)
         setLoadingSearch(false);
     };
 
@@ -93,18 +96,19 @@ const TraineeList = ({ initialList }) => {
                 <TableHeader>Title</TableHeader>
                 <TableHeader>Position</TableHeader>
                 <TableHeader>Time</TableHeader>
+                {/* <TableHeader>Attended</TableHeader> 6rem */}
             </GridRow>
 
             <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
                 {
                     loadingSearch ? (
-                        <LoadingList column={4} grid="grid-cols-[14rem,1fr,7.5rem,13rem]" />
+                        <LoadingList column={4} grid="grid-cols-[12rem,1fr,7.5rem,13rem]" />
                     ) : search && training.length === 0 ? (
                         <div className="text-center py-4">No results found for " {search} "</div>
                     ) : (
                         training.map((train, index) => (
                             <TableContent key={index}>
-                                <div className="px-3 py-1.5 flex items-center">
+                                <div className="px-3 py-1.5 flex items-center text-sm">
                                     {convertDate(train.event.dateStart,train.event.dateEnd,null,null,true)}
                                 </div>
                                 <div className="px-3 py-1.5 flex items-center">
@@ -116,6 +120,14 @@ const TraineeList = ({ initialList }) => {
                                 <div className="px-3 py-1.5 flex items-center text-sm">
                                     {train.time}
                                 </div>
+                                {/* <div className="px-3 py-1.5 flex justify-center items-center text-sm">
+                                    {   
+                                        attendedEvents.includes(train.participant_id) ? 
+                                        <CheckIcon className="w-5 h-5 text-green-600" /> : 
+                                        <MinusIcon className="w-5 h-5 text-orange-600" />
+                                    }
+                                    
+                                </div> */}
                             </TableContent>
                         ))
                     )
@@ -144,10 +156,10 @@ const TableHeader = styled.div.attrs(() => ({
 }))``;
 
 const GridRow = styled.div.attrs(() => ({
-    className: `grid grid-cols-[14rem,1fr,7.5rem,13rem]`,
+    className: `grid grid-cols-[12rem,1fr,7.5rem,13rem]`,
 }))``;
 
 const TableContent = styled.div.attrs(() => ({
-    className: `grid grid-cols-[14rem,1fr,7.5rem,13rem] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+    className: `grid grid-cols-[12rem,1fr,7.5rem,13rem] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
     hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group`,
 }))``;
