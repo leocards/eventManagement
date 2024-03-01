@@ -99,7 +99,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
             onError: (err) => {
                 let keys = Object.keys(err)
                 let doc = document.getElementById(keys[0])
-                //console.log(err)
+                console.log(err)
                 if(doc) {
                     doc.scrollIntoView({
                         behavior: 'smooth',

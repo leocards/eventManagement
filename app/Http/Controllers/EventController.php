@@ -14,6 +14,7 @@ use App\Rules\ValidateEventTimeInOut;
 use App\Rules\ValidVirtualVenueUrl;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -218,9 +219,34 @@ class EventController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($request, $event, $range, $userDateStart, $userDateEnd) {
-                $this->checkUpdatedRp($request, $event);
-                $this->checkUpdatedParticipants($request, $event);
+            DB::transaction(function () use ($request, $event, $range, $userDateStart, $userDateEnd, $start, $end) {
+                $eventTimeOut = $event->eventCode->first();
+                $timeOut = Carbon::parse(explode(' ', $eventTimeOut->time_out)[1]);
+                $isEnded = false;
+
+                if($event->is_range) {
+                    // Restrict update of event if it has been ended
+                    if($end->isBefore($this->now->toDateString()) || 
+                        ($end->isToday() && $timeOut->lt($this->now))) {
+                        $isEnded = true;
+                    }
+                } else {
+                    if($start->isBefore($this->now->toDateString()) || 
+                        ($start->isToday() && $timeOut->lt($this->now))) {
+                        // throw an error if event has ended
+                        $isEnded = true;
+                    }
+                }
+
+                $updatedRp = $this->checkUpdatedRp($request, $event, $isEnded);
+                if($updatedRp) {
+                    throw new Exception("Cannot update trainees when event has ended. !!!eventEnded");
+                }
+
+                $updatedParticipants = $this->checkUpdatedParticipants($request, $event, $isEnded);
+                if($updatedParticipants) {
+                    throw new Exception("Cannot update resource person when event has ended. !!!eventEnded");
+                }
                 
                 if ($request->initialDate['withTimeChanges'] || $request->initialDate['withDateChanges']) {
                     $dateRange = collect([]);
@@ -303,7 +329,7 @@ class EventController extends Controller
                 $event->title = $request->title;
                 $event->objective = $request->objective;
                 $event->fund = 'Php ' . number_format($request->fund);
-                $event->is_range = $request->date['isRange'];
+                $event->is_range = $isEnded?$event->is_range:$request->date['isRange'];
                 $event->dateStart = $request->date['start'];
                 $event->dateEnd = $request->date['isRange']?$request->date['end']:null;
                 $event->total_rp = $request->resourcePerson;
@@ -312,6 +338,9 @@ class EventController extends Controller
 
             return back();
         } catch (\Throwable $th) {
+            if(Str::contains($th->getMessage(), "!!!eventEnded")) {
+                return back()->withErrors(Str::of($th->getMessage())->replaceEnd('!!!eventEnded', '')->value(), 'eventEnded');
+            }
             return back()->withErrors($th->getMessage());
         }
 
@@ -466,13 +495,13 @@ class EventController extends Controller
                         if($collection->end->isBefore($this->now->toDateString()) || 
                             ($collection->end->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
                         }
                     } else {
                         if($collection->start->isBefore($this->now->toDateString()) || 
                             ($collection->start->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
                         }
                     }
                 }
@@ -488,13 +517,13 @@ class EventController extends Controller
                         if($collection->end->isBefore($this->now->toDateString()) || 
                             ($collection->end->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
                         }
                     } else {
                         if($collection->start->isBefore($this->now->toDateString()) || 
                             ($collection->start->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event when ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
                         }
                     }
                 }
@@ -595,7 +624,7 @@ class EventController extends Controller
         return $exist;
     }
 
-    function checkUpdatedRp(Request $request, Event $event)
+    function checkUpdatedRp(Request $request, Event $event, $hasEnded = false)
     {
         $rp_list = collect($request->rp_list)->map(function ($rp) {
             return collect($rp);
@@ -605,6 +634,12 @@ class EventController extends Controller
 
         $newly_added = $rp_list->whereNotIn('id', $existing_rp->pluck('rp_id'))->values()->all();
         $deleted_rp = $existing_rp->whereNotIn('rp_id', $rp_list->pluck('id'))->values()->all();
+
+        if(count($newly_added) > 0 || count($deleted_rp) > 0) {
+            if($hasEnded) {
+                return true;
+            }
+        }
 
         foreach ($newly_added as $rp) {
             EventResourcePerson::create([
@@ -616,9 +651,11 @@ class EventController extends Controller
         foreach ($deleted_rp as $rp) {
             $rp->delete();
         }
+
+        return false;
     }
 
-    function checkUpdatedParticipants(Request $request, Event $event)
+    function checkUpdatedParticipants(Request $request, Event $event, $hasEnded = false)
     {
         $participant_list = collect($request->trainee_list['list'])->map(function ($participant) {
             return collect($participant);
@@ -628,6 +665,12 @@ class EventController extends Controller
 
         $newly_added = $participant_list->whereNotIn('id', $existing_participant->pluck('user_id'))->values()->all();
         $deleted_participants = $existing_participant->whereNotIn('user_id', $participant_list->pluck('id'))->values()->all();
+
+        if(count($newly_added) > 0 || count($deleted_participants) > 0) {
+            if($hasEnded) {
+                return true;
+            }
+        }
 
         foreach ($newly_added as $participant) {
             EventParticipants::create([
@@ -639,6 +682,8 @@ class EventController extends Controller
         foreach ($deleted_participants as $participant) {
             $participant->delete();
         }
+
+        return false;
     }
 
     function generateEventCode($date)

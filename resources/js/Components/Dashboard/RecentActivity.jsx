@@ -2,6 +2,7 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { FilterButton } from "../Event/PopOver";
 import { router, usePage } from "@inertiajs/react";
+import { timeDifference } from "@/js/DateFormatter";
 
 export default function RecentActivity({ user, onResizeValue = () => {} }) {
     const [recentActivity, setRecentActivity] = useState([]);
@@ -96,8 +97,7 @@ export default function RecentActivity({ user, onResizeValue = () => {} }) {
                         <div
                             className={
                                 "border-l-4 " +
-                                (moment(recent.created_at).fromNow() ==
-                                "a day ago"
+                                (timeDifference(recent.created_at)
                                     ? "border-transparent"
                                     : "border-green-600 bg-green-100/50")
                             }

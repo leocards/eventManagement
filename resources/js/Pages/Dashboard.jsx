@@ -37,7 +37,7 @@ export default function Dashboard({ auth, upcoming, gender, totalEmployee, numbe
                 <RecentActivity user={auth.user} onResizeValue={setChartWidth} />
             </div>
             
-            <div className='grid grid-cols-[2fr,auto] gap-3 mt-3 max-h-[39rem] overflow-hidden'>
+            <div className='grid grid-cols-[2fr,auto] gap-3 mt-[3.5vh] max-h-[39rem] overflow-hidden'>
                 <Calendar height={"auto"} />
                 <div className="rounded-md bg-white ring-1 ring-slate-200/40 p-3 h-[39rem]" ref={chartDoughnut}>
                     <SexDesiggredatedDataChart gender={gender} />

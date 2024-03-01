@@ -34,3 +34,16 @@ export const convertDate = (
         );
     }
 };
+
+export const timeDifference = (time) => {
+    try {
+        if(isNaN(Date.parse(time)) || !time || time === null || time === undefined) {
+            throw new Error('Time parameter must be a valid date instance')
+        }
+
+        return (new Date(time).getTime() > (24 * 60 * 60 * 1000))
+
+    } catch (error) {
+        console.error(error.message)
+    }
+}
