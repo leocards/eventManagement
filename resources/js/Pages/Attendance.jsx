@@ -9,6 +9,7 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 import { Head, router } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 
 export default function Attendance({ auth, events }) {
@@ -19,6 +20,7 @@ export default function Attendance({ auth, events }) {
     const [selectedEvent, setSelectedEvent] = useState(events[0].id)
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [isPrint, setIsPrint] = useState(false)
+    const showMenu = useSelector(state => state.menuToggle.showMenu)
 
     const setAttendaceData = (initialData) => {
         let initial = { ...initialData };
@@ -121,10 +123,10 @@ export default function Attendance({ auth, events }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] border-b font-bold font-open pb-2 mt-3">
-                    <div className="capitalize px-2">Date</div>
+                <div className={`grid min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] grid-cols-[1fr,6rem,6rem,6rem] border-b font-bold font-open pb-2 mt-3`}>
+                    <div className="capitalize px-2 min-lg:block hidden">Date</div>
                     <div className="capitalize px-2">Trainee</div>
-                    <div className="capitalize px-2">Event</div>
+                    <div className="capitalize px-2 min-lg:block hidden">Event</div>
                     <div className="capitalize px-2 text-center">in</div>
                     <div className="capitalize px-2 text-center">out</div>
                     <div className="capitalize px-2 text-center">remarks</div>
@@ -190,20 +192,25 @@ const AttendanceList = ({ attendance }) => {
                 <div
                     key={index}
                     className={
-                        "grid grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] h-12 rounded-md list-hover transition duration-150 cursor-default"
+                        "grid grid-cols-[1fr,6rem,6rem,6rem] min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] min-lg:h-12 min-lg:items-start items-center h-14 rounded-md list-hover transition duration-150 cursor-default"
                     }
                 >
-                    <div className="capitalize px-2.5 flex items-center ">
+                    <div className="capitalize px-2.5 items-center min-lg:flex hidden">
                         {moment(attendance.updated_at).format('ll')}
                     </div>
-                    <div className="px-2.5 flex items-center ">
-                        <div className="line-clamp-1">
-                            {attendance.participants.name}
+                    <div className="px-2.5 min-lg:flex block items-center ">
+                        <div className="line-clamp-1"> {attendance.participants.name} </div>
+                        <div className="min-lg:hidden flex items-center text-sm opacity-70">
+                            <div className="shrink-0">{moment(attendance.updated_at).format('ll')}</div>
+                            <div className="mx-2">|</div>
+                            <div className="line-clamp-1">
+                                {attendance.event.title}
+                            </div>
                         </div>
                     </div>
-                    <div className="px-2.5 flex items-center">
+                    <div className="px-2.5 items-center min-lg:flex hidden">
                         <div className="line-clamp-1">
-                            {attendance.event.title}
+                        {attendance.event.title}
                         </div>
                     </div>
                     <div className="capitalize px-2.5 flex items-center justify-center">

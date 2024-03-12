@@ -495,13 +495,13 @@ class EventController extends Controller
                         if($collection->end->isBefore($this->now->toDateString()) || 
                             ($collection->end->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when ended.", "error" => "eventEnded"]);
                         }
                     } else {
                         if($collection->start->isBefore($this->now->toDateString()) || 
                             ($collection->start->isToday() && $timeOut->lt($this->now))) {
                             // throw an error if event has ended
-                            return collect(["message" => "Cannot update event schedule when has ended.", "error" => "eventEnded"]);
+                            return collect(["message" => "Cannot update event schedule when ended.", "error" => "eventEnded"]);
                         }
                     }
                 }

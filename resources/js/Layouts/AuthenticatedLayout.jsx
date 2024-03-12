@@ -1,18 +1,33 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TopNavigation from '@/Components/Navigation/TopNavigation';
 import SideNavigation from '@/Components/Navigation/SideNavigation';
+import Side from '@/Components/Navigation/Side';
 import Footer from '@/Components/Footer';
 import { usePage } from '@inertiajs/react';
+import { useDispatch, useSelector } from "react-redux";
+import { listenToWindowSize } from '@/Store/windowSize';
+import { toggleMenu } from '@/Store/menuToggle';
+
 
 export default function Authenticated({ user, children }) {
-    const [isShowMenu, setIsShowMenue] = useState(true)
+    const dispatch = useDispatch();
+    const showMenu = useSelector((state) => state.menuToggle.showMenu)
+    const windowSize = useSelector((state) => state.windowWidth.size)
+
+    useEffect(() => {
+        dispatch(listenToWindowSize())
+    }, [])
+
+    useEffect(() => {
+    }, [windowSize])
 
     return (
         <div className="min-h-screen bg-sla te-100/90">
-            <TopNavigation auth={user} onClickMenu={() => setIsShowMenue(!isShowMenu)} />
+            <TopNavigation auth={user} onClickMenu={() => dispatch(toggleMenu(!showMenu))} showMenu={showMenu} />
 
             <main className="h-screen flex">
-                <SideNavigation auth={user} showSideBar={isShowMenu} />
+                
+                <Side auth={user} showSideBar={showMenu} />
                 
                 <div className='h-[calc(100vh-4rem)] mt-16 w-full flex flex-col overflow-y-auto'>
                     
@@ -26,3 +41,4 @@ export default function Authenticated({ user, children }) {
         </div>
     );
 }
+{/* <SideNavigation auth={user} showSideBar={showMenu} /> */}

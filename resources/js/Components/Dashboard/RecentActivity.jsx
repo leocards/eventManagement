@@ -4,7 +4,7 @@ import { FilterButton } from "../Event/PopOver";
 import { router, usePage } from "@inertiajs/react";
 import { timeDifference } from "@/js/DateFormatter";
 
-export default function RecentActivity({ user, onResizeValue = () => {} }) {
+export default function RecentActivity({ user }) {
     const [recentActivity, setRecentActivity] = useState([]);
     const [loading, setLoading] = useState(false);
     const [filtered, setFiltered] = useState("");
@@ -33,17 +33,6 @@ export default function RecentActivity({ user, onResizeValue = () => {} }) {
 
     useEffect(() => {
         setLoading(true);
-        function resizeWindow() {
-            onResizeValue(activityRefs.current.offsetWidth);
-        }
-
-        window.addEventListener("resize", resizeWindow);
-
-        onResizeValue(activityRefs.current.offsetWidth);
-
-        return () => {
-            window.removeEventListener("resize", resizeWindow);
-        };
     }, []);
 
     useEffect(() => {
@@ -56,17 +45,10 @@ export default function RecentActivity({ user, onResizeValue = () => {} }) {
 
     return (
         <div className="container p-3" ref={activityRefs}>
-            <div className="font-semibold text-blue-800 flex items-center relative">
+            <div className="font-semibold text-blue-800 flex items-center relative sm:text-base text-sm">
                 {user.role == "Employee"
                     ? "Activity History"
                     : "Recent Added Activity"}
-
-                <div
-                    onClick={() => router.get(route('dashboard.activities'))}
-                    className="ml-auto mr-10 text-sm hover:underline cursor-pointer text-gray-700"
-                >
-                    Show more
-                </div>
 
                 <FilterButton
                     onClick={onFilterActivity}
@@ -83,9 +65,9 @@ export default function RecentActivity({ user, onResizeValue = () => {} }) {
                     Clear
                 </button>
             </div>}
-            <div className="overflow-y-auto overscroll-contain h-[23.5rem] mt-3 pt-1">
+            <div className="overflow-y-auto overscroll-contain h-[22.5rem] mt-3 pt-1">
                 {loading && (
-                    <div className="font-medium text-sm text-center my-3">
+                    <div className="font-medium text-sm text-center mt-3">
                         Loading...
                     </div>
                 )}
@@ -122,10 +104,18 @@ export default function RecentActivity({ user, onResizeValue = () => {} }) {
                 ))}
 
                 {recentActivity.length === 0 && !loading && (
-                    <div className="text-center my-2">
+                    <div className="text-center mt-2">
                         No activities recorded.
                     </div>
                 )}
+            </div>
+            <div className="pt-3 border-t flex items-center justify-center">
+                <div
+                    onClick={() => router.get(route('dashboard.activities'))}
+                    className="text-sm hover:underline cursor-pointer text-gray-700"
+                >
+                    Show more
+                </div>
             </div>
         </div>
     );

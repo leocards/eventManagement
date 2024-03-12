@@ -4,18 +4,15 @@ import RecentActivity from '@/Components/Dashboard/RecentActivity';
 import Statistics from '@/Components/Dashboard/Statistics';
 import Upcomming from '@/Components/Dashboard/Upcoming';
 import PageHeader from '@/Components/PageHeader';
-import SexDesiggredatedDataChart from '@/Components/Reports/SexDesiggredatedDataChart';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { defaults } from "chart.js/auto"; //keept this imported, required for chart
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Dashboard({ auth, upcoming, gender, totalEmployee, numberOfEvents, attendance, active }) {
-    const chartDoughnut = useRef()
-
-    const setChartWidth = size => {
-        chartDoughnut.current.style.width = size+"px"
-    }
+    const containerRef = useRef()
+    const showMenu = useSelector(state => state.menuToggle.showMenu)
 
     return (
         <AuthenticatedLayout
@@ -30,17 +27,16 @@ export default function Dashboard({ auth, upcoming, gender, totalEmployee, numbe
                 <Clock />
             </PageHeader>
 
-            <Statistics totalEmployee={totalEmployee} numberOfEvents={numberOfEvents} attendance={attendance} />
+            <Statistics totalEmployee={totalEmployee} numberOfEvents={numberOfEvents} attendance={attendance} gender={gender} />
 
-            <div className='grid grid-cols-[2fr,1fr] gap-3 mt-6 h-[27.5rem]'>
-                <Upcomming initialList={upcoming} active={active} />
-                <RecentActivity user={auth.user} onResizeValue={setChartWidth} />
-            </div>
-            
-            <div className='grid grid-cols-[2fr,auto] gap-3 mt-[3.5vh] max-h-[39rem] overflow-hidden'>
-                <Calendar height={"auto"} />
-                <div className="rounded-md bg-white ring-1 ring-slate-200/40 p-3 h-[39rem]" ref={chartDoughnut}>
-                    <SexDesiggredatedDataChart gender={gender} />
+            <div className="flex flex-col gap-1">
+                <div className={`grid gap-3 mt-6 p-1 px-0.5 grid-cols-[1fr] h-auto min-lg:grid-cols-[2fr,1fr] mm-md:grid-cols-[2fr,1fr]`}>
+                    <Upcomming initialList={upcoming} active={active} />
+                    <RecentActivity user={auth.user} />
+                </div>
+                
+                <div className={`p-1 px-0.5`}>
+                    <Calendar height={"auto"} />
                 </div>
             </div>
 

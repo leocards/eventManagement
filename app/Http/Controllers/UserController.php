@@ -211,8 +211,11 @@ class UserController extends Controller
             $query->when(Auth::user()->role == "Admin", function ($query) {
                 $query->where('role', 'Employee');
             })
-            ->when(Auth::user()->role == "Super Admin", function ($query) {
-                $query->where('id', '!=', Auth::id());
+            ->when(Auth::user()->role == "Super Admin", function ($query) use ($request) {
+                $query->where('id', '!=', Auth::id())
+                    ->when($request->isTrainee, function ($query) {
+                        $query->where('role', 'Employee');
+                    });
             })
             ->where('status', 'Active');
 

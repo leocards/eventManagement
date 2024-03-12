@@ -25,6 +25,12 @@ export default {
                 'platinum': 'var(--platinum)',
                 'ghost-white': 'var(--ghost-white)',
             },
+            screens: {
+                'min-md': {'min': '940px'},
+                'max-md': {'max': '1023px'},
+                'mm-md': {'min': '940px', 'max': '1023px'},
+                'min-lg': '1200px',//{'min':'1200px'},
+            }
         },
     },
 
