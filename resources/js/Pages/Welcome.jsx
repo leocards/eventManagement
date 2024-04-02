@@ -44,8 +44,8 @@ export default function Welcome({
                     <div className="flex">
                         <div className="flex">
                             <img src="/storage/logo.png" className="w-12" />
-                            <div className="font-gotham text-4xl my-auto ml-2">
-                                TAMS
+                            <div className="font-gotham text-xl my-auto ml-2">
+                                CBU Attendance Monitoring System
                             </div>
                         </div>
 

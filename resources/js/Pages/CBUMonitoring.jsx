@@ -1,4 +1,5 @@
-import { SelectByYear } from "@/Components/Event/PopOver";
+import ExportButton from "@/Components/Buttons/ExportExcelButton";
+import { FilterByQuarter, SelectByYear } from "@/Components/Event/PopOver";
 import { LoadingList } from "@/Components/LoadingSearch";
 import PageHeader from "@/Components/PageHeader";
 import Paginate from "@/Components/Paginate";
@@ -6,11 +7,12 @@ import PrintEvaluations from "@/Components/Reports/Print/PrintEvaluations";
 import SearchInput from "@/Components/SearchInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Transition } from "@headlessui/react";
-import { PrinterIcon } from "@heroicons/react/24/outline";
-import { Head } from "@inertiajs/react";
+import { PrinterIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { Head, router } from "@inertiajs/react";
+import moment from "moment";
 import { useEffect, useState } from "react";
 
-export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }) {
+export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, remarks }) {
     const [selectedYear, setSelectedYear] = useState(null);
     const [yearEvents, setYearEvents] = useState([]);
     const [showMore, setShowMore] = useState(false);
@@ -20,6 +22,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
     const [loadingSearch, setLoadingSearch] = useState(null);
     const [search, setSearch] = useState("");
     const [isPrint, setIsPrint] = useState(false)
+    const [filterRemarks, setFilterRemarks] = useState("All")
     //const [inactives, setInactives] = useState([])
 
     const setCBUData = (initialData) => {
@@ -50,6 +53,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
                     page: pageNumber,
                     search: search,
                     year: selectedYear,
+                    filter: filterRemarks
                 },
             })
         );
@@ -93,7 +97,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
 
     useEffect(() => {
         getCbu();
-    }, [selectedYear]);
+    }, [selectedYear, filterRemarks]);
 
     useEffect(() => {
         axios.get(route('cbu-monitoring.events'))
@@ -111,15 +115,17 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
                 links={["CBU Training Monitoring"]}
             />
 
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex items-center mb-2">
                 <div className="font-semibold text-lg text-blue-800">
                     Summary
                 </div>
 
+                <ExportButton exportRoute={route('export.cbu', {year: selectedYear??moment().format('YYYY')})} className={`ml-auto ${!selectedYear ? 'opacity-50 pointer-events-none':'hover:shadow-md'}`} />
+
                 <button
                     disabled={!selectedYear}
                     className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
-                    transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+                    transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none ml-3"
                     onClick={() => { setIsPrint(true)/* window.open(route('print.cbu', {_query: { year: selectedYear}})) */}}
                 >
                     <PrinterIcon className="w-5 h-5" />
@@ -163,9 +169,12 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years }
             </div>
 
             <div className="container p-3 mt-3">
-                <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
-                    <div className="w-56">
-                        <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(input)} />
+                <div className="flex items-center justify-between">
+                    <FilterByQuarter size="w-52" list={remarks} selectedQuarter={filterRemarks} onSelect={setFilterRemarks} />
+                    <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
+                        <div className="w-56">
+                            <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(input)} />
+                        </div>
                     </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/Buttons/PrimaryButton";
@@ -7,11 +7,13 @@ import { useForm } from "@inertiajs/react";
 import { Transition } from "@headlessui/react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid";
 
 export default function UpdatePasswordForm({ className = "" }) {
     const MySwal = withReactContent(Swal);
     const passwordInput = useRef();
     const currentPasswordInput = useRef();
+    const confirmPasswordInput = useRef();
 
     const {
         data,
@@ -59,11 +61,22 @@ export default function UpdatePasswordForm({ className = "" }) {
                     Ensure your account is using a long, random password to stay
                     secure.
                 </p>
+                <div className="text-sm">Password must contain:</div>
+                <div className="text-sm pl-3.5 mb-5">
+                    <div className="list-item">numbers</div>
+                    <div className="list-item">at least 8 characters</div>
+                    <div className="list-item">
+                        at least 1 lowercase and uppercase
+                    </div>
+                    <div className="list-item">
+                        special characters, ex: @!#$
+                    </div>
+                </div>
             </header>
 
             <form onSubmit={updatePassword} className="mt-6">
                 <div className="mb-5">
-                    <div className="form-input-float">
+                    <div className="form-input-float flex">
                         <TextInput
                             id="current_password"
                             ref={currentPasswordInput}
@@ -79,6 +92,11 @@ export default function UpdatePasswordForm({ className = "" }) {
                             htmlFor="current_password"
                             value="Current Password"
                         />
+
+                        <ToggleButton
+                            elementRef={currentPasswordInput.current}
+                            errors={errors.current_password}
+                        />
                     </div>
                     <InputError
                         message={errors.current_password}
@@ -87,7 +105,7 @@ export default function UpdatePasswordForm({ className = "" }) {
                 </div>
 
                 <div className="mb-5">
-                    <div className="form-input-float">
+                    <div className="form-input-float flex">
                         <TextInput
                             id="password"
                             ref={passwordInput}
@@ -100,12 +118,17 @@ export default function UpdatePasswordForm({ className = "" }) {
                         />
 
                         <InputLabel htmlFor="password" value="New Password" />
+
+                        <ToggleButton
+                            elementRef={passwordInput.current}
+                            errors={errors.password}
+                        />
                     </div>
                     <InputError message={errors.password} className="mt-" />
                 </div>
 
                 <div className="mb-5">
-                    <div className="form-input-float">
+                    <div className="form-input-float flex">
                         <TextInput
                             id="password_confirmation"
                             value={data.password_confirmation}
@@ -114,11 +137,17 @@ export default function UpdatePasswordForm({ className = "" }) {
                             }
                             type="password"
                             className="mt-1 block w-full"
+                            ref={confirmPasswordInput}
                         />
 
                         <InputLabel
                             htmlFor="password_confirmation"
                             value="Confirm Password"
+                        />
+
+                        <ToggleButton
+                            elementRef={confirmPasswordInput.current}
+                            errors={errors.password_confirmation}
                         />
                     </div>
                     <InputError
@@ -154,3 +183,31 @@ export default function UpdatePasswordForm({ className = "" }) {
         </section>
     );
 }
+
+const ToggleButton = ({ elementRef, errors }) => {
+    const [showpass, setShowpass] = useState(false);
+
+    const passwordToText = (element) => {
+        if (element.type == "password") {
+            element.type = "text";
+            setShowpass(true);
+        } else {
+            element.type = "password";
+            setShowpass(false);
+        }
+    };
+
+    return (
+        <button
+            type="button"
+            onClick={() => passwordToText(elementRef)}
+            className={
+                "border-l border-gray-300 px-4 bg-gray-100 rounded-r-md hover:bg-gray-200 " +
+                (errors && "border-pink-600 focus-within:border-pink-600")
+            }
+        >
+            {showpass && <EyeSlashIcon className="w-5 h-5" />}
+            {!showpass && <EyeIcon className="w-5 h-5" />}
+        </button>
+    );
+};

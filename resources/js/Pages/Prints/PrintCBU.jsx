@@ -169,7 +169,9 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
                                     >
                                         Total
                                     </Columns>
-                                    <Columns className="w-28 !py-1 border-r !text-sm font-medium"></Columns>
+                                    <Columns className="w-28 !py-1 border-r !text-sm font-medium">
+                                        
+                                    </Columns>
                                     {events.map((event, index) => (
                                         <Columns
                                             key={index}

@@ -77,6 +77,7 @@ class UserController extends Controller
             "position" => ['required'],
             "province" => ['required'],
             "gender" => ['required', 'in:Male,Female'],
+            "employment_status" => ['required', 'in:Regular,Contractual']
         ]);
         try {
             $filename = null;
@@ -106,6 +107,7 @@ class UserController extends Controller
                     "profile" => $filename ?? null,
                     "password" => Hash::make("12345678"),
                     "status" => "Active",
+                    "employment_status" => $request->employment_status,
                     "role" => $request->user_type ?? "Employee",
                 ]);
             });
@@ -132,7 +134,8 @@ class UserController extends Controller
             "address" => ['required'],
             "position" => ['required'],
             "province" => ['required'],
-            "gender" => ['required', 'in:Male,Female']
+            "gender" => ['required', 'in:Male,Female'],
+            "employment_status" => ['required', 'in:Regular,Contractual']
         ]);
         $validator->validate();
         
@@ -173,6 +176,7 @@ class UserController extends Controller
                     "profile" => $filename ?? "/storage/profile/profile.png",
                     "password" => Hash::make("12345678"),
                     "status" => !$request->status ? "Active" : $request->status,
+                    "employment_status" => $request->employment_status,
                     "role" => $request->user_type ?? "Employee",
                 ]);
             });
@@ -221,6 +225,10 @@ class UserController extends Controller
 
             if ($request->filter != "All" && $request->has('filter')) {
                 $query->where('province', "$request->filter");
+            }
+
+            if($request->filterEmployment !== "All") {
+                $query->where('employment_status', $request->filterEmployment);
             }
 
             $search = $query->paginate(25);

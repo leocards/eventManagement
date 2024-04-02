@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import ReferenceQuestion from "./ReferenceQuestion";
 import { LoadOnSubmit, LoadingList } from "../LoadingSearch";
 import PrintConsolidatedModal from "./Print/PrintEvaluations";
+import ExportButton from "../Buttons/ExportExcelButton";
 
 export default function Consolidated({ isPrintable = false, eventId, initialData }) {
     const [pages, setPages] = useState(null)
@@ -60,15 +61,17 @@ export default function Consolidated({ isPrintable = false, eventId, initialData
 
     return (
         <div className="container p-3 mt-3">
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center mb-3">
                 <div className="font-semibold text-lg text-blue-800">
                     Feedback Report Consolidation
                 </div>
 
+                <ExportButton exportRoute={route('export.feedbackreport', {event_id: eventId})} disabled={!eventId} className={'ml-auto'} />
+                
                 <button
                     disabled={!isPrintable}
                     className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
-                    transition duration-150 hover:shadow-md disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none"
+                    transition duration-150 hover:shadow-md disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none ml-3"
                     onClick={() => setIsPrint(true)}
                 >
                     <PrinterIcon className="w-5 h-5" />

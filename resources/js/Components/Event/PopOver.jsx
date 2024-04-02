@@ -366,6 +366,8 @@ export function Filter({
 export function FilterButton({
     list = ["Today", "This month", "This year"],
     position,
+    panelPosition,
+    selected = "",
     onClick = () => {},
 }) {
     return (
@@ -387,14 +389,14 @@ export function FilterButton({
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                     >
-                        <Popover.Panel className="absolute -right-3 z-10 w-52 transform px-4">
+                        <Popover.Panel className={`absolute z-10 w-52 transform px-4 ${panelPosition??"-right-3"}`}>
                             <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
                                 <div className="relative bg-white py-2">
                                     {list.map((item, index) => (
                                         <Popover.Button
                                             key={index}
                                             onClick={() => onClick(item)}
-                                            className="w-full text-left p-1.5 px-3 hover:bg-gray-100"
+                                            className={`w-full text-left p-1.5 px-3  ${selected == item ? 'bg-blue-100 text-blue-700':'hover:bg-gray-100'}`}
                                         >
                                             {item}
                                         </Popover.Button>
@@ -828,11 +830,12 @@ export function ResourcePersonList({
 
 export function FilterByQuarter({
     onSelect = () => {},
-    selectedQurter = "All",
+    selectedQuarter = "All Quarters",
     list = null,
+    size = "w-40"
 }) {
     const quarter = list ?? [
-        "All",
+        "All Quarters",
         "1st Quarter",
         "2nd Quarter",
         "3rd Quarter",
@@ -840,13 +843,13 @@ export function FilterByQuarter({
         "This month",
     ];
     return (
-        <div className="w-40 select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1">
+        <div className={`${size} select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1`}>
             <Menu as="div" className="relative inline-block text-left grow">
                 <div className="">
                     <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
                         <FilterIcon className="absolute left-1.5 top-2.5" />
                         <div className="grow ml-[1.20rem]   ">
-                            {selectedQurter}
+                            {selectedQuarter}
                         </div>
                         <ChevronDownIcon
                             className="h-5 w-5 text-gray-500 absolute right-1.5"
@@ -874,13 +877,13 @@ export function FilterByQuarter({
                                                 close();
                                             }}
                                             className={`${
-                                                selectedQurter == q
+                                                selectedQuarter == q
                                                     ? "bg-blue-100/60"
                                                     : ""
                                             } hover:bg-gray-200 transition duration-150 group flex w-full items-center px-2 py-1.5`}
                                         >
                                             <div className="w-4 shrink-0 mr-2">
-                                                {selectedQurter == q ? (
+                                                {selectedQuarter == q ? (
                                                     <CheckIcon className="w-4 h-4 text-blue-500" />
                                                 ) : (
                                                     ""
@@ -1119,6 +1122,7 @@ export function ListSelector({
     selectedOption = null,
     opacityOnEmpty = false,
     onSelect = () => {},
+    preSelect = false
 }) {
     const [isInvisible, setIsInvisible] = useState(opacityOnEmpty);
     const [selected, setSelected] = useState(list[0]);

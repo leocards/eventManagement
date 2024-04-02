@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -36,9 +37,11 @@ class AuthenticatedSessionController extends Controller
 
         $securityQuestions = SecurityQuestion::where('user_id', Auth::id())->get(['question']);
 
+        Session::put('security-notice', '1');
+
         if($securityQuestions->count() === 0) {
             return redirect()->route('profile.edit');
-        } 
+        }
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }

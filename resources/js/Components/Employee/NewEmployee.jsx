@@ -42,6 +42,7 @@ export default function NewEmployee({
         profile: null,
         user_type: "Employee",
         status: "",
+        employment_status: "Regular",
     });
     const [updateData, setUpdateData] = useState(null);
 
@@ -88,6 +89,7 @@ export default function NewEmployee({
                       : null,
                   status: data.status == "Active" ? "" : data.status,
                   user_type: data.role,
+                  employment_status: data.employment_status??"Regular"
               })
             : "";
 
@@ -177,6 +179,49 @@ export default function NewEmployee({
                             </div>
                         </div>
                     )}
+
+                    <div className="mb-4">
+                        <div
+                            className={
+                                "form-input-float " +
+                                (errors.employment_status &&
+                                    "border-pink-600 focus-within:border-pink-600 ")
+                            }
+                        >
+                            <ListSelector
+                                paddingHeight="py-4"
+                                list={[
+                                    { option: "Regular" },
+                                    { option: "Contractual" },
+                                ]}
+                                optionPosition="bottom"
+                                borderColor=""
+                                opacityOnEmpty
+                                selectedOption={data.employment_status}
+                                onSelect={selectedStatus => setData('employment_status', selectedStatus)}
+                                preSelect
+                            />
+                            <input
+                                type="text"
+                                readOnly
+                                value={data.employment_status}
+                                id="employment_status"
+                                placeholder=""
+                                hidden
+                            />
+                            <InputLabel
+                                htmlFor="employment_status"
+                                value="Employment Status"
+                                className={
+                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                                    (errors.employment_status && "!text-pink-600")
+                                }
+                            />
+                        </div>
+                        <div className="text-sm text-pink-700">
+                            {errors.employment_status}
+                        </div>
+                    </div>
 
                     <InputBox
                         space="mb-4"

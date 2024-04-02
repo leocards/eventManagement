@@ -32,6 +32,7 @@ class User extends Authenticatable
         "profile",
         "password",
         "status",
+        "employment_status",
         "role",
     ];
 

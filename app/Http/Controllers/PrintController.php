@@ -199,7 +199,8 @@ class PrintController extends Controller
         return Inertia::render('Prints/PrintAccomplishment', [
             "accomplishments" => $events,
             "year" => $request->year,
-            "quarter" => $quarters[$request->quarter]
+            "quarter" => $quarters[$request->quarter],
+            "quarter_int" => $request->quarter
         ]);
     }
 

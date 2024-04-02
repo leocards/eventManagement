@@ -2,12 +2,18 @@ import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 
-export default function Modal({ children, show = false, maxWidth = '2xl', closeable = true, isOverFlow = false, onClose = () => {} }) {
+export default function Modal({ children, show = false, maxWidth = '2xl', closeable = true, isOverFlow = false, position = 'center', backdrop = true, onClose = () => {} }) {
     const close = () => {
         if (closeable) {
             onClose();
         }
     };
+
+    const modalPosition = {
+        'top': 'mt-0',
+        'top-left': 'sm:!ml-4 sm:!mx-0',
+        'top-right': 'sm:!mr-4 sm:!ml-auto sm:!mx-0',
+    }[position]
 
     const maxWidthClass = {
         sm: 'sm:max-w-sm',
@@ -27,10 +33,10 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
             <Dialog
                 as="div"
                 id="modal"
-                className="fixed inset-0 flex overflow-y-auto px-4 py-6 sm:px-0 items-center justify-center z-50 transform transition-all print:hidden"
+                className={`${position === 'center'?'items-center justify-center flex':''} fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 transform transition-all print:hidden`}
                 onClose={close}
             >
-                <Transition.Child
+                {backdrop && <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -40,7 +46,7 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
                     leaveTo="opacity-0"
                 >
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-                </Transition.Child>
+                </Transition.Child>}
 
                 <Transition.Child
                     as={Fragment}
@@ -52,7 +58,8 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <Dialog.Panel
-                        className={`mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass} ${!isOverFlow&&"overflow-hidden"}`}
+                        className={`mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass} ${!isOverFlow&&"overflow-hidden"} ${modalPosition} 
+                        ${!backdrop?'border':''}`}
                     >
                         {children}
                     </Dialog.Panel>
@@ -62,10 +69,10 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
     );
 }
 
-export const ModalHeader = ({ label, showCloseButton = true, onClose }) => {
+export const ModalHeader = ({ label, showCloseButton = true, labelClassName = '', onClose }) => {
     return (
         <div className="text-lg font-semibold flex items-center uppercase mb-5 pr-1">
-            <div>{label}</div>
+            <div className={labelClassName}>{label}</div>
             {showCloseButton&&<button
                 onClick={onClose}
                 className="p-2 ml-auto hover:bg-gray-100 rounded-full transition duration-150"

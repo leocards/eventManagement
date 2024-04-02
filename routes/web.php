@@ -1,5 +1,11 @@
 <?php
 
+use App\Exports\AccomplishmentExport;
+use App\Exports\AttendanceExport;
+use App\Exports\CBUExport;
+use App\Exports\FeedbackReportExport;
+use App\Exports\QualitativeAssessmentExport;
+use App\Exports\ResourcePersonExport;
 use App\Http\Controllers\AccomplishmentReportController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\SecurityQuestionController;
@@ -14,11 +20,15 @@ use App\Http\Controllers\ResourcePersonController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UserController;
 use App\Models\Event;
+use App\Models\EventParticipants;
+use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -172,6 +182,45 @@ Route::middleware(['auth', 'verified', 'role:Admin,Super Admin'])->group(functio
             Route::get('/accomplishment-data', 'accomplishmentData')->name('reports.accomplishment.data');
         });
     });
+    
+    // EXCEL EXPORT
+    Route::prefix('excel-export')->group(function () {
+        // ATTENDANCE
+        Route::get('/attendance/{id?}', function ($id = null) {
+            return Excel::download(new AttendanceExport($id), 'Attendance Summary Report.xlsx');
+        })->name('export.attendance');
+
+        // CBU
+        Route::get('/cbu/{year}', function (Request $request) {
+            return Excel::download(new CBUExport($request->year), 'CBU Training Monitoring.xlsx');
+        })->name('export.cbu'); 
+
+        // ACCOMPLISHMENT
+        Route::get('/accomplishment/{year}/{quarter}', function ($year, $quarter) {
+            return Excel::download(new AccomplishmentExport($year, $quarter), 'IDCB Accomplishment Report.xlsx');
+        })->name('export.accomplishment');
+
+        // FEEDBACK CONSOLIDATION/ TRAINING ASSESSMET
+        Route::get('/feedbackreport/{event_id?}', function ($event_id = null) {
+            if(!$event_id) return back();
+
+            return Excel::download(new FeedbackReportExport($event_id), 'Feedback Report Consolidation_Training Evaluation.xlsx');
+        })->name('export.feedbackreport');
+
+        // QUALITATIVE ASSESSMENT
+        Route::get('/qualitativeassessment/{event_id?}', function ($event_id = null) {
+            if(!$event_id) return back();
+            
+            return Excel::download(new QualitativeAssessmentExport($event_id), 'Feedback Report Consolidation_Qualitative Assessment.xlsx');
+        })->name('export.qualitativeassessment');
+
+        // RESOURCE PERSON ASSESSMENT
+        Route::get('/rpassessment/{event_id?}/{rp?}', function ($event_id = null, $rp = null) {
+            if(!$event_id||!$rp) return back();
+            
+            return Excel::download(new ResourcePersonExport($event_id, $rp), 'Feedback Report Consolidation_Qualitative Assessment.xlsx');
+        })->name('export.resourceperson');
+    });
 });
 
 Route::middleware(['auth', 'role:Employee', 'verified'])->group(function () {
@@ -204,6 +253,14 @@ Route::middleware('auth')->group(function () {
         ->name('profile.picture.update');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('ignore-security-notice', [ProfileController::class, 'ignoreNotice'])->name('profile.ignore');
+});
+
+Route::get('/excel-export', function (Request $request) {
+    $acc = new ResourcePersonExport(5,1);
+
+    return $acc->view();
 });
 
 // Route::get('/add-dummy-event', [DummyEventController::class, 'index']);

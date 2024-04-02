@@ -54,7 +54,8 @@ class CBUController extends Controller
         return Inertia::render('CBUMonitoring', [
             "cbu_summary" => $cbu,
             //"inactiveUser" => $inactives,
-            "years" => $years->prepend(['year'=>null])
+            "years" => $years->prepend(['year'=>null]),
+            "remarks" => collect(['All', 'Resigned', 'Non-Renewal', 'Transfer Program'])
         ]);
     }
 
@@ -83,6 +84,9 @@ class CBUController extends Controller
                 $subquery->where('title', 'LIKE', "%$request->search%");
             })
             ->where('role', 'Employee');
+        })
+        ->when($request->filter != 'All', function ($query) use ($request) {
+            $query->where('status', $request->filter);
         })
         ->where('role', 'Employee')
         ->select('id', 'first_name', 'last_name', 'status', 'created_at')

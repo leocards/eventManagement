@@ -2,13 +2,16 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CameraIcon } from "@heroicons/react/20/solid";
 import styled from "styled-components";
 import Profile from "./Partials/Profile";
 import Security from "./Partials/Security";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import ChangeProfile from "./Partials/ChangeProfile";
+import { useSelector, useDispatch } from "react-redux";
+import { setIgnoreNotice, toggleShowModal } from "@/Store/securityNotice";
+import SecurityNotice from "@/Components/SecurityNotice";
 
 export default function Edit({
     auth,
@@ -16,9 +19,14 @@ export default function Edit({
     status,
     questions,
     security,
+    passwordChanged,
+    notice
+
 }) {
-    const [tabs, setTabs] = useState(!security ? "security" : "profile");
+    const [tabs, setTabs] = useState(!passwordChanged? 'change' : !security ? "security" : "profile");
     const [isUploadProfile, setIsUploadProfile] = useState(false);
+    const showModalNotice = useSelector(state => state.securityNotice.showModal)
+    const dispatch = useDispatch();
     const sqs = [
         "Favorite online hobby or activity?",
         "Preferred social media platform?",
@@ -36,6 +44,12 @@ export default function Edit({
         "What is your favorite sports team?",
         "What was the name of your first childhood friend?",
     ];
+
+    useEffect(() => {
+        if(notice) {
+            dispatch(toggleShowModal())
+        }
+    },[])
 
     return (
         <AuthenticatedLayout
@@ -117,12 +131,19 @@ export default function Edit({
                     </TabButton>
                 </div>
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                    {!security && (
+                    {!security && tabs == "security" && (
                         <Container className="!p-3 justify-center !ring-none !shadow-none text-blue-700 items-center flex gap-3">
                             <InformationCircleIcon className="w-5 h-5" /> Please
                             provide security questions for your account.
                         </Container>
                     )}
+
+                    {passwordChanged && tabs == "change" && (
+                        <Container className="!p-3 justify-center !ring-none !shadow-none text-blue-700 items-center flex gap-3">
+                            <InformationCircleIcon className="w-5 h-5" /> Please change your password
+                        </Container>
+                    )}
+
                     {tabs == "profile" && (
                         <Container>
                             <Profile user={auth.user} />
@@ -153,6 +174,15 @@ export default function Edit({
             <ChangeProfile
                 show={isUploadProfile}
                 onClose={() => setIsUploadProfile(false)}
+            />
+
+            <SecurityNotice
+                show={showModalNotice}  
+                onClose={() => {
+                    dispatch(setIgnoreNotice());
+                }}
+                security={security}
+                passwordChange={passwordChanged}
             />
         </AuthenticatedLayout>
     );

@@ -6,11 +6,14 @@ use App\Models\Activity;
 use App\Models\Event;
 use App\Models\EventCode;
 use App\Models\EventParticipants;
+use App\Models\SecurityQuestion;
 use App\Models\User;
 use App\Models\UserLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -24,14 +27,16 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $securityQuestions = SecurityQuestion::where('user_id', Auth::id())->exists();
+
         if (Auth::user()->role == "Employee") {
-            return $this->EmployeeDashboard();
+            return $this->EmployeeDashboard($securityQuestions);
         } else {
-            return $this->AdminDashboard();
+            return $this->AdminDashboard($securityQuestions);
         }
     }
 
-    public function AdminDashboard()
+    public function AdminDashboard($securityQuestion = null)
     {
         $upcomingEvents = Event::with('eventCode')
             ->select("id", "platform", "title", "venue", "dateStart", "dateEnd")
@@ -80,11 +85,13 @@ class DashboardController extends Controller
                 'This month' => $attendace_month,
                 'This year' => $attendace_year,
             ]),
-            'active' => $this->activeEvents()
+            'active' => $this->activeEvents(),
+            'security' => $securityQuestion,
+            'passwordChanged' => Hash::check('12345678', Auth::user()->password)
         ]);
     }
 
-    public function EmployeeDashboard()
+    public function EmployeeDashboard($securityQuestion = null)
     {
         $upcomingEvents = Event::with('eventCode')
             ->leftJoin("event_participants AS ep", "ep.event_id", "=", "events.id")
@@ -117,7 +124,9 @@ class DashboardController extends Controller
                 'Total' => $totalEvents,
                 'Upcoming' => $totalUpcomming,
             ]),
-            'active' => $this->activeEvents()
+            'active' => $this->activeEvents(),
+            'security' => $securityQuestion,
+            'passwordChanged' => Hash::check('12345678', Auth::user()->password)
         ]);
     }
 

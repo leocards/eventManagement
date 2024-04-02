@@ -10,7 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,7 +30,8 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'questions' => $securityQuestions,
-            'security' => $securityQuestions->count() === 0 ? false : true
+            'security' => $securityQuestions->count() === 0 ? false : true,
+            'passwordChanged' => Hash::check('12345678', Auth::user()->password)
         ]);
     }
 
@@ -102,5 +105,15 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    /**
+     * Delete security notice session.
+     */
+    public function ignoreNotice()
+    {
+        Session::forget('security-notice');
+
+        return response()->json('ok');
     }
 }

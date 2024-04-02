@@ -1,3 +1,4 @@
+import ExportButton from "@/Components/Buttons/ExportExcelButton";
 import { SelectEventList } from "@/Components/Event/PopOver";
 import { LoadingList } from "@/Components/LoadingSearch";
 import PageHeader from "@/Components/PageHeader";
@@ -5,7 +6,7 @@ import Paginate from "@/Components/Paginate";
 import PrintEvaluations from "@/Components/Reports/Print/PrintEvaluations";
 import SearchInput from "@/Components/SearchInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { PrinterIcon } from "@heroicons/react/24/outline";
+import { PrinterIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Head, router } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -108,7 +109,9 @@ export default function Attendance({ auth, events }) {
                     Summary
                 </div>
 
-                <button onClick={() => setIsPrint(true)} className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md">
+                <ExportButton exportRoute={route('export.attendance', {id: selectedEvent??events[0].id})} className={'ml-auto'} />
+
+                <button onClick={() => setIsPrint(true)} className="flex items-center gap-2 rounded-md ml-3 px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md">
                     <PrinterIcon className="w-5 h-5" />
                     <div>Print</div>
                 </button>

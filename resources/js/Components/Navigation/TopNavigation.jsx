@@ -50,7 +50,7 @@ export default function TopNavigation({ auth, showMenu, onClickMenu = () => {} }
                                 <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
 
                                 <div className="text-xl font-bold sm:block hidden">
-                                    TAMS
+                                    CBU Attendance Monitoring System
                                 </div>
                             </Link>
                         </div>

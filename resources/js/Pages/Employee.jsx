@@ -1,6 +1,7 @@
 import DeleteConfirmation from "@/Components/DeleteConfirmation";
 import NewEmployee from "@/Components/Employee/NewEmployee";
 import ViewEmployee from "@/Components/Employee/ViewEmployee";
+import { Filter, FilterButton } from "@/Components/Event/PopOver";
 import PageHeader from "@/Components/PageHeader";
 import Paginate from "@/Components/Paginate";
 import SearchInput from "@/Components/SearchInput";
@@ -32,6 +33,7 @@ export default function Employee({ auth, initialEmployeeList }) {
     const { post, processing } = useForm({});
     const [searchUser, setSearchUser] = useState(null);
     const [loadingSearch, setLoadingSearch] = useState(false);
+    const [filterEmployment, setFilterEmployment] = useState("All")
 
     const activeState = " bg-blue-500/20";
     const inactiveState =
@@ -67,11 +69,11 @@ export default function Employee({ auth, initialEmployeeList }) {
             setLoadingSearch(true);
             const response = !searchUser
                 ? await axios.get(
-                    route("employee.json", { _query: { page: pageNumber } })
+                    route("employee.json", { _query: { page: pageNumber, filterEmployment: filterEmployment } })
                 )
                 : await axios.get(
                     route("employee.search", {
-                        _query: { page: pageNumber, search: searchUser },
+                        _query: { page: pageNumber, search: searchUser, filterEmployment: filterEmployment },
                     })
                 );
             setEmployeeData(response.data);
@@ -102,6 +104,16 @@ export default function Employee({ auth, initialEmployeeList }) {
             },
         });
     };
+    
+    async function getSearches() {
+        setLoadingSearch(true);
+        let response = await axios.get(
+            route("employee.search", { _query: { search: searchUser, filterEmployment: filterEmployment } })
+        );
+        let data = response.data;
+        setEmployeeData(data);
+        setLoadingSearch(false);
+    }
 
     useEffect(() => {
         const outSideClick = (e) => {
@@ -128,22 +140,12 @@ export default function Employee({ auth, initialEmployeeList }) {
     }, [initialEmployeeList]);
 
     useEffect(() => {
-        if (searchUser) {
-            setLoadingSearch(true);
-            async function getSearches() {
-                let response = await axios.get(
-                    route("employee.search", { _query: { search: searchUser } })
-                );
-                let data = response.data;
-                setEmployeeData(data);
-                setLoadingSearch(false);
-            }
-
+        if (searchUser || filterEmployment !== "All") {
             getSearches();
         } else {
             setEmployeeData(initialEmployeeList);
         }
-    }, [searchUser]);
+    }, [searchUser, filterEmployment]);
 
     return (
         <Authenticated user={auth.user}>
@@ -162,6 +164,10 @@ export default function Employee({ auth, initialEmployeeList }) {
 
             <div className="container  p-3 max-h-[calc(100vh-6rem)]">
                 <div className="flex items-center justify-between">
+                    <div className="mr-auto">
+                        <Filter activeFilter={filterEmployment} filterList={['All', 'Regular', 'Contractual']} onSelect={setFilterEmployment} />
+                    </div>
+
                     <ActionButtons
                         selected={selected}
                         onView={() => setShowViewEmployee(true)}

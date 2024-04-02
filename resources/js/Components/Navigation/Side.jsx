@@ -14,7 +14,7 @@ export default function Side({ auth, showSideBar }) {
     const { url, component } = usePage();
 
     const responsiveSidebar = {
-        true: "lg:block lg:relative fixed w-80 h-full lg:z-0 z-20 lg:shadow-none shadow-2xl ",
+        true: "lg:block lg:relative fixed w-80 h-full lg:z-0 z-30 lg:shadow-none shadow-2xl ",
         false: "hidden lg:block lg:w-20"
     }[showSideBar]
 

@@ -14,61 +14,61 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            "first_name" => "Super",
-            "last_name" => "Admin",
-            "birthday" => "2001/02/02",
-            "email" => "super.admin@gmail.com",
-            "contact" => "09999999999",
-            "address" => "Panabo City",
-            "position" => "Division Chief",
-            "province" => "Davao del Norte",
-            "gender" => "Male",
-            "profile" => null,
-            "password" => Hash::make("12345678"), //12345678
-            "status" => "Active",
-            "role" => "Super Admin",
-            "created_at" => now()->format('Y-m-d H:i:s'),
-            "updated_at" => now()->format('Y-m-d H:i:s'),
-        ]);
-
-        User::create([
-            "first_name" => "John",
-            "last_name" => "Doe",
-            "birthday" => "2001/02/02",
-            "email" => "jd@gmail.com",
-            "contact" => "09999999999",
-            "address" => "Digos City",
-            "position" => "Project Development Officer III",
-            "province" => "Davao City",
-            "gender" => "Male",
-            "profile" => null,
-            "password" => Hash::make("12345678"), //12345678
-            "status" => "Active",
-            "role" => "Admin",
-            "created_at" => now()->format('Y-m-d H:i:s'),
-            "updated_at" => now()->format('Y-m-d H:i:s'),
-        ]);
-
-        User::create([
-            "first_name" => "Anna",
-            "last_name" => "Doe",
-            "birthday" => "2001/02/02",
-            "email" => "Anna@gmail.com",
-            "contact" => "09999999999",
-            "address" => "Panabo City",
-            "position" => "Financial Analyst II",
-            "province" => "Davao City",
-            "gender" => "Female",
-            "profile" => null,
-            "password" => Hash::make("12345678"), //12345678
-            "status" => "Active",
-            "role" => "Employee",
-            "created_at" => now()->format('Y-m-d H:i:s'),
-            "updated_at" => now()->format('Y-m-d H:i:s'),
-        ]);
-
         User::insert([
+            [
+                "first_name" => "Super",
+                "last_name" => "Admin",
+                "birthday" => "2001/02/02",
+                "email" => "super.admin@gmail.com",
+                "contact" => "09999999999",
+                "address" => "Panabo City",
+                "position" => "Division Chief",
+                "province" => "Davao del Norte",
+                "gender" => "Male",
+                "profile" => null,
+                "password" => Hash::make("12345678"), //12345678
+                "status" => "Active",
+                "employment_status" => "Regular",
+                "role" => "Super Admin",
+                "created_at" => now()->format('Y-m-d H:i:s'),
+                "updated_at" => now()->format('Y-m-d H:i:s'),
+            ],
+            [
+                "first_name" => "John",
+                "last_name" => "Doe",
+                "birthday" => "2001/02/02",
+                "email" => "jd@gmail.com",
+                "contact" => "09999999999",
+                "address" => "Digos City",
+                "position" => "Project Development Officer III",
+                "province" => "Davao City",
+                "gender" => "Male",
+                "profile" => null,
+                "password" => Hash::make("12345678"), //12345678
+                "status" => "Active",
+                "employment_status" => "Regular",
+                "role" => "Admin",
+                "created_at" => now()->format('Y-m-d H:i:s'),
+                "updated_at" => now()->format('Y-m-d H:i:s'),
+            ],
+            [
+                "first_name" => "Anna",
+                "last_name" => "Doe",
+                "birthday" => "2001/02/02",
+                "email" => "Anna@gmail.com",
+                "contact" => "09999999999",
+                "address" => "Panabo City",
+                "position" => "Financial Analyst II",
+                "province" => "Davao City",
+                "gender" => "Female",
+                "profile" => null,
+                "password" => Hash::make("12345678"), //12345678
+                "status" => "Active",
+                "employment_status" => "Regular",
+                "role" => "Employee",
+                "created_at" => now()->format('Y-m-d H:i:s'),
+                "updated_at" => now()->format('Y-m-d H:i:s'),
+            ],
             [
                 "first_name" => "John",
                 "last_name" => "Doe",
@@ -82,6 +82,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -99,6 +100,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -116,6 +118,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -133,6 +136,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -150,6 +154,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -170,6 +175,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -187,6 +193,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -204,6 +211,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -221,6 +229,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -238,6 +247,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -255,6 +265,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -272,6 +283,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -289,6 +301,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -306,6 +319,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -323,6 +337,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -340,6 +355,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -357,6 +373,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -374,6 +391,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -391,6 +409,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -408,6 +427,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -425,6 +445,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -442,6 +463,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -459,6 +481,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -476,6 +499,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -493,6 +517,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -510,6 +535,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -527,6 +553,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
@@ -544,6 +571,7 @@ class UserSeeder extends Seeder
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
                 "status" => "Active",
+                "employment_status" => "Regular",
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import TopNavigation from '@/Components/Navigation/TopNavigation';
-import SideNavigation from '@/Components/Navigation/SideNavigation';
 import Side from '@/Components/Navigation/Side';
 import Footer from '@/Components/Footer';
 import { usePage } from '@inertiajs/react';

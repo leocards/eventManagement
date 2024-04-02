@@ -7,6 +7,7 @@ import { PrinterIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { convertDate } from "@/js/DateFormatter";
 import { useEffect, useState } from "react";
+import ExportButton from "@/Components/Buttons/ExportExcelButton";
 
 export default function AccomplishmentReport({ auth, report, years }) {
     const [pages, setPages] = useState(null);
@@ -14,7 +15,7 @@ export default function AccomplishmentReport({ auth, report, years }) {
     const [selected, setSelected] = useState(null)
     const [loadingSearch, setLoadingSearch] = useState(false);
     const [yearSelected, setYearSelected] = useState(2024);
-    const [quarterSelected, setQuarterSelected] = useState("All");
+    const [quarterSelected, setQuarterSelected] = useState("All Quarters");
     const [accomplishments, setAccomplishments] = useState([]);
     const [showViewAccomplishment, setShowViewAccomplishment] = useState(false);
     const [accomplishmentPageList, setAccomplishmentsPageList] = useState(null);
@@ -74,7 +75,7 @@ export default function AccomplishmentReport({ auth, report, years }) {
     useEffect(() => {
         if (yearSelected) {
             const quarter = {
-                All: null,
+                'All Quarters': null,
                 "1st Quarter": 1,
                 "2nd Quarter": 2,
                 "3rd Quarter": 3,
@@ -103,16 +104,22 @@ export default function AccomplishmentReport({ auth, report, years }) {
     return (
         <Reports auth={auth} report={report}>
             <div className="container p-3 mt-3">
-                <div className="flex items-center justify-between">
+                <div className="flex">
+                {quarterSelected == 'All Quarters' && <div className="text-sm opacity-50 ml-auto mb-2">Select quarter to print or export</div>}
+                </div>
+                <div className="flex items-center">
                     <div className="font-semibold text-lg text-blue-900">
                         Institutional Development and Capability Building (IDCB)
                         Accomplishment Report
                     </div>
 
+                    <ExportButton exportRoute={route('export.accomplishment', {year: yearSelected, quarter: byQuarter[quarterSelected]??1})} 
+                    className={`ml-auto ${quarterSelected == "All Quarters" ? 'pointer-events-none opacity-50' : ''}`} />
+
                     <button
-                        disabled={quarterSelected == "All"}
-                        className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
-                        transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none"
+                        disabled={quarterSelected == "All Quarters"}
+                        className={`flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
+                        transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none ml-3`}
                         onClick={() => window.open(route('print.accomplishment', {_query: { year: yearSelected, quarter: byQuarter[quarterSelected]}}))}
                     >
                         <PrinterIcon className="w-5 h-5" />
@@ -128,7 +135,7 @@ export default function AccomplishmentReport({ auth, report, years }) {
                             onSelectYear={setYearSelected}
                         />
                         {years.length > 0 && <FilterByQuarter
-                            selectedQurter={quarterSelected}
+                            selectedQuarter={quarterSelected}
                             onSelect={setQuarterSelected}
                         />}
                     </div>

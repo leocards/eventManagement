@@ -42,7 +42,7 @@ export default function ViewActiveEvent({ show, event, onClose = () => {} }) {
                     </div>
                     <div className="flex space-x-5">
                         <div className="flex">
-                            <LabelText>Time in: </LabelText>
+                            <LabelText>Time out: </LabelText>
                             <div>{moment(event?.event_code[0].time_out).format('LT')}</div>
                         </div>
                         <div className="flex">

@@ -1,4 +1,4 @@
-import { PrinterIcon } from "@heroicons/react/24/outline";
+import { PrinterIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import PrintHeader from "./PrintHeader";
 import { Head, useForm } from "@inertiajs/react";
 import moment from "moment";
@@ -6,11 +6,13 @@ import { PencilIcon } from "@heroicons/react/20/solid";
 import AccomplishmentSignatoriesEdit from "./AccomplishmentSignatoriesEdit";
 import { convertDate } from "@/js/DateFormatter";
 import { useEffect, useState } from "react";
+import ExportButton from "@/Components/Buttons/ExportExcelButton";
 
 export default function PrintAccomplishment({
     auth,
     year,
     quarter,
+    quarter_int,
     accomplishments,
 }) {
     const printStyle = `
@@ -35,10 +37,13 @@ export default function PrintAccomplishment({
             <Head title="Accomplishment-print" />
             <style dangerouslySetInnerHTML={{ __html: printStyle }}></style>
             <div className="w-full p-2 mx-auto my-auto">
-                <div className="print:hidden my-4">
+                <div className="print:hidden my-4 flex ">
+                    
+                    <ExportButton exportRoute={route('export.accomplishment', {year: year, quarter: quarter_int})} className={'ml-auto'} />
+                    
                     <button
                         onClick={onPrint}
-                        className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md ml-auto"
+                        className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md ml-3"
                     >
                         <PrinterIcon className="w-5 h-5" />
                         <div>Print</div>
