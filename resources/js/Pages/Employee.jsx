@@ -163,26 +163,28 @@ export default function Employee({ auth, initialEmployeeList }) {
             </div>
 
             <div className="container  p-3 max-h-[calc(100vh-6rem)]">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="mr-auto">
                         <Filter activeFilter={filterEmployment} filterList={['All', 'Regular', 'Contractual']} onSelect={setFilterEmployment} />
                     </div>
 
-                    <ActionButtons
-                        selected={selected}
-                        onView={() => setShowViewEmployee(true)}
-                        onEdit={() => setShowNewEmployee(true)}
-                        onDelete={() => setShowDeleteConfirmation(true)}
-                    />
+                    <div className="flex flex-col-reverse sm:flex-row mt-4 sm:mt-0">
+                        <ActionButtons
+                            selected={selected}
+                            onView={() => setShowViewEmployee(true)}
+                            onEdit={() => setShowNewEmployee(true)}
+                            onDelete={() => setShowDeleteConfirmation(true)}
+                        />
 
-                    <div className="flex w-fit border h-9 rounded-md overflow-hidden">
-                        <div className="w-56">
-                            <SearchInput
-                                onSearch={setSearchUser}
-                                onInput={(input) =>
-                                    input && setLoadingSearch(true)
-                                }
-                            />
+                        <div className="flex sm:w-fit border h-9 rounded-md overflow-hidden">
+                            <div className="sm:w-56">
+                                <SearchInput
+                                    onSearch={setSearchUser}
+                                    onInput={(input) =>
+                                        input && setLoadingSearch(true)
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -367,7 +369,7 @@ export default function Employee({ auth, initialEmployeeList }) {
 
 const ActionButtons = ({ selected, onView, onEdit, onDelete }) => {
     return (
-        <div className="flex gap-2 ml-auto mr-3">
+        <div className="flex gap-2 ml-auto sm:mr-3 mt-2 sm:mt-0">
             <button
                 data-employee-action="true"
                 className="rounded-full p-2 shrink-0 hover:bg-slate-200/60 disabled:text-gray-400 disabled:pointer-events-none"

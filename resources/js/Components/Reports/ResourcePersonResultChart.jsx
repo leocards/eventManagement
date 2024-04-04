@@ -20,7 +20,7 @@ export default function ResourcePersonResultChart({ evaluation_ratings, name = "
                     (!evaluation_ratings?0:evaluation_ratings["2"].male),
                     (!evaluation_ratings?0:evaluation_ratings["1"].male),
                 ],
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
                 borderColor: "rgba(255, 99, 132, 1)",
                 borderWidth: 1,
             },
@@ -33,8 +33,8 @@ export default function ResourcePersonResultChart({ evaluation_ratings, name = "
                     (!evaluation_ratings?0:evaluation_ratings["2"].female),
                     (!evaluation_ratings?0:evaluation_ratings["1"].female),
                 ],
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
                 borderWidth: 1,
             },
             {
@@ -46,12 +46,28 @@ export default function ResourcePersonResultChart({ evaluation_ratings, name = "
                     (!evaluation_ratings?0:(evaluation_ratings["2"].male+evaluation_ratings["2"].female)),
                     (!evaluation_ratings?0:(evaluation_ratings["1"].male+evaluation_ratings["1"].female)),
                 ],
-                backgroundColor: "rgba(153, 102, 255, 0.2)",
-                borderColor: "rgba(153, 102, 255, 1)",
+                backgroundColor: "rgba(255, 205, 86, 0.5)",
+                borderColor: "rgba(255, 205, 86, 1)",
                 borderWidth: 1,
             },
         ],
     };
+
+    const getTotals = () => {
+        let totalFemale = 0;
+        let totalMale = 0;
+
+        for (const key in evaluation_ratings) {
+            if (data.hasOwnProperty(key)) {
+                totalFemale += data[key].female;
+                totalMale += data[key].male;
+            }
+        }
+
+        let ttl = totalFemale + totalMale
+
+        return ttl < 6 ? ttl + 6 : ttl
+    }
 
     const options = {
         responsive: true,
@@ -66,6 +82,21 @@ export default function ResourcePersonResultChart({ evaluation_ratings, name = "
             legend: {
                 display: true,
                 position: "bottom",
+            },
+        },
+        scales: {
+            y: {
+                suggestedMin: 1, 
+                suggestedMax: getTotals(),
+                title: {
+                    display: true,
+                    text: 'No. of evaluators'
+                },
+                ticks: {
+                    callback: function(value, index, ticks) {
+                        return value;
+                    }
+                }
             },
         },
         animation: animation

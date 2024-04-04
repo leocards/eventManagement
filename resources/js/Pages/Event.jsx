@@ -8,11 +8,13 @@ import ResourcePersonList from "@/Components/Event/ResourcePersonList";
 import PageHeader from "@/Components/PageHeader";
 import SearchInput from "@/Components/SearchInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, TrashIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Head, router, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { Transition } from "@headlessui/react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Event({
     auth,
@@ -21,11 +23,13 @@ export default function Event({
     resourcePersons,
     participants,
     totalEmp,
-    editId
+    editId,
 }) {
     const { url } = usePage();
     const MySwal = withReactContent(Swal);
-    const add = (addEvent == "event") ? (editId ? ["Update Event"] : ["Add Event"]) : [];
+    const windowSize = useSelector((state) => state.windowWidth.size);
+    const add =
+        addEvent == "event" ? (editId ? ["Update Event"] : ["Add Event"]) : [];
     const [selectedRp, setSelectedRP] = useState(null);
     const [showNewRP, setShowNewRP] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
@@ -35,8 +39,11 @@ export default function Event({
         sortBy: "Date created",
         orderBy: "DESC",
         filterEvent: "All",
-        dirty: false
+        dirty: false,
     });
+
+    useEffect(() => {
+    }, []);
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -60,41 +67,43 @@ export default function Event({
 
                     <div className="container p-3 max-h-[calc(100vh-6rem)]">
                         <div className="flex items-center justify-between">
-                            <div className="flex gap-3">
-                                {url == "/event" && (
-                                    <Sort
-                                        activeSort={sort.sortBy}
-                                        orderBy={sort.orderBy}
-                                        onSelect={(sort) =>
-                                            setSort((prev) => ({
-                                                ...prev,
-                                                sortBy: sort,
-                                                dirty: true
-                                            }))
-                                        }
-                                        onOrderBy={(order) =>
-                                            setSort((prev) => ({
-                                                ...prev,
-                                                orderBy: order,
-                                                dirty: true
-                                            }))
-                                        }
-                                    />
-                                )}
+                            {windowSize >= 768 && (
+                                <div className="hidden gap-3 md:flex">
+                                    {url == "/event" && (
+                                        <Sort
+                                            activeSort={sort.sortBy}
+                                            orderBy={sort.orderBy}
+                                            onSelect={(sort) =>
+                                                setSort((prev) => ({
+                                                    ...prev,
+                                                    sortBy: sort,
+                                                    dirty: true,
+                                                }))
+                                            }
+                                            onOrderBy={(order) =>
+                                                setSort((prev) => ({
+                                                    ...prev,
+                                                    orderBy: order,
+                                                    dirty: true,
+                                                }))
+                                            }
+                                        />
+                                    )}
 
-                                {url == "/event" && (
-                                    <Filter
-                                        activeFilter={sort.filterEvent}
-                                        onSelect={(filter) =>
-                                            setSort((prev) => ({
-                                                ...prev,
-                                                filterEvent: filter,
-                                                dirty: true
-                                            }))
-                                        }
-                                    />
-                                )}
-                            </div>
+                                    {url == "/event" && (
+                                        <Filter
+                                            activeFilter={sort.filterEvent}
+                                            onSelect={(filter) =>
+                                                setSort((prev) => ({
+                                                    ...prev,
+                                                    filterEvent: filter,
+                                                    dirty: true,
+                                                }))
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            )}
 
                             {url.startsWith("/event/resource_person") ? (
                                 <div className="flex gap-2 ml-auto mr-3">
@@ -120,10 +129,42 @@ export default function Event({
                                     </button>
                                 </div>
                             ) : (
-                                ""
+                                <Filters 
+                                    sort={sort} 
+                                    windowSize={windowSize} 
+                                    filtered={sort.filterEvent != "All" || sort.orderBy != "DESC" || sort.sortBy != "Date created"}
+                                    onSelect={(selected, type) => {
+                                        if(type == 'filter') {
+                                            setSort((prev) => ({
+                                                ...prev,
+                                                filterEvent: selected,
+                                                dirty: true,
+                                            }))
+                                        } else {
+                                            setSort((prev) => ({
+                                                ...prev,
+                                                sortBy: selected,
+                                                dirty: true,
+                                            }))
+                                        }
+                                    }}
+                                    onOrderBy={(order) =>
+                                        setSort((prev) => ({
+                                            ...prev,
+                                            orderBy: order,
+                                            dirty: true,
+                                        }))
+                                    }
+                                />
                             )}
 
-                            <div className="w-56 border h-9 rounded-md overflow-hidden">
+                            <div
+                                className={`w-56 border h-9 rounded-md overflow-hidden ${
+                                    !url.startsWith("/event/resource_person")
+                                        ? "md:ml-0 ml-auto"
+                                        : ""
+                                }`}
+                            >
                                 <SearchInput
                                     onSearch={(value) => setSearch(value)}
                                     onInput={(input) =>
@@ -187,3 +228,82 @@ export default function Event({
         </AuthenticatedLayout>
     );
 }
+
+const Filters = ({
+    filtered,
+    windowSize,
+    sort,
+    onSelect = () => {},
+    onOrderBy = () => {},
+}) => {
+    const [show, setShow] = useState(false)
+    const filters = useRef(null)
+
+    const getSelect = (select, type) => {
+        onSelect(select, type)
+        setShow(false)
+    }
+
+    const getOrderBy = (order) => {
+        onOrderBy(order)
+        setShow(false)
+    }
+
+    useEffect(() => {
+        const handleClick = (event) => {
+            if (filters.current && !filters.current.contains(event.target)) {
+                setShow(false)
+            }
+        };
+    
+        document.addEventListener('mousedown', handleClick);
+    
+        return () => {
+            document.removeEventListener('mousedown', handleClick);
+        };
+    }, []);
+
+    useEffect(() => {
+        if(windowSize < 768 && show) {
+            setShow(false)
+        }
+    }, [windowSize])
+
+    return <>{windowSize < 768 && <div ref={filters} className="md:hidden relative">
+        <button onClick={() => setShow(!show)} className={`h-9 w-9 flex items-center justify-center rounded-full ${filtered ? 'bg-slate-200/60':'hover:bg-slate-200/60'}`}>
+            <EllipsisVerticalIcon className="w-5 h-5" />
+        </button>
+
+        {filtered && <div className="absolute top-0.5 right-0.5 h-2 w-2 bg-blue-400 rounded-full" />}
+
+        <Transition
+            show={show}
+            enter="transition-opacity duration-75"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+        >
+            <div className="bg-white absolute mt-1 rounded py-1.5 z-10 ring-black/5 shadow-lg ring-1">
+                <div>
+                    <Sort
+                        activeSort={sort.sortBy}
+                        orderBy={sort.orderBy}
+                        onSelect={(select) => getSelect(select, 'sort')}
+                        onOrderBy={getOrderBy}
+                        withBorder={false}
+                    />
+                </div>
+                <hr className="my-1.5" />
+                <div>
+                    <Filter
+                        activeFilter={sort.filterEvent}
+                        onSelect={(select) => getSelect(select, 'filter')}
+                        withBorder={false}
+                    />
+                </div>
+            </div>
+        </Transition>
+    </div>}</>;
+};

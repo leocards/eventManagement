@@ -20,7 +20,7 @@ export default function TrainingActivitySummary({ summary, animation = true }) {
                     (!summary?0:(summary["2"]?.Male || 0)),
                     (!summary?0:(summary["1"]?.Male || 0)),
                 ],
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
                 borderColor: "rgba(255, 99, 132, 1)",
                 borderWidth: 1,
             },
@@ -33,8 +33,8 @@ export default function TrainingActivitySummary({ summary, animation = true }) {
                     (!summary?0:summary["2"]?.Female || 0),
                     (!summary?0:summary["1"]?.Female || 0),
                 ],
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
                 borderWidth: 1,
             },
             {
@@ -46,8 +46,8 @@ export default function TrainingActivitySummary({ summary, animation = true }) {
                     (!summary?0:((summary["2"]?.Male||0)+(summary["2"]?.Female||0))),
                     (!summary?0:((summary["1"]?.Male||0)+(summary["1"]?.Female||0))),
                 ],
-                backgroundColor: "rgba(153, 102, 255, 0.2)",
-                borderColor: "rgba(153, 102, 255, 1)",
+                backgroundColor: "rgba(255, 205, 86, 0.5)",
+                borderColor: "rgba(255, 205, 86, 1)",
                 borderWidth: 1,
             },
         ],
@@ -66,6 +66,22 @@ export default function TrainingActivitySummary({ summary, animation = true }) {
             legend: {
                 display: true,
                 position: "bottom",
+            },
+        },
+        scales: {
+            y: {
+                suggestedMin: 1, 
+                suggestedMax: 100,
+                title: {
+                    display: true,
+                    text: 'No. of evaluators in percentage'
+                },
+                ticks: {
+                    // Include a dollar sign in the ticks
+                    callback: function(value, index, ticks) {
+                        return value + '%';
+                    }
+                }
             },
         },
         animation: animation

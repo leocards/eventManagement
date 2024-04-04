@@ -6,7 +6,8 @@ import {
     Listbox,
     Combobox,
 } from "@headlessui/react";
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronDownIcon, EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import { EyeIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 export function Platform({ platform, className, onChange }) {
@@ -191,12 +192,17 @@ export function FilterByProvince({ onSelect = () => {}, activeFilter = null }) {
 export function Sort({
     activeSort = "Date created",
     orderBy = "DESC",
+    withBorder = true,
     onSelect = () => {},
     onOrderBy = () => {},
 }) {
     const sortList = ["Title", "Date created", "Event date"];
     return (
-        <div className="w-44 select-none shrink-0 flex items-center rounded-md border border-gr ay-200 text-right mr-1">
+        <div
+            className={`w-44 select-none shrink-0 flex items-center rounded-md text-right mr-1 ${
+                withBorder ? "border" : ""
+            }`}
+        >
             <Menu
                 as="div"
                 className="relative inline-block text-left grow h-[2.20rem]"
@@ -297,6 +303,7 @@ export function Filter({
     onSelect = () => {},
     activeFilter = "All",
     filterList = null,
+    withBorder = true,
 }) {
     const filterDataList = filterList ?? [
         "All",
@@ -307,7 +314,11 @@ export function Filter({
         "This month",
     ];
     return (
-        <div className="w-44 select-none shrink-0 flex items-center rounded-md border border-gr ay-200 text-right mr-1">
+        <div
+            className={`w-44 select-none shrink-0 flex items-center rounded-md text-right mr-1 ${
+                withBorder ? "border" : ""
+            }`}
+        >
             <Menu
                 as="div"
                 className="relative inline-block text-left grow h-[2.20rem]"
@@ -371,7 +382,12 @@ export function FilterButton({
     onClick = () => {},
 }) {
     return (
-        <div className={"w-fit absolute " + (position ?? "top-2 right-2")}>
+        <div
+            className={
+                "w-fit absolute " +
+                (position ?? "sm:top-2 top-1 sm:right-2 right-1")
+            }
+        >
             <Popover className="relative">
                 <>
                     <Popover.Button
@@ -389,14 +405,22 @@ export function FilterButton({
                         leaveFrom="opacity-100 translate-y-0"
                         leaveTo="opacity-0 translate-y-1"
                     >
-                        <Popover.Panel className={`absolute z-10 w-52 transform px-4 ${panelPosition??"-right-3"}`}>
+                        <Popover.Panel
+                            className={`absolute z-10 w-52 transform px-4 ${
+                                panelPosition ?? "-right-3"
+                            }`}
+                        >
                             <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black/5">
                                 <div className="relative bg-white py-2">
                                     {list.map((item, index) => (
                                         <Popover.Button
                                             key={index}
                                             onClick={() => onClick(item)}
-                                            className={`w-full text-left p-1.5 px-3  ${selected == item ? 'bg-blue-100 text-blue-700':'hover:bg-gray-100'}`}
+                                            className={`w-full text-left p-1.5 px-3  ${
+                                                selected == item
+                                                    ? "bg-blue-100 text-blue-700"
+                                                    : "hover:bg-gray-100"
+                                            }`}
                                         >
                                             {item}
                                         </Popover.Button>
@@ -591,7 +615,9 @@ export function SelectByYear({
                                 {selected && selected.year
                                     ? selected.year
                                     : eventYears.length > 1 && "All"}
-                                {(eventYears.length == 0 || (eventYears.length == 1 && !eventYears[0].year)) &&
+                                {(eventYears.length == 0 ||
+                                    (eventYears.length == 1 &&
+                                        !eventYears[0].year)) &&
                                     "No events"}
                             </div>
                             <ChevronDownIcon
@@ -632,28 +658,29 @@ export function SelectByYear({
                                                         ""
                                                     )}
                                                 </div>
-                                                {event.year || (eventYears.length === 1 && !event.year ? "No events" :"All")}
+                                                {event.year ||
+                                                    (eventYears.length === 1 &&
+                                                    !event.year
+                                                        ? "No events"
+                                                        : "All")}
                                             </button>
                                         )}
                                     </Menu.Item>
                                 ))}
-                                {
-                                    eventYears.length == 0 &&
-                                    (
-                                        <Menu.Item>
-                                            {({ close }) => (
-                                                <button
-                                                    disabled
-                                                    className={`flex w-full items-center px-2 py-1.5`}
-                                                >
-                                                    <div className=" shrink-0 mr-2 text-sm">
-                                                        No events
-                                                    </div>
-                                                </button>
-                                            )}
-                                        </Menu.Item>
-                                    )
-                                }
+                                {eventYears.length == 0 && (
+                                    <Menu.Item>
+                                        {({ close }) => (
+                                            <button
+                                                disabled
+                                                className={`flex w-full items-center px-2 py-1.5`}
+                                            >
+                                                <div className=" shrink-0 mr-2 text-sm">
+                                                    No events
+                                                </div>
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                )}
                             </div>
                         </Menu.Items>
                     </Transition>
@@ -832,7 +859,7 @@ export function FilterByQuarter({
     onSelect = () => {},
     selectedQuarter = "All Quarters",
     list = null,
-    size = "w-40"
+    size = "w-40",
 }) {
     const quarter = list ?? [
         "All Quarters",
@@ -843,7 +870,9 @@ export function FilterByQuarter({
         "This month",
     ];
     return (
-        <div className={`${size} select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1`}>
+        <div
+            className={`${size} select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1`}
+        >
             <Menu as="div" className="relative inline-block text-left grow">
                 <div className="">
                     <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
@@ -1122,22 +1151,22 @@ export function ListSelector({
     selectedOption = null,
     opacityOnEmpty = false,
     onSelect = () => {},
-    preSelect = false
+    preSelect = false,
 }) {
     const [isInvisible, setIsInvisible] = useState(opacityOnEmpty);
     const [selected, setSelected] = useState(list[0]);
 
     const onChange = (option) => {
-        onSelect(option.option)
-    }
+        onSelect(option.option);
+    };
 
     const position = {
         top: "bottom-11",
     }[optionPosition];
 
     useEffect(() => {
-        setSelected(list.find(({option}) => option == selectedOption))
-    }, [selectedOption])
+        setSelected(list.find(({ option }) => option == selectedOption));
+    }, [selectedOption]);
 
     return (
         <div className="w-full">
@@ -1219,6 +1248,62 @@ export function ListSelector({
                     </Transition>
                 </div>
             </Listbox>
+        </div>
+    );
+}
+
+export default function MenuOptions({ menus = [], circle = true, rounded = true, className = 'p-2', onSelect = () => {} }) {
+    return (
+        <div className="text-right">
+            <Menu as="div" className="relative inline-block text-left">
+                <div>
+                    <Menu.Button 
+                        className={`inline-flex w-full justify-center text-sm font-medium hover:bg-slate-200/80 focus:outline-none 
+                        focus-visible:ring-2 focus-visible:ring-white/75 shrink-0 ${className} ${circle?'rounded-full':(!circle && rounded)?'rounded-md':''}`}
+                    >
+                        <EllipsisVerticalIcon
+                            className="h-5 w-5"
+                            aria-hidden="true"
+                        />
+                    </Menu.Button>
+                </div>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <Menu.Items className="absolute right-0 w-44 origin-top-right divide-y divide-gray-100 rounded-md 
+                    bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-20">
+                        <div className="py-1">
+                            {
+                                menus.map((menuItem, index) => {
+                                    return <Menu.Item key={index}>
+                                        {({ active }) => (
+                                            <button
+                                                onClick={() => onSelect(menuItem.label)}
+                                                className={`${
+                                                    active
+                                                        ? "bg-gray-200"
+                                                        : "text-gray-900"
+                                                } group flex w-full items-center px-2.5 py-2 text-`}
+                                            >
+                                                <div className="flex gap-2 items-center">
+                                                    {menuItem.icon}
+                                                    {menuItem.label}
+                                                </div>
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                })
+                            }
+                        </div>
+                    </Menu.Items>
+                </Transition>
+            </Menu>
         </div>
     );
 }

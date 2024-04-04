@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventParticipants;
 use App\Models\EventResourcePerson;
 use App\Models\QualitativeAssessment;
 use App\Models\QuantitativeAssessment;
@@ -203,12 +204,15 @@ class EvaluationReportController extends Controller
             ->orderBy('q12', 'desc')
             ->get();
 
+        $total = EventParticipants::where('event_id', $event->id)->count();
+
         $collect = new \stdClass();
-        $activity->groupBy('q12')->each(function ($value, $key) use ($collect) {
+        $activity->groupBy('q12')->each(function ($value, $key) use ($collect, $total) {
             $obj = new \stdClass();
-            $value->each(function ($item, $key) use ($obj) {
+            $value->each(function ($item, $key) use ($obj, $total) {
                 $k = $item['gender'];
-                $obj->$k = $item['count'];
+                $obj->$k = ($item['count'] / $total) * 100;
+                $obj->count = $item['count'];
             });
             $collect->$key = $obj;
         });

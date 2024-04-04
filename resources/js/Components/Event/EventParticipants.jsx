@@ -145,31 +145,31 @@ export default function EventParticipants({
                 <div className="text-pink-700 text-sm ">{errorMessage}</div>
             )}
 
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
                 <div className="font-semibold after:content-['*'] after:ml-0.5 after:text-red-500">
                     {" "}
                     Event Participants{" "}
                 </div>
 
-                <div className="w-56 border rounded-md">
+                <div className="md:w-56 border rounded-md md:ml-0 mt-3 md:mt-0">
                     <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(true)} />
                 </div>
             </div>
 
-            <div className="flex items-center justify-between mt-3">
-                <div className="flex items-center">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-3">
+                <div className="flex flex-col sm:flex-row sm:items-center">
                     <FilterByProvince
                         activeFilter={filterByProvince}
                         onSelect={(select) => onFilterByProvince(select)}
                     />
 
                     {listOfAddedParticipants.length !== 0 && (
-                        <div className="ml-3">
+                        <div className="sm:ml-3 sm:mt-0 mt-1">
                             Participants: {listOfAddedParticipants.length}
                         </div>
                     )}
                 </div>
-                <div className="ml-auto flex items-center gap-3">
+                <div className="ml-auto flex items-center gap-3 mt-3 md:mt-0">
                     {filterByProvince != "All" && (
                         <SelectAllButton onClick={onClickSelectAll} >
                             Select All

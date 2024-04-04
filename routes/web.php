@@ -257,10 +257,16 @@ Route::middleware('auth')->group(function () {
     Route::get('ignore-security-notice', [ProfileController::class, 'ignoreNotice'])->name('profile.ignore');
 });
 
-Route::get('/excel-export', function (Request $request) {
-    $acc = new ResourcePersonExport(5,1);
+// Route::get('/excel-export', function (Request $request) {
+//     $acc = new ResourcePersonExport(5,1);
 
-    return $acc->view();
+//     return $acc->view();
+// });
+
+Route::get('/foo', function() {
+    $eval = new EvaluationReportController();
+    $event = Event::find(5);
+    return $eval->getRpRatingSummary($event, 1);
 });
 
 // Route::get('/add-dummy-event', [DummyEventController::class, 'index']);

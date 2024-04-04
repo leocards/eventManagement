@@ -37,7 +37,7 @@ export default function ConsolidatedDataChart({ consolidated, animation = true }
                     consolidated?.q11.Male || 0,
                     consolidated?.q12.Male || 0,
                 ],
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
                 borderColor: "rgba(255, 99, 132, 1)",
                 borderWidth: 1,
             },
@@ -57,8 +57,8 @@ export default function ConsolidatedDataChart({ consolidated, animation = true }
                     consolidated?.q11.Female || 0,
                     consolidated?.q12.Female || 0,
                 ],
-                backgroundColor: "rgba(75, 192, 192, 0.2)",
-                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
                 borderWidth: 1,
             },
             {
@@ -77,8 +77,8 @@ export default function ConsolidatedDataChart({ consolidated, animation = true }
                     consolidated?.total,
                     consolidated?.total,
                 ],
-                backgroundColor: "rgba(153, 102, 255, 0.2)",
-                borderColor: "rgba(153, 102, 255, 1)",
+                backgroundColor: "rgba(255, 205, 86, 0.5)",
+                borderColor: "rgba(255, 205, 86, 1)",
                 borderWidth: 1,
             },
         ],
@@ -98,6 +98,15 @@ export default function ConsolidatedDataChart({ consolidated, animation = true }
                 display: true,
                 position: "bottom",
             },
+        },
+        scales: {
+            y: {
+                suggestedMin: 1, suggestedMax: (consolidated?.total+5)||5,
+                title: {
+                    display: true,
+                    text: 'No. of evaluators'
+                },
+            }
         },
         animation: animation
     };

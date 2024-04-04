@@ -90,7 +90,7 @@ export default function ResourcePersonRating({
     return (
         <div className="container p-3 mt-3">
             <div className="flex items-center mb-3">
-                <div className="font-semibold text-lg text-blue-800">
+                <div className="font-semibold sm:text-lg text-sm text-blue-800">
                     Resource Person
                 </div>
 
@@ -98,12 +98,12 @@ export default function ResourcePersonRating({
 
                 <button
                     disabled={!isPrintable}
-                    className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white 
+                    className="flex items-center gap-2 rounded-md px-3 py-1.5 sm:pr-4 bg-blue-600 text-white 
                     hover:bg-blue-600/90 transition duration-150 hover:shadow-md disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none ml-3"
                     onClick={() => setIsPrint(true)}
                 >
                     <PrinterIcon className="w-5 h-5" />
-                    <div>Print</div>
+                    <div className="sm:block hidden">Print</div>
                 </button>
             </div>
 
@@ -125,71 +125,73 @@ export default function ResourcePersonRating({
                 </button>
             </div>
 
-            <div className="grid grid-cols-[5rem,6rem,repeat(7,1fr),20rem] font-bold font-open mt-3 pb-2 border-b">
-                <div className="px-2 text-center">No.</div>
-                <div className="px-2">Sex</div>
-                <div className="px-2 text-center">1</div>
-                <div className="px-2 text-center">2</div>
-                <div className="px-2 text-center">3</div>
-                <div className="px-2 text-center">4</div>
-                <div className="px-2 text-center">5</div>
-                <div className="px-2 text-center">6</div>
-                <div className="px-2 text-center">7</div>
-                <div className="px-2">Comment/Suggestion</div>
-            </div>
-
-            <div className="overflow-y-auto pt-2 pb-1">
-                {loading ? (
-                    <LoadingList
-                        column={10}
-                        grid="grid-cols-[5rem,6rem,repeat(7,1fr),20rem]"
-                    />
-                ) : rpEvaluations.length == 0 && !eventId ? (
-                    <div className="text-center py-2">No event selected</div>
-                ) : rpEvaluations.length == 0 && eventId ? (
-                    <div className="text-center py-2">No ratings</div>
-                ) : (
-                    rpEvaluations?.map((item, index) => (
-                        <div
-                            key={++index}
-                            className="grid grid-cols-[5rem,6rem,repeat(7,1fr),20rem] mb-1 rounded-md list-hover cursor-default"
-                        >
-                            <div className="px-2 py-2 text-center">
-                                {pages.from + index}
-                            </div>
-                            <div className="px-2 py-2">
-                                {item.gender.gender}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q1}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q2}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q3}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q4}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q5}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q6}
-                            </div>
-                            <div className="px-2 py-2 text-center">
-                                {item.q7}
-                            </div>
-                            <div className="px-2 py-2">
-                                <div className="line-clamp-1">
-                                    {item.comment}
+            <div className="max-sm:overflow-x-auto">
+                <div className="grid grid-cols-[5rem,6rem,repeat(7,1fr),20rem] font-bold font-open mt-3 pb-2 border-b">
+                    <div className="px-2 text-center">No.</div>
+                    <div className="px-2">Sex</div>
+                    <div className="px-2 text-center">1</div>
+                    <div className="px-2 text-center">2</div>
+                    <div className="px-2 text-center">3</div>
+                    <div className="px-2 text-center">4</div>
+                    <div className="px-2 text-center">5</div>
+                    <div className="px-2 text-center">6</div>
+                    <div className="px-2 text-center">7</div>
+                    <div className="px-2">Comment/Suggestion</div>
+                </div>
+                <div className="overflow-y-auto pt-2 pb-1">
+                    {loading ? (
+                        <LoadingList
+                            column={10}
+                            grid="grid-cols-[5rem,6rem,repeat(7,1fr),20rem]"
+                        />
+                    ) : rpEvaluations.length == 0 && !eventId ? (
+                        <div className="text-center py-2">No event selected</div>
+                    ) : rpEvaluations.length == 0 && eventId ? (
+                        <div className="text-center py-2">No ratings</div>
+                    ) : (
+                        rpEvaluations?.map((item, index) => (
+                            <div
+                                key={++index}
+                                className="grid grid-cols-[5rem,6rem,repeat(7,1fr),20rem] mb-1 rounded-md list-hover cursor-default"
+                            >
+                                <div className="px-2 py-2 text-center">
+                                    {pages.from + index}
+                                </div>
+                                <div className="px-2 py-2">
+                                    {item.gender.gender}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q1}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q2}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q3}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q4}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q5}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q6}
+                                </div>
+                                <div className="px-2 py-2 text-center">
+                                    {item.q7}
+                                </div>
+                                <div className="px-2 py-2">
+                                    <div className="line-clamp-1">
+                                        {item.comment}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
-                )}
+                        ))
+                    )}
+                </div>
             </div>
+
 
             {pages?.last_page > 1 && (
                 <Paginate

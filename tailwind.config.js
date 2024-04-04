@@ -30,6 +30,9 @@ export default {
                 'max-md': {'max': '1023px'},
                 'mm-md': {'min': '940px', 'max': '1023px'},
                 'min-lg': '1200px',//{'min':'1200px'},
+                'xs': '456px',
+                'max-sm': {'max': '767px'},
+                'max-xs': {'max': '639px'},
             }
         },
     },

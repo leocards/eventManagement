@@ -18,6 +18,11 @@ export default function Authenticated({ user, children }) {
     }, [])
 
     useEffect(() => {
+        if(windowSize < 1024) {
+            dispatch(toggleMenu(false))
+        } else {
+            dispatch(toggleMenu(true))
+        }
     }, [windowSize])
 
     return (

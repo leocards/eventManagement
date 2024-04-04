@@ -49,7 +49,7 @@ export default function Notifications({ show = false, getUnread = () => {} }) {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
             >
-                <div className="p-3 px-0 bg-white shadow-lg absolute right-0 ring-1 ring-slate-200/50 rounded-md w-[23rem] c">
+                <div className="p-3 px-0 bg-white shadow-lg absolute md:right-0 -right-36 ring-1 ring-slate-200/50 rounded-md sm:w-[23rem] w-[18rem] c">
                     <div className="px-3 font-gotham text-left flex">
                         Notifications
                         <span

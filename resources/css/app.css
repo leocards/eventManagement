@@ -45,7 +45,7 @@
 
 @layer utilities {
     ::-webkit-scrollbar {
-        @apply w-[14px] bg-transparent;
+        @apply w-[14px] h-[14px] bg-transparent;
     }
     
     ::-webkit-scrollbar-thumb {

@@ -12,9 +12,9 @@ export default function SexDesiggredatedDataChart({ gender = {Male: 0, Female: 0
                 label: "Sex",
                 data: [Female, Male, (Male + Female)],
                 backgroundColor: [
-                    "rgb(255, 205, 86)",
-                    "rgb(255, 99, 132)",
                     "rgb(54, 162, 235)",
+                    "rgb(255, 99, 132)",
+                    "rgb(255, 205, 86)",
                 ],
             },
         ],

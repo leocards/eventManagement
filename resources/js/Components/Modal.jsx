@@ -33,7 +33,7 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
             <Dialog
                 as="div"
                 id="modal"
-                className={`${position === 'center'?'items-center justify-center flex':''} fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50 transform transition-all print:hidden`}
+                className={`${position === 'center'?'items-center justify-center flex':''} fixed inset-0 overflow-y-auto px-4 py-6 z-50 transform transition-all print:hidden`}
                 onClose={close}
             >
                 {backdrop && <Transition.Child
@@ -69,10 +69,10 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
     );
 }
 
-export const ModalHeader = ({ label, showCloseButton = true, labelClassName = '', onClose }) => {
+export const ModalHeader = ({ label, children, showCloseButton = true, labelClassName = '', onClose }) => {
     return (
         <div className="text-lg font-semibold flex items-center uppercase mb-5 pr-1">
-            <div className={labelClassName}>{label}</div>
+            <div className={labelClassName}>{label||children}</div>
             {showCloseButton&&<button
                 onClick={onClose}
                 className="p-2 ml-auto hover:bg-gray-100 rounded-full transition duration-150"

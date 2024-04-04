@@ -600,7 +600,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                             },
                         });
                     }}
-                    className="mr-auto px-8 py-2 rounded-md hover:bg-gray-200/90 transition duration-150 text-gray-700 text-xs font-semibold uppercase"
+                    className="mr-auto px-4 sm:px-8 py-2 rounded-md hover:bg-gray-200/90 transition duration-150 text-gray-700 text-xs font-semibold uppercase"
                 >
                     Clear form
                 </button>
@@ -610,7 +610,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                         onCancel()
                         router.get(route('event'))
                     }}
-                    className="w-32 !py-3 justify-center !border-0 !bg-gray-300 hover:!bg-gray-400/70 mr-4"
+                    className="sm:w-32 !py-3 justify-center !border-0 !bg-gray-300 hover:!bg-gray-400/70 mr-4"
                 >
                     Cancel
                 </SecondaryButton>
@@ -618,7 +618,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                 <PrimaryButton
                     disabled={processing}
                     onClick={onSubmit}
-                    className="min-w-[8rem] !py-3 justify-center"
+                    className="sm:min-w-[8rem] !py-3 justify-center"
                 >
                     {processing ? (
                         <div className="flex items-center gap-2">

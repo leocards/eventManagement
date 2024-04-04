@@ -10,8 +10,8 @@ export default function TopCards({ onTimeIn, onTimeOut, numberOfEvents}) {
     } */
 
     return (
-        <div className="grid grid-cols-[2fr,1fr] gap-3">
-            <div className="min-h-[6rem] bg-white rounded-md ring-1 ring-slate-200/40 p-2.5 relative">
+        <div className="grid grid-cols-1 md:grid-cols-[2fr,1fr] gap-3">
+            <div className="min-h-[6rem] bg-white rounded-md ring-1 ring-slate-200/40 p-2.5 relative max-sm:order-2">
                 <div className="sm:text-xs md:text-sm xl:text-base text-blue-900 font-semibold mb-2">
                     Take Attendance
                 </div>
@@ -26,16 +26,16 @@ export default function TopCards({ onTimeIn, onTimeOut, numberOfEvents}) {
                 </div>
             </div>
             <div className="h-24 bg-white rounded-md ring-1 ring-slate-200/40 flex p-2.5 items-center relative">
-                <div className="lg:w-20 sm:w-14 shrink-0">
-                    <div className="rounded-full shrink-0 lg:w-14 sm:w-10 lg:h-14 sm:h-10 bg-red-300/20 flex items-center justify-center text-red-700">
-                        <CalendarDaysIcon className="lg:w-7 sm:w-5 lg:h-7 sm:h-5" />
+                <div className="lg:w-20 w-14 shrink-0">
+                    <div className="rounded-full shrink-0 lg:w-14 w-10 lg:h-14 h-10 bg-red-300/20 flex items-center justify-center text-red-700">
+                        <CalendarDaysIcon className="lg:w-7 w-5 lg:h-7 h-5" />
                     </div>
                 </div>
                 <div>
-                    <div className="lg:text-2xl sm:text-lg text-blue-900 font-semibold">
+                    <div className="lg:text-2xl text-lg text-blue-900 font-semibold">
                         {numberOfEvents[filterEventTotal]}
                     </div>
-                    <div className="sm:text-xs md:text-sm xl:text-base text-blue-900 font-semibold">
+                    <div className="md:text-sm xl:text-base text-blue-900 font-semibold">
                         Number of Events |{" "}
                         <span className="opacity-40 font-medium">{filterEventTotal}</span>
                     </div>

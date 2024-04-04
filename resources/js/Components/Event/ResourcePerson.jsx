@@ -109,10 +109,10 @@ export default function ResourcePerson({
     return (
         <div className={"container p-4 pb-3 mt-6 "+(errorMessage&&"!ring-pink-500")} id="rp_list">
             {errorMessage && <div className="text-pink-700 text-sm ">{errorMessage}</div>}
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
                 <div className="font-semibold after:content-['*'] after:ml-0.5 after:text-red-500"> Event Resource Person </div>
 
-                <div className="w-56 border rounded-md">
+                <div className="md:w-56 border rounded-md md:ml-0 mt-3 md:mt-0">
                     <SearchInput
                         onSearch={(value) => setSearch(value)}
                         onInput={(input) => input && setLoadingSearch(true)}
@@ -120,7 +120,7 @@ export default function ResourcePerson({
                 </div>
             </div>
 
-            <div className="flex items-end mt-3">
+            <div className="flex flex-col md:flex-row md:items-end mt-3">
                 <div className="flex relative">
                     <label htmlFor="rp">Number of resource person:</label>
                     <input
@@ -134,9 +134,10 @@ export default function ResourcePerson({
                     />
                 </div>
 
-                <div className="ml-auto flex items-center">
+                <div className="ml-auto flex flex-col sm:flex-row sm:items-center md:mt-0 mt-4 ">
+                    <div className="flex items-center gap-2">
                     {numberOfRp && numberOfRp != 0 && (
-                        <div className="mr-3">
+                        <div className="sm:mr-3 ml-auto">
                             {listOfRP.length} of {numberOfRp}
                         </div>
                     )}
@@ -146,9 +147,10 @@ export default function ResourcePerson({
                     >
                         View added resource person
                     </ViewButton>
+                    </div>
                     <ViewButton
                         onClick={() => setAddRP(true)}
-                        className="ml-3 flex items-center gap-2 !px-4 !pr-5"
+                        className="sm:ml-3 flex items-center gap-2 !px-4 !pr-5 w-fit sm:w-auto ml-auto mt-2 sm:mt-0"
                     >
                         <PlusCircleIcon className="h-4 w-4" />
                         New

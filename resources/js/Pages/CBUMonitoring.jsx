@@ -11,6 +11,7 @@ import { PrinterIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Head, router } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 
 export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, remarks }) {
     const [selectedYear, setSelectedYear] = useState(null);
@@ -23,6 +24,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, 
     const [search, setSearch] = useState("");
     const [isPrint, setIsPrint] = useState(false)
     const [filterRemarks, setFilterRemarks] = useState("All")
+    const windowSize = useSelector(state => state.windowWidth.size);
     //const [inactives, setInactives] = useState([])
 
     const setCBUData = (initialData) => {
@@ -115,22 +117,24 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, 
                 links={["CBU Training Monitoring"]}
             />
 
-            <div className="flex items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center mb-2">
                 <div className="font-semibold text-lg text-blue-800">
                     Summary
                 </div>
 
-                <ExportButton exportRoute={route('export.cbu', {year: selectedYear??moment().format('YYYY')})} className={`ml-auto ${!selectedYear ? 'opacity-50 pointer-events-none':'hover:shadow-md'}`} />
+                <div className="flex ml-auto mt-3 sm:mt-0">
+                    <ExportButton exportRoute={route('export.cbu', {year: selectedYear??moment().format('YYYY')})} className={`${!selectedYear ? 'opacity-50 pointer-events-none':'hover:shadow-md'}`} />
 
-                <button
-                    disabled={!selectedYear}
-                    className="flex items-center gap-2 rounded-md px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
-                    transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none ml-3"
-                    onClick={() => { setIsPrint(true)/* window.open(route('print.cbu', {_query: { year: selectedYear}})) */}}
-                >
-                    <PrinterIcon className="w-5 h-5" />
-                    <div>Print</div>
-                </button>
+                    <button
+                        disabled={!selectedYear}
+                        className="flex items-center gap-2 rounded-md px-3 py-1.5 sm:pr-4 bg-blue-600 text-white hover:bg-blue-600/90 
+                        transition duration-150 hover:shadow-md disabled:opacity-50 disabled:pointer-events-none ml-3"
+                        onClick={() => { setIsPrint(true)/* window.open(route('print.cbu', {_query: { year: selectedYear}})) */}}
+                    >
+                        <PrinterIcon className="w-5 h-5" />
+                        <div className="sm:block hidden">Print</div>
+                    </button>
+                </div>
             </div>
 
             <div className="container">
@@ -138,9 +142,9 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, 
                     {selectedYear && (
                         <button
                             onClick={() => setShowMore(!showMore)}
-                            className="bg-gray-100 text-gray-700 cursor-pointer px-2.5 shrink-0 whitespace-nowrap rounded"
+                            className="bg-gray-100 text-gray-700 cursor-pointer px-2.5 shrink-0 whitespace-nowrap rounded sm:text-base text-sm"
                         >
-                            {showMore ? "Hide" : "Show"} Events for the year {selectedYear}
+                            {showMore ? "Hide" : "Show"} Events
                         </button>
                     )}
                     <div className="ml-auto">
@@ -169,73 +173,77 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, 
             </div>
 
             <div className="container p-3 mt-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <FilterByQuarter size="w-52" list={remarks} selectedQuarter={filterRemarks} onSelect={setFilterRemarks} />
-                    <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
-                        <div className="w-56">
+                    <div className="flex xs:w-fit border h-9 rounded-md overflow-hidden xs:ml-auto mt-3 md:mt-0">
+                        <div className="xs:w-56">
                             <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(input)} />
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-[5rem,1fr,15rem,14rem] font-bold font-open mt-3 pb-2 border-b">
-                    <div className="px-2">No.</div>
-                    <div className="px-2">Trainee</div>
-                    <div className="px-2 text-center">Remarks</div>
-                    <div className="px-2 text-center">
-                        Total Trainings Attended
+                <div className="max-xs:overflow-x-auto">
+                    <div className="grid grid-cols-[5rem,1fr,1fr] sm:text-base text-sm md:grid-cols-[5rem,1fr,15rem,14rem] font-bold font-open mt-3 pb-2 border-b">
+                        <div className="px-2">No.</div>
+                        <div className="px-2">Trainee</div>
+                        <div className="px-2 text-center md:block hidden">Remarks</div>
+                        <div className="px-2 text-center">
+                            Total Trainings Attended
+                        </div>
                     </div>
-                </div>
-                <div className="overflow-y-auto h-[calc(100vh-15rem)] pt-2 pb-1">
-                    {loadingSearch ? (
-                        <LoadingList
-                            column={4}
-                            grid="grid-cols-[5rem,1fr,15rem,14rem]"
-                        />
-                    ) : !loadingSearch && search && CBUs.length === 0 ? (
-                        <div className="text-center my-5">No results found for "{search}"</div>
-                    ) : !loadingSearch && !search && CBUs.length === 0 ? (
-                        <div className="text-center my-5">No records</div>
-                    ) : (
-                        CBUs.map((cbu, index) => (
-                            <div
-                                key={index}
-                                className="grid grid-cols-[5rem,1fr,15rem,14rem] h-12 mb-1 rounded-md list-hover cursor-default"
-                            >
-                                <div className="px-4 flex items-center">
-                                    {pages.from + index}
-                                </div>
-                                <div className="px-2 flex items-center">
-                                    <div className="line-clamp-1">
-                                        {cbu.first_name} {cbu.last_name}
+
+                    <div className="overflow-y-auto h-[calc(100vh-15rem)] pt-2 pb-1">
+                        {loadingSearch ? (
+                            <LoadingList
+                                column={windowSize < 768 ? 3:4}
+                                grid="grid-cols-[5rem,1fr,1fr] md:grid-cols-[5rem,1fr,15rem,14rem]"
+                            />
+                        ) : !loadingSearch && search && CBUs.length === 0 ? (
+                            <div className="text-center my-5">No results found for "{search}"</div>
+                        ) : !loadingSearch && !search && CBUs.length === 0 ? (
+                            <div className="text-center my-5">No records</div>
+                        ) : (
+                            CBUs.map((cbu, index) => (
+                                <div
+                                    key={index}
+                                    className="grid grid-cols-[5rem,1fr,1fr] md:grid-cols-[5rem,1fr,15rem,14rem] h-12 mb-1 rounded-md list-hover cursor-default"
+                                >
+                                    <div className="px-4 flex items-center">
+                                        {pages.from + index}
+                                    </div>
+                                    <div className="px-2 flex items-center">
+                                        <div className="line-clamp-1">
+                                            {cbu.first_name} {cbu.last_name}
+                                        </div>
+                                    </div>
+                                    <div className="px-2 hidden items-center justify-center md:flex">
+                                        {cbu.status != "Active" ?cbu.status:""}
+                                    </div>
+                                    <div className="px-2 flex items-center justify-center">
+                                        {cbu.trainings_attended?(cbu.trainings_attended[0]?.trainings||"0") : "0"}
                                     </div>
                                 </div>
-                                <div className="px-2 flex items-center justify-center">
-                                    {cbu.status != "Active" ?cbu.status:""}
-                                </div>
-                                <div className="px-2 flex items-center justify-center">
-                                    {cbu.trainings_attended?(cbu.trainings_attended[0]?.trainings||"0") : "0"}
-                                </div>
-                            </div>
-                        ))
+                            ))
+                        )}
+                    </div>
+
+                    {pages?.last_page > 1 && (
+                        <Paginate
+                            disabled={{
+                                next: pages?.next_page_url ? true : false,
+                                previous: pages?.prev_page_url ? true : false,
+                            }}
+                            contentList={pages}
+                            onPrevious={() =>
+                                getNextAndPrevPages(pages.current_page - 1)
+                            }
+                            onNext={() =>
+                                getNextAndPrevPages(pages.current_page + 1)
+                            }
+                        />
                     )}
                 </div>
 
-                {pages?.last_page > 1 && (
-                    <Paginate
-                        disabled={{
-                            next: pages?.next_page_url ? true : false,
-                            previous: pages?.prev_page_url ? true : false,
-                        }}
-                        contentList={pages}
-                        onPrevious={() =>
-                            getNextAndPrevPages(pages.current_page - 1)
-                        }
-                        onNext={() =>
-                            getNextAndPrevPages(pages.current_page + 1)
-                        }
-                    />
-                )}
             </div>
 
             {selectedYear && <PrintEvaluations show={isPrint} withLayout onCancel={() => setIsPrint(false)} src={route('print.cbu', { _query: { year:  selectedYear} })} />}

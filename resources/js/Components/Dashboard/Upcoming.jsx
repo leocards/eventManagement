@@ -124,12 +124,12 @@ export default function Upcoming({ initialList, active }) {
             </div>
             {!tabs ? (
                 <>
-                    <div className="flex items-center">
+                    <div className="flex sm:flex-row flex-col sm:items-center">
                         <div className="text-blue-800 font-semibold lg:text-lg sm:text-base text-sm">
                             Upcoming Cap Dev Training
                         </div>
-                        <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
-                            <div className="w-56">
+                        <div className="flex border h-9 rounded-md overflow-hidden sm:ml-auto mt-3 sm:mt-0">
+                            <div className="sm:w-56">
                                 <SearchInput
                                     onSearch={(value) =>
                                         onSearchUpcoming(value)
@@ -142,7 +142,7 @@ export default function Upcoming({ initialList, active }) {
                         </div>
                     </div>
                     <div className="mt-3 h-full">
-                        <div className="overflow-y-auto overscroll-contain h-[18rem] pt-1">
+                        <div className="overflow-y-auto overscroll-contain sm: h-[18rem] pt-1">
                             {loadingSearch ? (
                                 <LoadingList
                                     column={1}
@@ -159,7 +159,7 @@ export default function Upcoming({ initialList, active }) {
                                         <div className="font-bold">
                                             {list.title}
                                         </div>
-                                        <div className="flex gap-5">
+                                        <div className="flex md:flex-row flex-col md:gap-5">
                                             <div className="text-sm opacity-80 flex items-center gap-1 shrink-0">
                                                 <CalendarDaysIcon className="w-4 h-4" />
                                                 {convertDate(

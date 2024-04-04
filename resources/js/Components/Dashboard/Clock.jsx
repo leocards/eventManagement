@@ -26,20 +26,20 @@ export default function Clock()
     }, [time])
 
     return (
-        <div className="rounded-md bg-white flex p-2 px-3.5 ring-1 ring-slate-200/40 text-blue-900">
+        <div className="rounded-md md:bg-white flex p-2 px-3.5 md:ring-1 ring-slate-200/40 text-blue-900 w-fit ml-auto md:ml-0 md:w-auto">
             <div className="flex items-center">
-                <div className="w-12 h-12 flex justify-center items-center rounded-full bg-green-400/20 text-green-600">
-                    <ClockIcon className="w-6 h-6" />
+                <div className="md:w-12 md:flex hidden w-9 md:h-12 h-9 justify-center items-center rounded-full bg-green-400/20 text-green-600">
+                    <ClockIcon className="md:w-6 md:h-6 w-5 h-5" />
                 </div>
 
-                <div className="ml-3 flex items-center">
-                    <div className="text-2xl font-semibold w-36">
+                <div className="ml-3 flex md:flex-row flex-col md:items-center">
+                    <div className="md:text-2xl text-sm font-semibold md:w-36 ml-auto">
                         <span>{time}</span>
                     </div>
 
-                    <div className="border-l-2 border-slate-400 ml-3 pl-3">
-                        <div className="font-semibold text-red-500">{date.day}</div>
-                        <div>{date.date}</div>
+                    <div className="md:border-l-2 border-slate-400 sm:ml-3 sm:pl-3 md:block flex">
+                        <div className="font-semibold text-red-500 text-sm md:mr-0 mr-3 max-xs:text-xs">{date.day}</div>
+                        <div className="text-sm max-xs:text-xs">{date.date}</div>
                     </div>
                 </div>
             </div>

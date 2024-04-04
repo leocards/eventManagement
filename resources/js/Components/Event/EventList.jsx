@@ -14,6 +14,7 @@ import styled from "styled-components";
 import DeleteConfirmation from "../DeleteConfirmation";
 import AddRemarks from "./AddRemarks";
 import moment from "moment";
+import MenuOptions from "./PopOver";
 
 export default function EventList({
     MySwal,
@@ -64,7 +65,7 @@ export default function EventList({
                     filterEvent: filterEvent,
                     sort: sortBy,
                     order: orderBy,
-                    page: pageNumber
+                    page: pageNumber,
                 },
             })
         );
@@ -81,13 +82,13 @@ export default function EventList({
         { dateStart, dateEnd, is_range, event_code },
         returnValue = false
     ) => {
-        const outTime = event_code[0].time_out.split(' ')[1]
-        
+        const outTime = event_code[0].time_out.split(" ")[1];
+
         const currentDate = new Date();
         const currentDateTime = new Date();
         const endDate = new Date(dateEnd);
         const startDate = new Date(dateStart);
-        const timeOut = new Date(moment().format('Y-MM-D')+ ' ' +outTime);
+        const timeOut = new Date(moment().format("Y-MM-D") + " " + outTime);
 
         startDate.setHours(0, 0, 0, 0);
         currentDate.setHours(0, 0, 0, 0);
@@ -130,7 +131,8 @@ export default function EventList({
                     1
                 );
             else if (
-                (currentDate.getTime() >= startDate.getTime() && currentDate.getTime() <= endDate.getTime()) &&
+                currentDate.getTime() >= startDate.getTime() &&
+                currentDate.getTime() <= endDate.getTime() &&
                 timeOut.getTime() >= currentDateTime.getTime()
             )
                 return !returnValue ? (
@@ -215,8 +217,10 @@ export default function EventList({
 
     return (
         <>
-            <div className="grid grid-cols-[7rem,8rem,1fr] border-b mt-3">
-                <div className="font-bold font-open p-1.5 px-3">Code</div>
+            <div className="grid grid-cols-[6rem,1fr] md:grid-cols-[7rem,8rem,1fr] border-b mt-3">
+                <div className="font-bold font-open p-1.5 px-3 md:block hidden">
+                    Code
+                </div>
                 <div className="font-bold font-open p-1.5 px-3">Status</div>
                 <div className="font-bold font-open p-1.5 px-3">Name</div>
             </div>
@@ -230,11 +234,11 @@ export default function EventList({
                     events.map((item, index) => (
                         <div
                             key={index}
-                            className="grid grid-cols-[7rem,8rem,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+                            className="grid grid-cols-[6rem,1fr] md:grid-cols-[7rem,8rem,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
                             hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group"
                             onClick={() => setSelected(item)}
                         >
-                            <div className="px-3 py-1.5 flex items-center text-sm font-semibold">
+                            <div className="px-3 py-1.5 items-center text-sm font-semibold md:flex hidden ">
                                 <div className="whitespace-pre-wrap break-words max-w-[14rem]">
                                     {getEventCode(item)}
                                 </div>
@@ -244,7 +248,7 @@ export default function EventList({
                             </div>
                             <div className="px-3 py-1.5 flex items-center">
                                 <div className="line-clamp-1">{item.title}</div>
-                                <div className="hidden ml-auto gap-2 group-hover:flex pl-3">
+                                <div className="hidden ml-auto gap-2 md:group-hover:flex pl-3">
                                     <button
                                         className="rounded-md p-2 shrink-0 hover:bg-slate-200 text-"
                                         title="View"
@@ -291,6 +295,59 @@ export default function EventList({
                                         <TrashIcon className="w-5 h-5" />
                                     </button>
                                 </div>
+                                <div className="ml-auto md:hidden block pl-3">
+                                    <MenuOptions
+                                        menus={[
+                                            {
+                                                icon: (
+                                                    <EyeIcon className="h-5 w-5" />
+                                                ),
+                                                label: "Details",
+                                            },
+                                            {
+                                                icon: (
+                                                    <PencilSquareIcon className="h-5 w-5" />
+                                                ),
+                                                label: "Edit",
+                                            },
+                                            {
+                                                icon: (
+                                                    <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
+                                                ),
+                                                label: "Remarks",
+                                            },
+                                            {
+                                                icon: (
+                                                    <TrashIcon className="h-5 w-5" />
+                                                ),
+                                                label: "Delete",
+                                            },
+                                        ]}
+                                        onSelect={(option) => {
+                                            if (option == "Details") {
+                                                setShowEventDetails(true);
+                                            }
+                                            if (option == "Edit") {
+                                                router.get(
+                                                    route("event"),
+                                                    {
+                                                        event: "event",
+                                                        event_id: item.id,
+                                                    },
+                                                    {
+                                                        replace: true,
+                                                    }
+                                                );
+                                            }
+                                            if (option == "Remarks") {
+                                                setShowEventRemarks(true);
+                                            }
+                                            if (option == "Delete") {
+                                                setShowDeleteConfirmation(true);
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     ))
@@ -323,9 +380,9 @@ export default function EventList({
                 onCancel={setShowDeleteConfirmation}
                 onConfirmDelete={() => {
                     post(route("event.delete", [selected?.id]), {
-                        onSuccess: ({props:{events}}) => {
-                            setEventData(events)
-                            setShowDeleteConfirmation(false)
+                        onSuccess: ({ props: { events } }) => {
+                            setEventData(events);
+                            setShowDeleteConfirmation(false);
                             MySwal.fire({
                                 text: `Event has been deleted.`,
                                 icon: "success",
@@ -335,7 +392,7 @@ export default function EventList({
                                 timer: 3000,
                                 showConfirmButton: false,
                             });
-                        }
+                        },
                     });
                 }}
             >
@@ -372,16 +429,16 @@ export default function EventList({
                 onClose={() => setShowEventRemarks(false)}
                 onSuccess={(message, remark, eventId) => {
                     let updateEvent = events.map((event) => {
-                        if(event.id == eventId) {
+                        if (event.id == eventId) {
                             return {
-                                ...event, 
-                                remarks: remark
-                            }
+                                ...event,
+                                remarks: remark,
+                            };
                         }
-                        return event
-                    })
-                    setEvents(updateEvent)
-                    setShowEventRemarks(false)
+                        return event;
+                    });
+                    setEvents(updateEvent);
+                    setShowEventRemarks(false);
                     MySwal.fire({
                         text: message,
                         icon: "success",

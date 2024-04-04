@@ -8,6 +8,7 @@ import { Head } from "@inertiajs/react";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useSelector } from 'react-redux';
 
 export default function Attendance({ auth, attendance }) {
     return (
@@ -30,6 +31,7 @@ const AttendanceList = ({ initialList }) => {
     const [pages, setPages] = useState(null);
     const [attendance, setAttendance] = useState([]);
     const [loadingSearch, setLoadingSearch] = useState(false);
+    const windowSize = useSelector(state => state.windowWidth.size)
 
     const setAttendaceData = (initialData) => {
         let initial = { ...initialData };
@@ -95,7 +97,7 @@ const AttendanceList = ({ initialList }) => {
             <GridRow className="border-b pb-2">
                 <TableHeader>Date</TableHeader>
                 <TableHeader>Title</TableHeader>
-                <TableHeader>Position</TableHeader>
+                <TableHeader className="md:block hidden">Position</TableHeader>
                 <TableHeader>Time in</TableHeader>
                 <TableHeader>Time out</TableHeader>
             </GridRow>
@@ -103,7 +105,7 @@ const AttendanceList = ({ initialList }) => {
             <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
                 {
                     loadingSearch ? (
-                        <LoadingList column={5} grid="grid-cols-[14rem,1fr,7.5rem,7.5rem,7.5rem]" />
+                        <LoadingList column={5} grid="grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr]" />
                     ) : attendance.length === 0 && search ? (
                         <div className="text-center py-2">No results found for " {search} " </div>
                     ) : attendance.length === 0 && !loadingSearch ? (
@@ -117,7 +119,7 @@ const AttendanceList = ({ initialList }) => {
                                 <div className="px-3 py-1.5 flex items-center">
                                     <div className="line-clamp-1">{attended.event.title}</div>
                                 </div>
-                                <div className="px-3 py-1.5 flex items-center">
+                                <div className="px-3 py-1.5 items-center md:flex hidden">
                                     Trainee
                                 </div>
                                 <div className="px-3 py-1.5 flex items-center">
@@ -154,11 +156,11 @@ const TableHeader = styled.div.attrs(() => ({
 }))``;
 
 const GridRow = styled.div.attrs(() => ({
-    className: `grid grid-cols-[14rem,1fr,7.5rem,7.5rem,7.5rem]`,
+    className: `grid grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr]`,
 }))``;
 
 const TableContent = styled.div.attrs(() => ({
-    className: `grid grid-cols-[14rem,1fr,7.5rem,7.5rem,7.5rem] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+    className: `grid grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
     hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group`,
 }))``;
 

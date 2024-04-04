@@ -7,7 +7,7 @@ export default function EventTabs({ eventTab, onChangeTab, addRP = () => {} }) {
     const { url } = usePage()
 
     return (
-        <div className="flex justify-between mb-2 text-blue-900">
+        <div className="flex flex-col sm:flex-row sm:justify-between mb-2 text-blue-900">
             <div className="h-9 flex gap-2">
                 <button
                     onClick={() => router.get(route("event"))}
@@ -33,7 +33,7 @@ export default function EventTabs({ eventTab, onChangeTab, addRP = () => {} }) {
                 </button>
             </div>
 
-            <div>
+            <div className="ml-auto sm:ml-0 mt-3 sm:mt-0">
                 <button
                     onClick={() => {
                         if(url == "/event")

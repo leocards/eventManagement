@@ -102,7 +102,7 @@ const TraineeList = ({ initialList, attends }) => {
             <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
                 {
                     loadingSearch ? (
-                        <LoadingList column={4} grid="grid-cols-[12rem,1fr,7.5rem,13rem]" />
+                        <LoadingList column={4} grid="grid-cols-[1fr,1fr,1fr,1fr]" />
                     ) : search && training.length === 0 ? (
                         <div className="text-center py-4">No results found for " {search} "</div>
                     ) : (
@@ -156,10 +156,10 @@ const TableHeader = styled.div.attrs(() => ({
 }))``;
 
 const GridRow = styled.div.attrs(() => ({
-    className: `grid grid-cols-[12rem,1fr,7.5rem,13rem]`,
+    className: `grid grid-cols-[1fr,1fr,1fr,1fr]`,
 }))``;
 
 const TableContent = styled.div.attrs(() => ({
-    className: `grid grid-cols-[12rem,1fr,7.5rem,13rem] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+    className: `grid grid-cols-[1fr,1fr,1fr,1fr] min-h-[4rem] rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
     hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group`,
 }))``;

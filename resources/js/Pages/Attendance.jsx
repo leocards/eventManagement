@@ -104,70 +104,76 @@ export default function Attendance({ auth, events }) {
             <Head title="Attendance" />
             <PageHeader title="Attendance" links={["Attendance"]} />
 
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex md:flex-row flex-col md:items-center mb-2">
                 <div className="font-semibold text-lg text-blue-800">
                     Summary
                 </div>
 
-                <ExportButton exportRoute={route('export.attendance', {id: selectedEvent??events[0].id})} className={'ml-auto'} />
+                <div className="flex ml-auto mt-4 md:mt-0">
+                    <ExportButton exportRoute={route('export.attendance', {id: selectedEvent??events[0].id})} />
 
-                <button onClick={() => setIsPrint(true)} className="flex items-center gap-2 rounded-md ml-3 px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md">
-                    <PrinterIcon className="w-5 h-5" />
-                    <div>Print</div>
-                </button>
+                    <button onClick={() => setIsPrint(true)} className="flex items-center gap-2 rounded-md ml-3 px-3 py-1.5 pr-4 bg-blue-600 text-white hover:bg-blue-600/90 transition duration-150 hover:shadow-md">
+                        <PrinterIcon className="w-5 h-5" />
+                        <div className="sm:block hidden">Print</div>
+                    </button>
+                </div>
             </div>
 
             <SelectEventList eventList={events} onSelectEvent={setSelectedEvent} />
 
             <div className="container p-3 text-gray-700 mt-3">
-                <div className="flex w-fit border h-9 rounded-md overflow-hidden ml-auto">
-                    <div className="w-56">
+                <div className="flex sm:w-fit border h-9 rounded-md overflow-hidden ml-auto">
+                    <div className="sm:w-56">
                         <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(true)} />
                     </div>
                 </div>
 
-                <div className={`grid min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] grid-cols-[1fr,6rem,6rem,6rem] border-b font-bold font-open pb-2 mt-3`}>
-                    <div className="capitalize px-2 min-lg:block hidden">Date</div>
-                    <div className="capitalize px-2">Trainee</div>
-                    <div className="capitalize px-2 min-lg:block hidden">Event</div>
-                    <div className="capitalize px-2 text-center">in</div>
-                    <div className="capitalize px-2 text-center">out</div>
-                    <div className="capitalize px-2 text-center">remarks</div>
-                </div>
+                <div className="max-xs:overflow-x-auto">
 
-                <div className="overflow-y-auto h-[calc(100vh-16rem)] py-2">
-                    {
-                        search && !loadingSearch && attendance.length === 0 ? (
-                            <div className="text-center">
-                                No records found for "{" "}
-                                <span className="font-medium">{search}</span> "
-                            </div>
-                        ) : !search && !loadingSearch && attendance.length == 0 ? (
-                            <div className="p-3 w-full text-center">No records</div>
-                        ) : loadingSearch ? (
-                            <LoadingList
-                                column={6}
-                                grid="grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem]"
-                            />
-                        ) : (
-                            <AttendanceList attendance={attendance} />
-                        )
-                    }
-                </div>
+                    <div className={`grid min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] grid-cols-[1fr,6rem,6rem,6rem] border-b font-bold font-open pb-2 mt-3`}>
+                        <div className="capitalize px-2 min-lg:block hidden">Date</div>
+                        <div className="capitalize px-2">Trainee</div>
+                        <div className="capitalize px-2 min-lg:block hidden">Event</div>
+                        <div className="capitalize px-2 text-center">in</div>
+                        <div className="capitalize px-2 text-center">out</div>
+                        <div className="capitalize px-2 text-center">remarks</div>
+                    </div>
 
-                {pages?.last_page > 1 && (
-                    <Paginate
-                        disabled={{
-                            next: pages?.next_page_url ? true : false,
-                            previous: pages?.prev_page_url ? true : false,
-                        }}
-                        contentList={pages}
-                        onPrevious={() =>
-                            getNextAndPrevPages(pages.current_page - 1)
+                    <div className="overflow-y-auto h-[calc(100vh-16rem)] py-2">
+                        {
+                            search && !loadingSearch && attendance.length === 0 ? (
+                                <div className="text-center">
+                                    No records found for "{" "}
+                                    <span className="font-medium">{search}</span> "
+                                </div>
+                            ) : !search && !loadingSearch && attendance.length == 0 ? (
+                                <div className="p-3 w-full text-center">No records</div>
+                            ) : loadingSearch ? (
+                                <LoadingList
+                                    column={6}
+                                    grid="grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem]"
+                                />
+                            ) : (
+                                <AttendanceList attendance={attendance} />
+                            )
                         }
-                        onNext={() => getNextAndPrevPages(pages.current_page + 1)}
-                    />
-                )}
+                    </div>
+
+                    {pages?.last_page > 1 && (
+                        <Paginate
+                            disabled={{
+                                next: pages?.next_page_url ? true : false,
+                                previous: pages?.prev_page_url ? true : false,
+                            }}
+                            contentList={pages}
+                            onPrevious={() =>
+                                getNextAndPrevPages(pages.current_page - 1)
+                            }
+                            onNext={() => getNextAndPrevPages(pages.current_page + 1)}
+                        />
+                    )}
+                </div>
+
             </div>
             
             <PrintEvaluations show={isPrint} onCancel={() => setIsPrint(false)} src={route('print.attendance', {_query: { id: selectedEvent}})} />
