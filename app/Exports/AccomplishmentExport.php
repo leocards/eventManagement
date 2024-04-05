@@ -5,15 +5,19 @@ namespace App\Exports;
 use App\Models\Event;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromView;
+use stdClass;
 
 class AccomplishmentExport implements FromView
 {
     private $now;
     public function __construct(
         public int $year,
-        public int|string $quarter
+        public int|string $quarter,
+        public object $reviewedby = new stdClass,
+        public object $approvedby = new stdClass
     ) {
         $this->now = Carbon::now();
     }
@@ -84,7 +88,14 @@ class AccomplishmentExport implements FromView
         return view('Accomplishment', [
             "accomplishments" => $events,
             "year" => $this->year,
-            "quarter" => $quarters[$this->quarter]
+            "quarter" => $quarters[$this->quarter],
+            "reviewedby" => $this->reviewedby,
+            "approvedby" => $this->approvedby,
+            "auth" => (object) [
+                "name" => Auth::user()->first_name.' '.Auth::user()->last_name,
+                "position" => Auth::user()->position,
+                "date" => Carbon::now()->format("F d, Y")
+            ]
         ]);
     }
 }

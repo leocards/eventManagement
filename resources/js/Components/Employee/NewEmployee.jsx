@@ -122,17 +122,17 @@ export default function NewEmployee({
     }, [updateData]);
 
     return (
-        <Modal show={show} onClose={onClose} maxWidth="xl" isOverFlow>
+        <Modal show={show} onClose={onClose} maxWidth="xl" isOverFlow={true}>
             <div className="p-4 pr-2">
                 <ModalHeader
                     showCloseButton={false}
-                    label={(employeeEdit ? "Update" : "New") + " Employee"}
-                />
+                    label={((employeeEdit ? "Update" : "New") + " Employee")}
+                ></ModalHeader>
 
                 <div className="max-h-[66vh] overflow-y-auto pr-1.5 py-1 mb-10">
                     <div className="pb-3 flex items-center gap-2 text-sm">
-                        User default password:{" "}
-                        <pre className="text-base">12345678</pre>
+                        User default password:
+                        <div className="text-base font-medium">12345678</div>
                     </div>
                     {employeeEdit && (
                         <div className="mb-4">

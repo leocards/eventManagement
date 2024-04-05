@@ -123,7 +123,7 @@ export default function Attendance({ auth, events }) {
 
             <div className="container p-3 text-gray-700 mt-3">
                 <div className="flex sm:w-fit border h-9 rounded-md overflow-hidden ml-auto">
-                    <div className="sm:w-56">
+                    <div className="sm:w-56 w-full">
                         <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(true)} />
                     </div>
                 </div>

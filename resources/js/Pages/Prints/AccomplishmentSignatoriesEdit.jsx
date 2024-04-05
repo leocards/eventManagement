@@ -44,11 +44,13 @@ const AccomplishmentSignatoriesEdit = ({ show, label = "Reviewed", onClose, setD
         }
     }
 
-    useEffect(() => {
+    const saveData = () => {
         if(data.remember) {
             localStorage.setItem(`${label}Signatory`, JSON.stringify(data))
         }
-    }, [data])
+        setDataEdit(data); 
+        onClose()
+    }
 
     useEffect(() => {
         if(show) {
@@ -157,7 +159,7 @@ const AccomplishmentSignatoriesEdit = ({ show, label = "Reviewed", onClose, setD
                 </div>
 
                 <div className="pt-5 flex">
-                    <PrimaryButton onClick={() => {setDataEdit(data); onClose()}} className="ml-auto">
+                    <PrimaryButton onClick={saveData} className="ml-auto">
                         Save changes
                     </PrimaryButton>
                 </div>

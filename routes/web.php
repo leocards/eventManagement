@@ -22,6 +22,7 @@ use App\Http\Controllers\UserController;
 use App\Models\Event;
 use App\Models\EventParticipants;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -196,8 +197,18 @@ Route::middleware(['auth', 'verified', 'role:Admin,Super Admin'])->group(functio
         })->name('export.cbu'); 
 
         // ACCOMPLISHMENT
-        Route::get('/accomplishment/{year}/{quarter}', function ($year, $quarter) {
-            return Excel::download(new AccomplishmentExport($year, $quarter), 'IDCB Accomplishment Report.xlsx');
+        Route::get('/accomplishment/{year}/{quarter}', function (Request $request, $year, $quarter) {
+            $reviewed = new stdClass;
+            $approved = new stdClass;
+            if($request->query('reviewedby') && $request->query('approvedby')) {
+                $reviewed = (object) $request->query('reviewedby');
+                $reviewed->date = Carbon::parse($reviewed->date)->format('F d, Y');
+                $approved = (object) $request->query('approvedby');
+                $approved->date = Carbon::parse($approved->date)->format('F d, Y');
+            }
+
+            return Excel::download(new AccomplishmentExport($year, $quarter, $reviewed, $approved), 
+            'IDCB Accomplishment Report.xlsx');
         })->name('export.accomplishment');
 
         // FEEDBACK CONSOLIDATION/ TRAINING ASSESSMET
@@ -263,10 +274,18 @@ Route::middleware('auth')->group(function () {
 //     return $acc->view();
 // });
 
-Route::get('/foo', function() {
-    $eval = new EvaluationReportController();
+Route::get('/foo/{year}/{quarter}', function($year, $quarter) {
+    $eval = new AccomplishmentExport($year, $quarter, (object) [
+        "name" => "Jonathan James Cyd",
+        "position" => "Training specialist II",
+        "date" => "2024-04-05"
+    ], (object) [
+        "name" => "Jonathan James Cyd",
+        "position" => "Training specialist II",
+        "date" => "2024-04-05"
+    ]);
     $event = Event::find(5);
-    return $eval->getRpRatingSummary($event, 1);
+    return $eval->view();
 });
 
 // Route::get('/add-dummy-event', [DummyEventController::class, 'index']);

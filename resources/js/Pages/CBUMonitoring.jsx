@@ -176,7 +176,7 @@ export default function CBUMonitoring({ auth, cbu_summary, inactiveUser, years, 
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <FilterByQuarter size="w-52" list={remarks} selectedQuarter={filterRemarks} onSelect={setFilterRemarks} />
                     <div className="flex xs:w-fit border h-9 rounded-md overflow-hidden xs:ml-auto mt-3 md:mt-0">
-                        <div className="xs:w-56">
+                        <div className="xs:w-56 w-full">
                             <SearchInput onSearch={(value) => setSearch(value)} onInput={(input) => input && setLoadingSearch(input)} />
                         </div>
                     </div>

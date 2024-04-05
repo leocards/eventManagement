@@ -69,3 +69,76 @@
         @endforelse
     </tbody>
 </table>
+
+<table>
+    <tbody>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td></td>
+            <x-table-cell styles="font-weight: 400;"> Prepared by: </x-table-cell>
+            <td></td>
+            <x-table-cell colspan="2" styles="font-weight: 400;"> Reviewed by: </x-table-cell>
+            <td></td>
+            <x-table-cell colspan="2" styles="font-weight: 400;"> Prepared by: </x-table-cell>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        <tr>
+            <td></td>
+            <x-table-cell styles="font-weight: 600;"> 
+                {{ $auth->name }}
+            </x-table-cell>
+
+            @if (!empty(get_object_vars($reviewedby)))
+                <td></td>
+                <x-table-cell colspan="2" styles="font-weight: 600;"> 
+                    {{ $reviewedby->name }}
+                </x-table-cell>
+            @endif
+            @if (!empty(get_object_vars($approvedby)))
+                <td></td>
+                <x-table-cell colspan="2" styles="font-weight: 600;"> 
+                    {{ $approvedby->name }}
+                </x-table-cell>
+            @endif
+        </tr>
+        <tr>
+            <td></td>
+            <x-table-cell> 
+                {{ $auth->position }}
+            </x-table-cell>
+            @if (!empty(get_object_vars($reviewedby)))
+                <td></td>
+                <x-table-cell colspan="2"> 
+                    {{ $reviewedby->position }}
+                </x-table-cell>
+            @endif
+            @if (!empty(get_object_vars($approvedby)))
+                <td></td>
+                <x-table-cell colspan="2"> 
+                    {{ $approvedby->position }}
+                </x-table-cell>
+            @endif
+        </tr>
+        <tr>
+            <td></td>
+            <x-table-cell>
+                {{ $auth->date }}
+            </x-table-cell>
+            @if (!empty(get_object_vars($reviewedby)))
+                <td></td>
+                <x-table-cell colspan="2"> 
+                    {{ $reviewedby->date }}
+                </x-table-cell>
+            @endif
+            @if (!empty(get_object_vars($approvedby)))
+                <td></td>
+                <x-table-cell colspan="2"> 
+                    {{ $approvedby->date }}
+                </x-table-cell>
+            @endif
+
+        </tr>
+    </tbody>
+</table>

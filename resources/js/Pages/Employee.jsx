@@ -177,7 +177,7 @@ export default function Employee({ auth, initialEmployeeList }) {
                         />
 
                         <div className="flex sm:w-fit border h-9 rounded-md overflow-hidden">
-                            <div className="sm:w-56">
+                            <div className="sm:w-56 w-full">
                                 <SearchInput
                                     onSearch={setSearchUser}
                                     onInput={(input) =>
