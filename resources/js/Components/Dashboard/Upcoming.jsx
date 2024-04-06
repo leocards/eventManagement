@@ -129,7 +129,7 @@ export default function Upcoming({ initialList, active }) {
                             Upcoming Cap Dev Training
                         </div>
                         <div className="flex border h-9 rounded-md overflow-hidden sm:ml-auto mt-3 sm:mt-0">
-                            <div className="sm:w-56">
+                            <div className="sm:w-56 w-full">
                                 <SearchInput
                                     onSearch={(value) =>
                                         onSearchUpcoming(value)

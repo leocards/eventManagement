@@ -231,7 +231,7 @@ export default function AccomplishmentReport({ auth, report, years }) {
                 </div>
 
                 <div className="flex flex-col md:flex-row md:items-center my-3">
-                    <div className="flex gap-2">
+                    <div className="flex xs:flex-row flex-col gap-2">
                         <SelectByYear
                             eventYears={years}
                             selectedYear={yearSelected}

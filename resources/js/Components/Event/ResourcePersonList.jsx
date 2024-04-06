@@ -145,7 +145,7 @@ export default function ResourcePersonList({
                 ) : !search && !loadingSearch && resourcePersons.length == 0 ? (
                     <div className="p-3 w-full text-center">No records</div>
                 ) : (
-                    <div className="grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-2">
+                    <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
                         {!loadingSearch ? (
                             resourcePersons.map((item, index) => (
                                 <div

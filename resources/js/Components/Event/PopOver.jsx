@@ -606,7 +606,7 @@ export function SelectByYear({
 
     return (
         <>
-            <div className="sm:w-44 w-28 select-none shrink-0 flex items-center rounded border border-gray-300 text-right">
+            <div className="xs:w-44 w-full select-none shrink-0 flex items-center rounded border border-gray-300 text-right">
                 <Menu as="div" className="relative inline-block text-left grow">
                     <div className="">
                         <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
@@ -859,7 +859,7 @@ export function FilterByQuarter({
     onSelect = () => {},
     selectedQuarter = "All Quarters",
     list = null,
-    size = "w-40",
+    size = "xs:w-40 w-full",
 }) {
     const quarter = list ?? [
         "All Quarters",

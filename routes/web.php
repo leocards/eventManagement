@@ -288,5 +288,7 @@ Route::get('/foo/{year}/{quarter}', function($year, $quarter) {
     return $eval->view();
 });
 
+Route::get('/test/{event}', [EvaluationReportController::class, 'getActivityRatingSummary']);
+
 // Route::get('/add-dummy-event', [DummyEventController::class, 'index']);
 require __DIR__.'/auth.php';

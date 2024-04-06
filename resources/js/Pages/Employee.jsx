@@ -162,7 +162,7 @@ export default function Employee({ auth, initialEmployeeList }) {
                 </button>
             </div>
 
-            <div className="container  p-3 max-h-[calc(100vh-6rem)]">
+            <div className="container p-3 sm:max-h-[calc(100vh-6rem)]">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                     <div className="mr-auto">
                         <Filter activeFilter={filterEmployment} filterList={['All', 'Regular', 'Contractual']} onSelect={setFilterEmployment} />
@@ -200,7 +200,7 @@ export default function Employee({ auth, initialEmployeeList }) {
                       employees.length == 0 ? (
                         <div className="p-3 w-full text-center">No records</div>
                     ) : (
-                        <div className="grid grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] gap-2">
+                        <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
                             {!loadingSearch ? (
                                 employees.map((item, index) => (
                                     <div

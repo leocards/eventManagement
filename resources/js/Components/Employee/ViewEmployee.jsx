@@ -58,6 +58,9 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
                                     <div className="text-sm font-medium text-gray-500">
                                         {employee.role}
                                     </div>
+                                    <div className="text-sm font-medium text-gray-500">
+                                        {employee.employment_status}
+                                    </div>
                                 </div>
                             </div>
                             <hr className="my-4" />

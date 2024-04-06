@@ -165,7 +165,11 @@ class EvaluationReportController extends Controller
 
         $totalParticipants = QuantitativeAssessment::where("event_id", $event->id)
             ->selectRaw("COUNT(id) as count")
-            ->first();
+            ->count();
+        
+        $totalEventParticipants = EventParticipants::where("event_id", $event->id)
+            ->selectRaw("COUNT(id) as count")
+            ->count();
 
         $data = $data->map(function ($value) use ($event) {
             $column = key((array) $value);
@@ -188,14 +192,15 @@ class EvaluationReportController extends Controller
             $column = key((array) $item);
             //dd($item->$column['Female']??0) + ($item->$column['Male']??0);
             $total = ($item->$column['Female']??0) + ($item->$column['Male']??0);
-            $mappedValue->$column = (object) [...$item->$column, "percent" => $total?(($total/$totalParticipants->count)*100):0];
+            $mappedValue->$column = (object) [...$item->$column, "total" => $total, "percent" => $total?(($total/$totalEventParticipants)*100):0];
+            //dd($mappedValue->$column);
         }
-        $mappedValue->total = $totalParticipants->count;
+        $mappedValue->total = $totalEventParticipants;
         
         return $mappedValue;
     }
 
-    public function getActivityRatingSummary($event)
+    public function getActivityRatingSummary(Event $event)
     {
         $activity = QuantitativeAssessment::join('users as u', 'u.id', '=', 'quantitative_assessments.user_id')
             ->selectRaw('u.gender, quantitative_assessments.q12, count(u.gender) as count')
@@ -204,6 +209,7 @@ class EvaluationReportController extends Controller
             ->orderBy('q12', 'desc')
             ->get();
 
+
         $total = EventParticipants::where('event_id', $event->id)->count();
 
         $collect = new \stdClass();
@@ -211,9 +217,11 @@ class EvaluationReportController extends Controller
             $obj = new \stdClass();
             $value->each(function ($item, $key) use ($obj, $total) {
                 $k = $item['gender'];
+                $count = 'count'.$k;
                 $obj->$k = ($item['count'] / $total) * 100;
-                $obj->count = $item['count'];
+                $obj->$count = $item['count'];
             });
+
             $collect->$key = $obj;
         });
 

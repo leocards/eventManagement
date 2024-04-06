@@ -52,8 +52,8 @@
                 <x-table-cell> {{ $acc->platform == 'Face-to-face' ? $acc->venue : 'Online' }} </x-table-cell>
                 <x-table-cell> {{ $acc->participant_count }} </x-table-cell>
                 <x-table-cell> 
-                    @if ($acc->evaluation_rates)
-                        @foreach ($acc->evaluation_rates as $rates)
+                    @if ($acc->evaluationRates)
+                        @foreach ($acc->evaluationRates as $rates)
                             {{ $rates['level'] }}: {{ $rates['count'] }} ( {{ $rates['percent'] }} )
                         @endforeach    
                     @endif

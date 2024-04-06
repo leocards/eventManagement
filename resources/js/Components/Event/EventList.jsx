@@ -225,7 +225,7 @@ export default function EventList({
                 <div className="font-bold font-open p-1.5 px-3">Name</div>
             </div>
 
-            <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
+            <div className="sm:h-[calc(100vh-17rem)] min-h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
                 {loadingSearch ? (
                     <LoadingList />
                 ) : events.length === 0 ? (
