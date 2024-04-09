@@ -203,35 +203,34 @@ class UserController extends Controller
     public function searchUser(Request $request)
     {
         try {
-            $query = User::select("id", "first_name", "last_name", "email", "province", "position", "profile", "status", "role");
+            $filter = $request->filter??'';
+            $search = $request->search??'';
+            $filterEmployment = $request->filterEmployment??'';
             
-            if($request->search) {
-                $query->where(function ($query) use ($request) {
-                    $query->where('first_name', 'LIKE', "%$request->search%")
-                        ->orWhere('last_name', 'LIKE', "%$request->search%")
-                        ->orWhere('email', 'LIKE', "%$request->search%");
-                });
-            }
-            $query->when(Auth::user()->role == "Admin", function ($query) {
-                $query->where('role', 'Employee');
-            })
-            ->when(Auth::user()->role == "Super Admin", function ($query) use ($request) {
-                $query->where('id', '!=', Auth::id())
-                    ->when($request->isTrainee, function ($query) {
-                        $query->where('role', 'Employee');
-                    });
-            })
-            ->where('status', 'Active');
-
-            if ($request->filter != "All" && $request->has('filter')) {
-                $query->where('province', "$request->filter");
-            }
-
-            if($request->filterEmployment !== "All") {
-                $query->where('employment_status', $request->filterEmployment);
-            }
-
-            $search = $query->paginate(25);
+            $search = User::select("id", "first_name", "last_name", "email", "province", "position", "profile", "status", "role")
+                ->when($search, function ($query) use ($search) {
+                    $query->where('first_name', 'LIKE', "%$search%")
+                         ->orWhere('last_name', 'LIKE', "%search%")
+                         ->orWhere('email', 'LIKE', "%search%");
+                })
+                ->when(Auth::user()->role == "Admin", function ($query) {
+                    $query->where('role', 'Employee');
+                })
+                ->when(Auth::user()->role == "Super Admin", function ($query) use ($request) {
+                    $query->where('id', '!=', Auth::id())
+                        ->when($request->isTrainee, function ($query) {
+                            $query->where('role', 'Employee');
+                        });
+                })
+                ->where('status', 'Active')
+                ->when($filter, function ($query) use ($filter) {
+                    $query->where('province', $filter);
+                })
+                ->when($filterEmployment, function ($query) use ($filterEmployment) {
+                    $query->where('employment_status', $filterEmployment);
+                })
+                ->latest()
+                ->paginate(25);
 
             return response()->json($search);
         } catch (\Throwable $th) {

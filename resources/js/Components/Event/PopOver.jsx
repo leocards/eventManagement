@@ -6,7 +6,11 @@ import {
     Listbox,
     Combobox,
 } from "@headlessui/react";
-import { CheckIcon, ChevronDownIcon, EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import {
+    CheckIcon,
+    ChevronDownIcon,
+    EllipsisVerticalIcon,
+} from "@heroicons/react/20/solid";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -1252,19 +1256,48 @@ export function ListSelector({
     );
 }
 
-export default function MenuOptions({ menus = [], circle = true, rounded = true, className = 'p-2', onSelect = () => {} }) {
+export default function MenuOptions({
+    menus = [],
+    circle = true,
+    rounded = true,
+    className = "p-2",
+    icon,
+    disabled = false,
+    label,
+    btnLabelClass,
+    rootClass = "",
+    asLink,
+    onSelect = () => {},
+}) {
     return (
-        <div className="text-right">
+        <div className={"text-right "+rootClass}>
             <Menu as="div" className="relative inline-block text-left">
                 <div>
-                    <Menu.Button 
+                    <Menu.Button
+                        disabled={disabled}
                         className={`inline-flex w-full justify-center text-sm font-medium hover:bg-slate-200/80 focus:outline-none 
-                        focus-visible:ring-2 focus-visible:ring-white/75 shrink-0 ${className} ${circle?'rounded-full':(!circle && rounded)?'rounded-md':''}`}
+                        focus-visible:ring-2 focus-visible:ring-white/75 shrink-0 gap-2 items-center
+                        ${
+                            disabled
+                                ? "bg-gray-200 text-gray-400 pointer-events-none"
+                                : ""
+                        }
+                        ${className} ${
+                            circle
+                                ? "rounded-full"
+                                : !circle && rounded
+                                ? "rounded-md"
+                                : ""
+                        }`}
                     >
-                        <EllipsisVerticalIcon
-                            className="h-5 w-5"
-                            aria-hidden="true"
-                        />
+                        {icon || (
+                            <EllipsisVerticalIcon
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                            />
+                        )}
+
+                        <div className={`sm:block hidden ${btnLabelClass}`}>{label}</div>
                     </Menu.Button>
                 </div>
                 <Transition
@@ -1276,30 +1309,50 @@ export default function MenuOptions({ menus = [], circle = true, rounded = true,
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <Menu.Items className="absolute right-0 w-44 origin-top-right divide-y divide-gray-100 rounded-md 
-                    bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-20">
+                    <Menu.Items
+                        className="absolute right-0 w-44 origin-top-right divide-y divide-gray-100 rounded-md 
+                    bg-white shadow-lg ring-1 ring-black/5 focus:outline-none z-20"
+                    >
                         <div className="py-1">
-                            {
-                                menus.map((menuItem, index) => {
-                                    return <Menu.Item key={index}>
-                                        {({ active }) => (
-                                            <button
-                                                onClick={() => onSelect(menuItem.label)}
-                                                className={`${
-                                                    active
-                                                        ? "bg-gray-200"
-                                                        : "text-gray-900"
-                                                } group flex w-full items-center px-2.5 py-2 text-`}
-                                            >
-                                                <div className="flex gap-2 items-center">
-                                                    {menuItem.icon}
-                                                    {menuItem.label}
-                                                </div>
-                                            </button>
-                                        )}
+                            {menus.map((menuItem, index) => {
+                                return (
+                                    <Menu.Item key={index}>
+                                        {({ active }) => {
+                                            if (asLink) {
+                                                return <a 
+                                                    href={menuItem.link}
+                                                    className={`${
+                                                        active
+                                                            ? "bg-gray-200"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center px-2.5 py-2 text-`}
+                                                >
+                                                    <div className="flex gap-2 items-center">
+                                                        {menuItem.icon}
+                                                        {menuItem.label}
+                                                    </div>
+                                                </a>;
+                                            } else {
+                                                return <button
+                                                    onClick={() =>
+                                                        onSelect(menuItem.label)
+                                                    }
+                                                    className={`${
+                                                        active
+                                                            ? "bg-gray-200"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center px-2.5 py-2 text-`}
+                                                >
+                                                    <div className="flex gap-2 items-center">
+                                                        {menuItem.icon}
+                                                        {menuItem.label}
+                                                    </div>
+                                                </button>;
+                                            }
+                                        }}
                                     </Menu.Item>
-                                })
-                            }
+                                );
+                            })}
                         </div>
                     </Menu.Items>
                 </Transition>

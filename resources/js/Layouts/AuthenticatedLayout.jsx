@@ -35,7 +35,7 @@ export default function Authenticated({ user, children }) {
                 
                 <div className='h-[calc(100vh-4rem)] mt-16 w-full flex flex-col overflow-y-auto'>
                     
-                    <div className='grow p-5 w-full mb-10'>
+                    <div className='grow sm:p-5 p-3.5 w-full mb-10'>
                         {children}
                     </div>
 

@@ -1,4 +1,4 @@
-@props(['styles' => ''])
-<td style="border: 1px black solid; {{$styles}}" {{$attributes}}>
+@props(['styles' => '', 'bordered' => true])
+<td style="{{$bordered ? 'border: 3px solid black;': ''}} {{$styles}}" {{$attributes}}>
     {{ $slot }}
 </td>

@@ -226,10 +226,10 @@ Route::middleware(['auth', 'verified', 'role:Admin,Super Admin'])->group(functio
         })->name('export.qualitativeassessment');
 
         // RESOURCE PERSON ASSESSMENT
-        Route::get('/rpassessment/{event_id?}/{rp?}', function ($event_id = null, $rp = null) {
-            if(!$event_id||!$rp) return back();
+        Route::get('/rpassessment/{event_id?}', function (Request $request, $event_id = null) {
+            if(!$event_id||(!$request->rp && !$request->all)) return back();
             
-            return Excel::download(new ResourcePersonExport($event_id, $rp), 'Feedback Report Consolidation_Qualitative Assessment.xlsx');
+            return Excel::download(new ResourcePersonExport($event_id, $request->rp, $request->all??false), 'Feedback Report Consolidation_Qualitative Assessment.xlsx');
         })->name('export.resourceperson');
     });
 });
@@ -274,17 +274,8 @@ Route::middleware('auth')->group(function () {
 //     return $acc->view();
 // });
 
-Route::get('/foo/{year}/{quarter}', function($year, $quarter) {
-    $eval = new AccomplishmentExport($year, $quarter, (object) [
-        "name" => "Jonathan James Cyd",
-        "position" => "Training specialist II",
-        "date" => "2024-04-05"
-    ], (object) [
-        "name" => "Jonathan James Cyd",
-        "position" => "Training specialist II",
-        "date" => "2024-04-05"
-    ]);
-    $event = Event::find(5);
+Route::get('/foo/{year?}/{quarter?}', function($year = null, $quarter = null) {
+    $eval = new ResourcePersonExport('5', '1', true);
     return $eval->view();
 });
 

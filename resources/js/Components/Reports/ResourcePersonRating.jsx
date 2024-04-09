@@ -4,11 +4,12 @@ import {
 } from "@heroicons/react/24/outline";
 import Paginate from "../Paginate";
 import { useEffect, useState } from "react";
-import { ResourcePersonList } from "../Event/PopOver";
+import MenuOptions, { ResourcePersonList } from "../Event/PopOver";
 import { LoadingList } from "../LoadingSearch";
 import ReferenceQuestion from "./ReferenceQuestion";
 import PrintEvaluations from "./Print/PrintEvaluations";
 import ExportButton from "../Buttons/ExportExcelButton";
+import { ArrowUpIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 export default function ResourcePersonRating({
     isPrintable = false,
@@ -94,7 +95,28 @@ export default function ResourcePersonRating({
                     Resource Person
                 </div>
 
-                <ExportButton exportRoute={route('export.resourceperson', {event_id: eventId, rp: selectedRp})} disabled={!eventId} className={'ml-auto'} />
+                <MenuOptions
+                    circle={false}
+                    disabled={!eventId}
+                    label="Export to excel"
+                    btnLabelClass="mr-1.5 font-normal text-base"
+                    className="p-1.5 sm:px-2 px-3 bg-blue-600 text-white hover:!bg-blue-600/90 disabled:text-gray-400"
+                    rootClass="ml-auto"
+                    asLink={true}
+                    icon={<ArrowUpTrayIcon className="w-5 h-5" />}
+                    menus={[
+                        {
+                            icon: <ArrowUpTrayIcon className="w-5 h-5" />,
+                            label: 'Export selected',
+                            link: route('export.resourceperson', {event_id: eventId, _query: { rp: selectedRp }})
+                        },
+                        {
+                            icon: <ArrowUpTrayIcon className="w-5 h-5" />,
+                            label: 'Export all',
+                            link: route('export.resourceperson', {event_id: eventId, _query: { all: true }})
+                        }
+                    ]}
+                />
 
                 <button
                     disabled={!isPrintable}

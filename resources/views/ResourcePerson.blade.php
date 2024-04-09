@@ -5,6 +5,7 @@
         date="{{ ($event?convertDate($event->dateStart, $event->dateEnd):'') }}"
         evaluationType="Quantitative Assessment of Resource Person"
         resourcePerson="{{ $rp->name }}"
+        cols="{{ 10 }}"
     />
 
     <tr>

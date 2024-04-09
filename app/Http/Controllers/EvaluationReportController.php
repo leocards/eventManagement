@@ -195,7 +195,7 @@ class EvaluationReportController extends Controller
             $mappedValue->$column = (object) [...$item->$column, "total" => $total, "percent" => $total?(($total/$totalEventParticipants)*100):0];
             //dd($mappedValue->$column);
         }
-        $mappedValue->total = $totalEventParticipants;
+        $mappedValue->total = $total?$totalEventParticipants:0;
         
         return $mappedValue;
     }

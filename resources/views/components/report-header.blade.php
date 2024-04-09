@@ -6,7 +6,7 @@
             :bordered="''" 
             styles="text-align: center; font-weight: 700 !important; font-size: 24px; vertical-align: center;" 
             height="40" 
-            colspan="14"
+            colspan="{{$cols}}"
         >
             Feedback Report Consolidation
         </x-table-head-cell>
@@ -14,7 +14,7 @@
     <tr>
         <x-table-head-cell 
             styles="text-align: center; font-size: 12px; font-weight: 400 !important; vertical-align: center;" 
-            colspan="14"
+            colspan="{{$cols}}"
             height="60"
         >
             Department of Social Welfare and Development <br>

@@ -33,7 +33,7 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
             <Dialog
                 as="div"
                 id="modal"
-                className={`${position === 'center'?'items-center justify-center flex':''} fixed inset-0 overflow-y-auto px-4 py-6 z-50 transform transition-all print:hidden`}
+                className={`${position === 'center'?'items-center justify-center flex':''} max-w-full fixed inset-0 overflow-y-auto sm:px-4 px-2 py-6 z-50 transform transition-all print:hidden`}
                 onClose={close}
             >
                 {backdrop && <Transition.Child
@@ -58,7 +58,7 @@ export default function Modal({ children, show = false, maxWidth = '2xl', closea
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <Dialog.Panel
-                        className={`mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto ${maxWidthClass} ${!isOverFlow&&"overflow-hidden"} ${modalPosition} 
+                        className={`mb-6 bg-white rounded-lg shadow-xl transform transition-all w-full sm:mx-auto ${maxWidthClass} ${!isOverFlow&&"overflow-hidden"} ${modalPosition} 
                         ${!backdrop?'border':''}`}
                     >
                         {children}

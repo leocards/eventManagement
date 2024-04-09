@@ -76,65 +76,65 @@
         <tr></tr>
         <tr>
             <td></td>
-            <x-table-cell styles="font-weight: 400;"> Prepared by: </x-table-cell>
+            <x-table-cell styles="font-weight: 400;" bordered="{{false}}"> Prepared by: </x-table-cell>
             <td></td>
-            <x-table-cell colspan="2" styles="font-weight: 400;"> Reviewed by: </x-table-cell>
+            <x-table-cell colspan="2" styles="font-weight: 400;" bordered="{{false}}"> Reviewed by: </x-table-cell>
             <td></td>
-            <x-table-cell colspan="2" styles="font-weight: 400;"> Prepared by: </x-table-cell>
+            <x-table-cell colspan="2" styles="font-weight: 400;" bordered="{{false}}"> Prepared by: </x-table-cell>
         </tr>
         <tr></tr>
         <tr></tr>
         <tr>
             <td></td>
-            <x-table-cell styles="font-weight: 600;"> 
+            <x-table-cell styles="font-weight: 600;" bordered="{{false}}"> 
                 {{ $auth->name }}
             </x-table-cell>
 
             @if (!empty(get_object_vars($reviewedby)))
                 <td></td>
-                <x-table-cell colspan="2" styles="font-weight: 600;"> 
+                <x-table-cell colspan="2" styles="font-weight: 600;" bordered="{{false}}"> 
                     {{ $reviewedby->name }}
                 </x-table-cell>
             @endif
             @if (!empty(get_object_vars($approvedby)))
                 <td></td>
-                <x-table-cell colspan="2" styles="font-weight: 600;"> 
+                <x-table-cell colspan="2" styles="font-weight: 600;" bordered="{{false}}"> 
                     {{ $approvedby->name }}
                 </x-table-cell>
             @endif
         </tr>
         <tr>
             <td></td>
-            <x-table-cell> 
+            <x-table-cell bordered="{{false}}"> 
                 {{ $auth->position }}
             </x-table-cell>
             @if (!empty(get_object_vars($reviewedby)))
                 <td></td>
-                <x-table-cell colspan="2"> 
+                <x-table-cell colspan="2" bordered="{{false}}"> 
                     {{ $reviewedby->position }}
                 </x-table-cell>
             @endif
             @if (!empty(get_object_vars($approvedby)))
                 <td></td>
-                <x-table-cell colspan="2"> 
+                <x-table-cell colspan="2" bordered="{{false}}"> 
                     {{ $approvedby->position }}
                 </x-table-cell>
             @endif
         </tr>
         <tr>
             <td></td>
-            <x-table-cell>
+            <x-table-cell bordered="{{false}}">
                 {{ $auth->date }}
             </x-table-cell>
             @if (!empty(get_object_vars($reviewedby)))
                 <td></td>
-                <x-table-cell colspan="2"> 
+                <x-table-cell colspan="2" bordered="{{false}}"> 
                     {{ $reviewedby->date }}
                 </x-table-cell>
             @endif
             @if (!empty(get_object_vars($approvedby)))
                 <td></td>
-                <x-table-cell colspan="2"> 
+                <x-table-cell colspan="2" bordered="{{false}}"> 
                     {{ $approvedby->date }}
                 </x-table-cell>
             @endif
