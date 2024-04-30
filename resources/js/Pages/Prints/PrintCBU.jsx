@@ -12,7 +12,7 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
     const [styleScale, setStyleScale] = useState(null);
     const printConctentRef = useRef(null);
     const [printStyle, setPrintStyle] = useState()
-    //const [inactive, setInactive] = useState([])
+    const [totalAttended, setTotalAttended] = useState([])
 
     //console.log(printStyle)
 
@@ -74,6 +74,7 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
 
             setEvents(data.events);
             setTrainees(data.users);
+            setTotalAttended(data.totalAttended)
             setLoading(false);
         }
         getCBUList();
@@ -169,8 +170,8 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
                                     >
                                         Total
                                     </Columns>
-                                    <Columns className="w-28 !py-1 border-r !text-sm font-medium">
-                                        
+                                    <Columns $center className="w-28 !py-1 border-r !text-sm font-medium">
+                                        {totalAttended}
                                     </Columns>
                                     {events.map((event, index) => (
                                         <Columns

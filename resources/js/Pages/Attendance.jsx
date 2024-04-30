@@ -92,6 +92,15 @@ export default function Attendance({ auth, events }) {
             }
     
             getAttendance()
+        } else {
+            async function getAttendance() {
+                let response = await sendFilterRequest()
+                let data = response.data
+                setAttendaceData(data)
+                setLoadingSearch(false);
+            }
+    
+            getAttendance()
         }
     }, [search]);
 
@@ -128,52 +137,52 @@ export default function Attendance({ auth, events }) {
                     </div>
                 </div>
 
-                <div className="max-xs:overflow-x-auto">
+                <div className="overflow-x-auto flex flex-col">
+                    <div className="divide-y w-fit min-lg:grow min-lg:w-full">
+                        <div className={`grid grid-cols-[11rem,6rem,minmax(15rem,1fr),10rem,minmax(15rem,1fr),6rem,6rem] text-sm font-bold font-open pb-2 mt-3`}>
+                            <div className="capitalize px-2">Name</div>
+                            <div className="capitalize px-2">Sex</div>
+                            <div className="capitalize px-2">Position/Designation</div>
+                            <div className="px-2">Area of Assignment</div>
+                            <div className="capitalize px-2">Email</div>
+                            <div className="capitalize px-2">Time in</div>
+                            <div className="capitalize px-2">Time out</div>
+                        </div>
 
-                    <div className={`grid min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] grid-cols-[1fr,6rem,6rem,6rem] border-b font-bold font-open pb-2 mt-3`}>
-                        <div className="capitalize px-2 min-lg:block hidden">Date</div>
-                        <div className="capitalize px-2">Trainee</div>
-                        <div className="capitalize px-2 min-lg:block hidden">Event</div>
-                        <div className="capitalize px-2 text-center">in</div>
-                        <div className="capitalize px-2 text-center">out</div>
-                        <div className="capitalize px-2 text-center">remarks</div>
-                    </div>
-
-                    <div className="overflow-y-auto h-[calc(100vh-16rem)] py-2">
-                        {
-                            search && !loadingSearch && attendance.length === 0 ? (
-                                <div className="text-center">
-                                    No records found for "{" "}
-                                    <span className="font-medium">{search}</span> "
-                                </div>
-                            ) : !search && !loadingSearch && attendance.length == 0 ? (
-                                <div className="p-3 w-full text-center">No records</div>
-                            ) : loadingSearch ? (
-                                <LoadingList
-                                    column={6}
-                                    grid="grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem]"
-                                />
-                            ) : (
-                                <AttendanceList attendance={attendance} />
-                            )
-                        }
-                    </div>
-
-                    {pages?.last_page > 1 && (
-                        <Paginate
-                            disabled={{
-                                next: pages?.next_page_url ? true : false,
-                                previous: pages?.prev_page_url ? true : false,
-                            }}
-                            contentList={pages}
-                            onPrevious={() =>
-                                getNextAndPrevPages(pages.current_page - 1)
+                        <div className="h-[calc(100vh-16rem)] py-2">
+                            {
+                                search && !loadingSearch && attendance.length === 0 ? (
+                                    <div className="text-center">
+                                        No records found for "{" "}
+                                        <span className="font-medium">{search}</span> "
+                                    </div>
+                                ) : !search && !loadingSearch && attendance.length == 0 ? (
+                                    <div className="p-3 w-full text-center">No records</div>
+                                ) : loadingSearch ? (
+                                    <LoadingList
+                                        column={7}
+                                        grid="grid-cols-[11rem,6rem,1fr,10rem,1fr,6rem,6rem]"
+                                    />
+                                ) : (
+                                    <AttendanceList attendance={attendance} />
+                                )
                             }
-                            onNext={() => getNextAndPrevPages(pages.current_page + 1)}
-                        />
-                    )}
+                        </div>
+                    </div>
                 </div>
-
+                {pages?.last_page > 1 && (
+                    <Paginate
+                        disabled={{
+                            next: pages?.next_page_url ? true : false,
+                            previous: pages?.prev_page_url ? true : false,
+                        }}
+                        contentList={pages}
+                        onPrevious={() =>
+                            getNextAndPrevPages(pages.current_page - 1)
+                        }
+                        onNext={() => getNextAndPrevPages(pages.current_page + 1)}
+                    />
+                )}
             </div>
             
             <PrintEvaluations show={isPrint} onCancel={() => setIsPrint(false)} src={route('print.attendance', {_query: { id: selectedEvent}})} />
@@ -201,35 +210,33 @@ const AttendanceList = ({ attendance }) => {
                 <div
                     key={index}
                     className={
-                        "grid grid-cols-[1fr,6rem,6rem,6rem] min-lg:grid-cols-[10rem,11rem,1fr,6rem,6rem,6rem] min-lg:h-12 min-lg:items-start items-center h-14 rounded-md list-hover transition duration-150 cursor-default"
+                        "grid grid-cols-[11rem,6rem,minmax(15rem,1fr),10rem,minmax(15rem,1fr),6rem,6rem] h-12 items-center rounded-md list-hover transition duration-150 cursor-default"
                     }
                 >
-                    <div className="capitalize px-2.5 items-center min-lg:flex hidden">
-                        {moment(attendance.updated_at).format('ll')}
+                    <div className="capitalize px-2.5 items-center">
+                        {attendance.participants.name}
                     </div>
                     <div className="px-2.5 min-lg:flex block items-center ">
-                        <div className="line-clamp-1"> {attendance.participants.name} </div>
-                        <div className="min-lg:hidden flex items-center text-sm opacity-70">
-                            <div className="shrink-0">{moment(attendance.updated_at).format('ll')}</div>
-                            <div className="mx-2">|</div>
-                            <div className="line-clamp-1">
-                                {attendance.event.title}
-                            </div>
+                        {attendance.participants.gender}
+                    </div>
+                    <div className="px-2.5 items-center">
+                        <div className="overflow-hidden text-ellipsis">
+                            {attendance.participants.position}
                         </div>
                     </div>
-                    <div className="px-2.5 items-center min-lg:flex hidden">
+                    <div className="px-2.5 items-center">
                         <div className="line-clamp-1">
-                        {attendance.event.title}
+                            {attendance.participants.province}
                         </div>
                     </div>
-                    <div className="capitalize px-2.5 flex items-center justify-center">
+                    <div className="px-2.5 items-center">
+                        <div className="overflow-hidden text-ellipsis"> {attendance.participants.email} </div>
+                    </div>
+                    <div className="px-2.5 capitalize">
                         {moment(attendance.time_in).format('LT')}
                     </div>
-                    <div className="capitalize px-2.5 flex items-center justify-center">
+                    <div className="px-2.5 capitalize">
                         {attendance.time_out && moment(attendance.time_out).format('LT')}
-                    </div>
-                    <div className="px-2.5 flex items-center justify-center">
-                        {checkRemarkStatus(attendance.time_in, attendance.event_time_in, attendance.time_in_cutoff)}
                     </div>
                 </div>
             ))

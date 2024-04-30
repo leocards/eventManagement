@@ -11,7 +11,6 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\SecurityQuestionController;
 use App\Http\Controllers\CBUController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Dummy\DummyEventController;
 use App\Http\Controllers\EvaluationReportController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\PrintController;
@@ -20,11 +19,7 @@ use App\Http\Controllers\ResourcePersonController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UserController;
 use App\Models\Event;
-use App\Models\EventParticipants;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\View\View;
-use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -268,11 +263,11 @@ Route::middleware('auth')->group(function () {
     Route::get('ignore-security-notice', [ProfileController::class, 'ignoreNotice'])->name('profile.ignore');
 });
 
-// Route::get('/excel-export', function (Request $request) {
-//     $acc = new ResourcePersonExport(5,1);
+/* Route::get('/excel-export', function (Request $request) {
+    $acc = new AttendanceExport(1);
 
-//     return $acc->view();
-// });
+    return $acc->view();
+}); */
 
 Route::get('/foo/{year?}/{quarter?}', function($year = null, $quarter = null) {
     $eval = new ResourcePersonExport('5', '1', true);
@@ -281,5 +276,4 @@ Route::get('/foo/{year?}/{quarter?}', function($year = null, $quarter = null) {
 
 Route::get('/test/{event}', [EvaluationReportController::class, 'getActivityRatingSummary']);
 
-// Route::get('/add-dummy-event', [DummyEventController::class, 'index']);
 require __DIR__.'/auth.php';

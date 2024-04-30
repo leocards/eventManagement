@@ -94,44 +94,48 @@ const AttendanceList = ({ initialList }) => {
                     onInput={(input) => input && setLoadingSearch(true)}
                 />
             </div>
-            <GridRow className="border-b pb-2">
-                <TableHeader>Date</TableHeader>
-                <TableHeader>Title</TableHeader>
-                <TableHeader className="md:block hidden">Position</TableHeader>
-                <TableHeader>Time in</TableHeader>
-                <TableHeader>Time out</TableHeader>
-            </GridRow>
+            <div className="overflow-x-auto">
+                <div className="min-w-[45rem]">
+                    <GridRow className="border-b pb-2">
+                        <TableHeader>Date</TableHeader>
+                        <TableHeader>Title</TableHeader>
+                        <TableHeader className="md:block hidden">Position</TableHeader>
+                        <TableHeader>Time in</TableHeader>
+                        <TableHeader>Time out</TableHeader>
+                    </GridRow>
 
-            <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
-                {
-                    loadingSearch ? (
-                        <LoadingList column={5} grid="grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr]" />
-                    ) : attendance.length === 0 && search ? (
-                        <div className="text-center py-2">No results found for " {search} " </div>
-                    ) : attendance.length === 0 && !loadingSearch ? (
-                        <Empty />
-                    ) : (
-                        attendance.map((attended, index) => (
-                            <TableContent key={index}>
-                                <div className="px-3 py-1.5 flex items-center">
-                                    {moment(attended.event.dateStart).format('ll')}
-                                </div>
-                                <div className="px-3 py-1.5 flex items-center">
-                                    <div className="line-clamp-1">{attended.event.title}</div>
-                                </div>
-                                <div className="px-3 py-1.5 items-center md:flex hidden">
-                                    Trainee
-                                </div>
-                                <div className="px-3 py-1.5 flex items-center">
-                                    {moment(attended.time_in).format('LT')}
-                                </div>
-                                <div className="px-3 py-1.5 flex items-center">
-                                    {attended.time_out && moment(attended.time_out).format('LT')}
-                                </div>
-                            </TableContent>
-                        ))
-                    )
-                }
+                    <div className="h-[calc(100vh-17rem)] pt-2 overflow-y-auto overscroll-contain">
+                        {
+                            loadingSearch ? (
+                                <LoadingList column={5} grid="grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr]" />
+                            ) : attendance.length === 0 && search ? (
+                                <div className="text-center py-2">No results found for " {search} " </div>
+                            ) : attendance.length === 0 && !loadingSearch ? (
+                                <Empty />
+                            ) : (
+                                attendance.map((attended, index) => (
+                                    <TableContent key={index}>
+                                        <div className="px-3 py-1.5 flex items-center">
+                                            {moment(attended.event.dateStart).format('ll')}
+                                        </div>
+                                        <div className="px-3 py-1.5 flex items-center">
+                                            <div className="line-clamp-1">{attended.event.title}</div>
+                                        </div>
+                                        <div className="px-3 py-1.5 items-center md:flex hidden">
+                                            Trainee
+                                        </div>
+                                        <div className="px-3 py-1.5 flex items-center">
+                                            {moment(attended.time_in).format('LT')}
+                                        </div>
+                                        <div className="px-3 py-1.5 flex items-center">
+                                            {attended.time_out && moment(attended.time_out).format('LT')}
+                                        </div>
+                                    </TableContent>
+                                ))
+                            )
+                        }
+                    </div>
+                </div>
             </div>
 
             {pages?.last_page > 1 && (
@@ -160,7 +164,7 @@ const GridRow = styled.div.attrs(() => ({
 }))``;
 
 const TableContent = styled.div.attrs(() => ({
-    className: `grid grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr] h-14 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
+    className: `grid grid-cols-[1fr,1fr,1fr,1fr] md:grid-cols-[1fr,1fr,1fr,1fr,1fr] h-12 rounded-md hover:bg-slate-100/50 ring-1 ring-inset ring-transparent 
     hover:ring-slate-200/90 transition-all duration-150 mb-1 cursor-default group`,
 }))``;
 

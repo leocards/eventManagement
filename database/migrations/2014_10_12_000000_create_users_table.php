@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('address');
             $table->string('position');
             $table->string('province');
+            $table->string('municipality')->nullable();
+            $table->string('ip_affiliation')->nullable();
             $table->string('gender', 10);
             $table->string('profile')->nullable();
             $table->timestamp('email_verified_at')->nullable();

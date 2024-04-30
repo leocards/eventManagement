@@ -51,9 +51,18 @@ class CBUExport implements FromView
             ->orWhereYear('dateEnd', $this->year)
         ->get(['id', 'title']);
 
+        $totalAttended = 0;
+
+        foreach ($events as $key => $event) {
+            if($event->participant->count() > 0) {
+                $totalAttended += $event->participant[0]?->total||0;
+            }
+        }
+
         return view('CBU', [
             'users' => $users,
-            'events' => $events
+            'events' => $events,
+            "totalAttended" => $totalAttended
         ]);
     }
 }

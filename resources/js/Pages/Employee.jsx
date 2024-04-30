@@ -1,11 +1,16 @@
 import DeleteConfirmation from "@/Components/DeleteConfirmation";
 import NewEmployee from "@/Components/Employee/NewEmployee";
 import ViewEmployee from "@/Components/Employee/ViewEmployee";
-import { Filter, FilterButton } from "@/Components/Event/PopOver";
+import {
+    EmployeeFilters,
+    Filter,
+    FilterButton,
+} from "@/Components/Event/PopOver";
 import PageHeader from "@/Components/PageHeader";
 import Paginate from "@/Components/Paginate";
 import SearchInput from "@/Components/SearchInput";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import {
     ExclamationCircleIcon,
     IdentificationIcon,
@@ -33,7 +38,9 @@ export default function Employee({ auth, initialEmployeeList }) {
     const { post, processing } = useForm({});
     const [searchUser, setSearchUser] = useState(null);
     const [loadingSearch, setLoadingSearch] = useState(false);
-    const [filterEmployment, setFilterEmployment] = useState("All")
+    const [filterStatus, setFilterStatus] = useState("");
+    const [filterDesignation, setFilterDesignation] = useState("");
+    const [filterAreaOfAssign, setFilterAreaOfAssign] = useState("");
 
     const activeState = " bg-blue-500/20";
     const inactiveState =
@@ -69,11 +76,22 @@ export default function Employee({ auth, initialEmployeeList }) {
             setLoadingSearch(true);
             const response = !searchUser
                 ? await axios.get(
-                    route("employee.json", { _query: { page: pageNumber, filterEmployment: filterEmployment } })
+                    route("employee.json", {
+                        _query: {
+                            page: pageNumber,
+                            filterEmployment: filterStatus,
+                        },
+                    })
                 )
                 : await axios.get(
                     route("employee.search", {
-                        _query: { page: pageNumber, search: searchUser, filterEmployment: filterEmployment },
+                        _query: {
+                            page: pageNumber,
+                            search: searchUser,
+                            filterEmployment: filterStatus,
+                            filterDesignation: filterDesignation,
+                            filter: filterAreaOfAssign,
+                        },
                     })
                 );
             setEmployeeData(response.data);
@@ -104,11 +122,18 @@ export default function Employee({ auth, initialEmployeeList }) {
             },
         });
     };
-    
+
     async function getSearches() {
         setLoadingSearch(true);
         let response = await axios.get(
-            route("employee.search", { _query: { search: searchUser, filterEmployment: filterEmployment } })
+            route("employee.search", {
+                _query: {
+                    search: searchUser, 
+                    filterEmployment: filterStatus, 
+                    filterDesignation: filterDesignation,
+                    filter: filterAreaOfAssign,
+                },
+            })
         );
         let data = response.data;
         setEmployeeData(data);
@@ -140,12 +165,12 @@ export default function Employee({ auth, initialEmployeeList }) {
     }, [initialEmployeeList]);
 
     useEffect(() => {
-        if (searchUser || filterEmployment !== "All") {
+        if (searchUser || filterStatus || filterDesignation || filterAreaOfAssign) {
             getSearches();
         } else {
             setEmployeeData(initialEmployeeList);
         }
-    }, [searchUser, filterEmployment]);
+    }, [searchUser, filterStatus, filterDesignation, filterAreaOfAssign]);
 
     return (
         <Authenticated user={auth.user}>
@@ -163,11 +188,41 @@ export default function Employee({ auth, initialEmployeeList }) {
             </div>
 
             <div className="container p-3 sm:max-h-[calc(100vh-6rem)]">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <div className="mr-auto">
-                        <Filter activeFilter={filterEmployment} filterList={['All', 'Regular', 'Contractual']} onSelect={setFilterEmployment} />
-                    </div>
-
+                <div className="flex items-center flex-wrap gap-4 mb-4">
+                    <EmployeeFilters
+                        empStatus={filterStatus}
+                        designation={filterDesignation}
+                        areaOfAssignment={filterAreaOfAssign}
+                        onSelectDesignation={setFilterDesignation}
+                        onSelectEmpStatus={setFilterStatus}
+                        onSelectAOA={setFilterAreaOfAssign}
+                    />
+                    {(filterStatus ||
+                        filterDesignation ||
+                        filterAreaOfAssign) && (
+                            <div className="flex items-center flex-wrap gap-2">
+                                {filterStatus && (
+                                    <FilteredDataButton
+                                        filter={filterStatus}
+                                        onRemove={() => setFilterStatus("")}
+                                    />
+                                )}
+                                {filterDesignation && (
+                                    <FilteredDataButton
+                                        filter={filterDesignation}
+                                        onRemove={() => setFilterDesignation("")}
+                                    />
+                                )}
+                                {filterAreaOfAssign && (
+                                    <FilteredDataButton
+                                        filter={filterAreaOfAssign}
+                                        onRemove={() => setFilterAreaOfAssign("")}
+                                    />
+                                )}
+                            </div>
+                        )}
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end">
                     <div className="flex flex-col-reverse sm:flex-row mt-4 sm:mt-0">
                         <ActionButtons
                             selected={selected}
@@ -196,8 +251,8 @@ export default function Employee({ auth, initialEmployeeList }) {
                             <span className="font-medium">{searchUser}</span> "
                         </div>
                     ) : !searchUser &&
-                      !loadingSearch &&
-                      employees.length == 0 ? (
+                        !loadingSearch &&
+                        employees.length == 0 ? (
                         <div className="p-3 w-full text-center">No records</div>
                     ) : (
                         <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(17rem,1fr))] grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2">
@@ -227,8 +282,8 @@ export default function Employee({ auth, initialEmployeeList }) {
                                                     }
                                                     alt=""
                                                     onError={(event) =>
-                                                        (event.target.src =
-                                                            "/storage/profile/profile.png")
+                                                    (event.target.src =
+                                                        "/storage/profile/profile.png")
                                                     }
                                                     className="object-cover w-full h-full"
                                                 />
@@ -336,8 +391,8 @@ export default function Employee({ auth, initialEmployeeList }) {
                         <img
                             src={selected?.profile}
                             onError={(event) =>
-                                (event.target.src =
-                                    "/storage/profile/profile.png")
+                            (event.target.src =
+                                "/storage/profile/profile.png")
                             }
                         />
                     </div>
@@ -415,3 +470,17 @@ const LoadingSearch = () => (
         ))}
     </>
 );
+
+const FilteredDataButton = ({ filter, onRemove }) => {
+    return (
+        <div
+            title={filter}
+            className="flex flex-nowrap gap-2 text-left items-center rounded border border-slate-300/60 p-1.5 pl-2 cursor-default"
+        >
+            <div className="line-clamp-1 max-w-36 text-sm">{filter}</div>
+            <div onClick={onRemove} className="hover:bg-slate-100 rounded p-1 cursor-pointer">
+                <XMarkIcon className="w-4 h-4" />
+            </div>
+        </div>
+    );
+};

@@ -14,10 +14,10 @@ class ValidVirtualVenueUrl implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if((!request()->input('venue') || request()->input('venue') == "") && request()->input('platform') === 'Virtual') {
+        if((!request()->input('venue') || request()->input('venue') == "") && request()->input('platform') === 'Online Platform') {
             $fail('The URL field is required.');
 
-        }else if(request()->input('platform') === 'Virtual' && filter_var($value, FILTER_VALIDATE_URL) === false) {
+        }else if(request()->input('platform') === 'Online Platform' && filter_var($value, FILTER_VALIDATE_URL) === false) {
             $fail('The URL field must be a valid URL.');
         }
     }

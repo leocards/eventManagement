@@ -13,7 +13,7 @@ import {
 
 export default function LikertScale({ selected, error, onSelect = () => {} }) {
     return (
-        <div className="flex mt-4 justify-between px-10 text-gray-400/80">
+        <div className="flex flex-col gap-3 sm:gap-0 sm:flex-row mt-4 justify-end sm:justify-between md:px-10 text-gray-400/80">
             <LikertButton
                 label="Poor"
                 active={selected === 1}
@@ -61,7 +61,7 @@ const LikertButton = ({ active, children, label, ...props }) => {
         <button
             {...props}
             className={
-                "text-xs font-medium flex flex-col items-center group " +
+                "text-xs font-medium flex sm:flex-col items-center group sm:gap-0 gap-3 " +
                 (active ? activeState : inactiveState)
             }
         >
@@ -70,7 +70,7 @@ const LikertButton = ({ active, children, label, ...props }) => {
                 className={
                     active
                         ? activeState
-                        : "text-gray-500 group-hover:text-current"
+                        : "text-gray-500 group-hover:text-current text-wrap sm:text-xs text-base"
                 }
             >
                 {label}

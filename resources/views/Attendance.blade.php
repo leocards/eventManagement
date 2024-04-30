@@ -5,7 +5,7 @@
                 :bordered="''" 
                 styles="text-align: center; font-weight: 700 !important; font-size: 24px; vertical-align: center;" 
                 height="40" 
-                colspan="6"
+                colspan="7"
             >
                 Attendance Summary Report
             </x-table-head-cell>
@@ -14,7 +14,7 @@
             <tr>
                 <x-table-head-cell 
                     styles="text-align: center; font-size: 12px; font-weight: 400 !important; vertical-align: center;" 
-                    colspan="6"
+                    colspan="7"
                     height="60"
                 >
                     {{$event->title}} <br>
@@ -26,29 +26,29 @@
     </thead>
     <thead>
         <tr>
-            <x-table-head-cell width="150px">Date</x-table-head-cell>
-            <x-table-head-cell width="250px">Trainee</x-table-head-cell>
-            <x-table-head-cell width="500px">Event</x-table-head-cell>
-            <x-table-head-cell width="80px" styles="text-align: center;">In</x-table-head-cell>
-            <x-table-head-cell width="80px" styles="text-align: center;">Out</x-table-head-cell>
-            <x-table-head-cell width="120px" styles="text-align: center;">Remarks</x-table-head-cell>
+            <x-table-head-cell width="250px">Name</x-table-head-cell>
+            <x-table-head-cell width="70px">Sex</x-table-head-cell>
+            <x-table-head-cell width="300px">Position/Designation</x-table-head-cell>
+            <x-table-head-cell width="150px" styles="text-align: center;">Area of Assignment</x-table-head-cell>
+            <x-table-head-cell width="250px" styles="text-align: center;">Email</x-table-head-cell>
+            <x-table-head-cell width="120px" styles="text-align: center;">Time In</x-table-head-cell>
+            <x-table-head-cell width="120px" styles="text-align: center;">Time Out</x-table-head-cell>
         </tr>
     </thead>
     <tbody>
-        @if ($attendances->count() > 1)
+        @if ($attendances->count() > 0)
             @foreach ($attendances as $att)
                 <tr>
-                    <x-table-head-cell width="150px">{{ \Carbon\Carbon::now()->format('M. d Y') }}</x-table-head-cell>
                     <x-table-head-cell width="250px">{{ $att->participants['name'] }}</x-table-head-cell>
-                    <x-table-head-cell width="500px">{{ $att->event['title'] }}</x-table-head-cell>
+                    <x-table-head-cell width="70px">{{ $att->participants['gender'] }}</x-table-head-cell>
+                    <x-table-head-cell width="300px">{{ $att->participants['position'] }}</x-table-head-cell>
+                    <x-table-head-cell width="150px">{{ $att->participants['province'] }}</x-table-head-cell>
+                    <x-table-head-cell width="250px">{{ $att->participants['email'] }}</x-table-head-cell>
                     <x-table-head-cell width="80px" styles="text-align: center;">
                         {{ getTime($att->time_in) }}
                     </x-table-head-cell>
                     <x-table-head-cell width="80px" styles="text-align: center;">
                         {{ getTime($att->time_out) }}
-                    </x-table-head-cell>
-                    <x-table-head-cell width="120px" styles="text-align: center;">
-                        {{ checkRemarkStatusOfTrainee($att->time_in, $att->event_time_in, $att->time_in_cutoff) }}
                     </x-table-head-cell>
                 </tr>
             @endforeach

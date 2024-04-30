@@ -48,7 +48,7 @@ class EventParticipants extends Model
     public function participants(): BelongsTo
     {
         return $this->belongsTo(User::class, "user_id", "id")
-            ->selectRaw("id, CONCAT(first_name, ' ', last_name) AS name, position, profile, province");
+            ->selectRaw("id, CONCAT(first_name, ' ', last_name) AS name, position, profile, province, gender, email");
     }
 
     public function attendance(): HasMany

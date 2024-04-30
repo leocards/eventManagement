@@ -13,7 +13,7 @@ export const DisplayRP = ({ selectedRp }) => {
                     {selectedRp?.position}
                 </span>
             </div>
-            <div className="w-80 h-80 mx-auto mt-4">
+            <div className="w-60 sm:w-80 h-60 sm:h-80 mx-auto mt-4">
                 <img
                     src={selectedRp?.profile??"/storage/profile/profile.png"}
                     className="w-full h-full rounded-md object-contain"

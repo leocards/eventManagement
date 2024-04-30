@@ -2,6 +2,7 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import Modal from "../Modal";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 export default function ViewEmployee({ show, viewEmployee, onClose }) {
     const [employee, setEmployee] = useState(null);
@@ -55,27 +56,31 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
                                     <div className="font-bold">
                                         {employee.first_name} {employee.last_name}
                                     </div>
-                                    <div className="text-sm font-medium text-gray-500">
+                                    <div className="text-sm text-gray-500">
                                         {employee.role}
                                     </div>
-                                    <div className="text-sm font-medium text-gray-500">
-                                        {employee.employment_status}
+                                    <div className="text-sm text-gray-500">
+                                        {employee.employment_status == "Contractual"?"Contract of Service":employee.employment_status}
                                     </div>
                                 </div>
                             </div>
                             <hr className="my-4" />
                             <div className="">
                                 <div className="flex items-center mb-3">
-                                    <LabelText>Position: </LabelText>
+                                    <LabelText>Position/ Designation: </LabelText>
                                     <div className="">{employee.position}</div>
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <LabelText>Gender: </LabelText>
+                                    <LabelText>Area of Assignment: </LabelText>
+                                    <div className="">{employee.province}{employee.municipality?', '+employee.municipality:''}</div>
+                                </div>
+                                <div className="flex items-center mb-3">
+                                    <LabelText>Sex: </LabelText>
                                     <div className="">{employee.gender}</div>
                                 </div>
                                 <div className="flex items-center mb-3">
                                     <LabelText>Birthday: </LabelText>
-                                    <div className="">{employee.birthday}</div>
+                                    <div className="">{moment(employee.birthday).format('LL')}</div>
                                 </div>
                                 <div className="flex items-center mb-3">
                                     <LabelText>Email: </LabelText>
@@ -90,8 +95,8 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
                                     <div className="">{employee.address}</div>
                                 </div>
                                 <div className="flex items-center mb-3">
-                                    <LabelText>Province: </LabelText>
-                                    <div className="">{employee.province}</div>
+                                    <LabelText>IP Affiliation: </LabelText>
+                                    <div className="">{employee.ip_affiliation??'N/A'}</div>
                                 </div>
                             </div>
                         </div>

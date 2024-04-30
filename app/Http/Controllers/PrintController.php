@@ -122,10 +122,19 @@ class PrintController extends Controller
             ->whereYear('dateStart', $request->year)
             ->orWhereYear('dateEnd', $request->year)
             ->get(['id', 'title']);
+
+        $totalAttended = 0;
+
+        foreach ($events as $key => $event) {
+            if($event->participant->count() > 0) {
+                $totalAttended += $event->participant[0]?->total||0;
+            }
+        }
         
         return response()->json(collect([
             'users' => $users,
-            'events' => $events
+            'events' => $events,
+            "totalAttended" => $totalAttended
         ]));
     }
 

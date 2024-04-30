@@ -45,7 +45,7 @@ export default function Welcome({
                         <div className="flex">
                             <img src="/storage/logo.png" className="w-12" />
                             <div className="font-gotham text-xl my-auto ml-2 hidden md:block">
-                                CBU Attendance Monitoring System
+                                <div className="lg:block hidden">{ (import.meta.env.VITE_APP_NAME).split('_').join(' ') }</div>
                             </div>
                         </div>
 
@@ -70,16 +70,16 @@ export default function Welcome({
                             <div className="md:text-5xl sm:text-2xl text-lg font-bold text-center md:text-left">
                                 Welcome to DSWD Davao{" "}
                                 <br className="hidden md:block" />
-                                Training Attendance{" "}
+                                TAMS Up: Training Attendance{" "}
                                 <br className="hidden md:block" />
-                                Monitoring System{" "}
+                                Monitoring System - Upgrade{" "}
                                 <br className="hidden md:block" />
                                 <span className="text-current md:text-xl">
                                     for 4Ps Employees
                                 </span>
                             </div>
                             <div className="max-w-xl md:text-lg text-center md:text-left mt-4 mx-auto md:mx-0">
-                                Training Attendance Monitoring System for 4ps
+                                Training Attendance Monitoring System - Updgrade for 4ps
                                 Employees in Davao Region that streamlines
                                 managing and recording of attendance during
                                 training sessions.

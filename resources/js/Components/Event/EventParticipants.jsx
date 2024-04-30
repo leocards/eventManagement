@@ -1,11 +1,12 @@
 import { CheckIcon } from "@heroicons/react/20/solid";
 import SearchInput from "../SearchInput";
-import { FilterByProvince } from "./PopOver";
+import { Filter, FilterByProvince } from "./PopOver";
 import styled from "styled-components";
 import LoadingSearch from "../LoadingSearch";
 import { useEffect, useState } from "react";
 import Paginate from "../Paginate";
 import ViewEventAddedParticipants from "./ViewEventAddedParticipants";
+import PositionsTitles from "@/js/Position";
 
 const activeState = " bg-blue-500/20 border-blue-300";
 const defaultState =
@@ -16,8 +17,10 @@ export default function EventParticipants({
     allEmployees = [],
     errorMessage,
     provincesCount,
+    positionCount,
     selectedProvince = [],
     filterByProvince = "All",
+    filterByDesignation = "All",
     listOfAddedParticipants = [],
     listOfConflictSchedule = [],
 
@@ -25,6 +28,7 @@ export default function EventParticipants({
     onAddParticipant = () => {},
     onRemoveParticipant = () => {},
     onFilterByProvince = () => {},
+    onFilterByDesignation = () => {},
 }) {
     const [pages, setPages] = useState(null);
     const [search, setSearch] = useState("");
@@ -76,51 +80,58 @@ export default function EventParticipants({
     const checkIfParticipantHasBeenAdded = (id) => 
         listOfAddedParticipants.find((p) => p.id === id)
 
-    const onClickSelectAll = () => {
-        if(filterByProvince != "All") {
-            if(!selectedProvince.includes(filterByProvince)) {
-                let getAllParticipants = allEmployees.filter(({province}) => province == filterByProvince)
-                getAllParticipants = getAllParticipants.filter(({id}) => !listOfAddedParticipants.some(p => p.id == id))
-                onSelectAll(
-                    [...selectedProvince, filterByProvince],
-                    [...listOfAddedParticipants, ...getAllParticipants]
+    const checkIfSelectAll = () => {
+        return participants.every(participant => listOfAddedParticipants.some(list => list.id === participant.id));
+    }
+
+    const onClickSelectAll = (isSelectAll = false) => {
+        let all;
+        if(!isSelectAll) {
+            if(filterByDesignation != "All" && filterByProvince != "All") {
+                all = allEmployees.filter(({province, position}) => 
+                    (position == filterByDesignation) && 
+                    (province == filterByProvince)
                 )
             } else {
-                let filterSelectAll = selectedProvince.filter(sp => sp != filterByProvince)
-                let filterAddedEmp = listOfAddedParticipants.filter(({province}) => province != filterByProvince)
-                onSelectAll(
-                    [...filterSelectAll],
-                    [...filterAddedEmp]
-                )
+                all = allEmployees.filter(({province, position}) => (
+                    (filterByDesignation != "All" && position == filterByDesignation) || 
+                    (filterByProvince != "All" && province == filterByProvince)
+                ))
             }
+            all = all.filter(({id}) => !listOfAddedParticipants.some(p => p.id == id))
+            onSelectAll([...listOfAddedParticipants, ...all])
+        } else {
+            if(filterByDesignation != "All" && filterByProvince != "All")
+                all = listOfAddedParticipants.filter(({province, position}) => (province != filterByProvince || position != filterByDesignation))
+            else if(filterByDesignation == "All" && filterByProvince != "All")
+                all = listOfAddedParticipants.filter(({province}) => province != filterByProvince)
+            else if(filterByDesignation != "All" && filterByProvince == "All")
+                all = listOfAddedParticipants.filter(({position}) => position != filterByDesignation)
+            
+            onSelectAll(all)
         }
     }
 
     const addOrRemoveParticipant = (a_rp, remove = false) => {
         if(!remove) {
-            let countProvEmp = provincesCount.find(({province}) => province == a_rp.province)
-            let totalAdded = listOfAddedParticipants.filter(({province}) => province == a_rp.province)
-            if(countProvEmp && countProvEmp.count == (totalAdded.length + 1)) {
-                onAddParticipant(a_rp, [...selectedProvince, a_rp.province])
-            } else {
-                onAddParticipant(a_rp, [...selectedProvince])
-            }
+            onAddParticipant(a_rp)
         } else {
-            let filterSelectAll = selectedProvince.filter(sp => sp != a_rp.province)
             let filterAddedParticipants = listOfAddedParticipants.filter(({id}) => a_rp.id != id)
-            onRemoveParticipant(filterAddedParticipants, [...filterSelectAll])
+            onRemoveParticipant(filterAddedParticipants)
         }
     }
 
-    const checkIfSelectAll = () => 
-        selectedProvince.length === 5 || selectedProvince.includes(filterByProvince)
-
     useEffect(() => {
-        if (search || filterByProvince != "All") {
+        if (search || (filterByProvince != "All" || filterByDesignation != 'All')) {
             setLoadingSearch(true);
             async function getSearches() {
                 let response = await axios.get(
-                    route("employee.search", { _query: { search: search, filter: filterByProvince, isTrainee: true } })
+                    route("employee.search", { _query: { 
+                        search: search, 
+                        filter: filterByProvince, 
+                        filterByDesignation: filterByDesignation, 
+                        isTrainee: true 
+                    }})
                 );
                 let data = response.data;
                 setParticipantData(data);
@@ -131,7 +142,7 @@ export default function EventParticipants({
         } else {
             setParticipantData(initialList);
         }
-    }, [search, initialList, filterByProvince]);
+    }, [search, initialList, filterByProvince, filterByDesignation]);
 
     useEffect(() => {
         if(errorMessage && listOfConflictSchedule.length > 0) {
@@ -156,46 +167,55 @@ export default function EventParticipants({
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-3">
-                <div className="flex flex-col sm:flex-row sm:items-center">
-                    <FilterByProvince
-                        activeFilter={filterByProvince}
-                        onSelect={(select) => onFilterByProvince(select)}
-                    />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-0 gap-2">
+                <FilterByProvince
+                    className="!w-full sm:!w-52"
+                    activeFilter={filterByProvince}
+                    onSelect={(select) => onFilterByProvince(select)}
+                />
+                <Filter 
+                    activeFilter={filterByDesignation}
+                    className="w-full sm:!w-64 pt-px !rounded border-gray-300"
+                    filterList={["All", ...PositionsTitles.map(({ name }) => name).sort()]}
+                    onSelect={(select) => onFilterByDesignation(select)}
+                />
+            </div>
 
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mt-2 md:mt-3">
+                <div className="flex flex-col md:flex-row items-center gap-3 mt-3 md:mt-0 w-full">
                     {listOfAddedParticipants.length !== 0 && (
-                        <div className="sm:ml-3 sm:mt-0 mt-1">
+                        <div className="mr-auto md:mr-0 shrink-0">
                             Participants: {listOfAddedParticipants.length}
                         </div>
                     )}
-                </div>
-                <div className="ml-auto flex items-center gap-3 mt-3 md:mt-0">
-                    {filterByProvince != "All" && (
-                        <SelectAllButton onClick={onClickSelectAll} >
-                            Select All
-                            <div
-                                className={
-                                    "w-4 h-4 flex items-center justify-center shrink-0 border rounded " +
-                                    (checkIfSelectAll()
-                                        ? "bg-blue-700 text-white border-blue-700"
-                                        : "border-gray-600")
-                                }
-                            >
-                                {checkIfSelectAll() ? (
-                                    <CheckIcon className="w-4 h-4" />
-                                ) : (
-                                    ""
-                                )}
-                            </div>
-                        </SelectAllButton>
-                    )}
-                    <ViewButton
-                        className="shrink-0"
-                        disabled={listOfAddedParticipants.length === 0}
-                        onClick={() => setShowParticipantList(true)}
-                    >
-                        View added participants
-                    </ViewButton>
+                    <div className="flex gap-3 ml-auto">
+                        {(filterByProvince != "All" || filterByDesignation != "All") && participants.length > 0 && (
+                            <SelectAllButton className="!w-fit" onClick={() => onClickSelectAll(checkIfSelectAll())} >
+                                Select All
+                                <div
+                                    className={
+                                        "w-4 h-4 flex items-center justify-center shrink-0 border rounded " +
+                                        (checkIfSelectAll()
+                                            ? "bg-blue-700 text-white border-blue-700"
+                                            : "border-gray-600")
+                                    }
+                                >
+                                    {checkIfSelectAll() ? (
+                                        <CheckIcon className="w-4 h-4" />
+                                    ) : (
+                                        ""
+                                    )}
+                                </div>
+                            </SelectAllButton>
+                        )}
+                        <ViewButton
+                            className="shrink-0"
+                            disabled={listOfAddedParticipants.length === 0}
+                            onClick={() => setShowParticipantList(true)}
+                        >
+                            View added participants
+                        </ViewButton>
+                    </div>
                 </div>
             </div>
 

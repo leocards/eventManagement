@@ -8,7 +8,8 @@ import ImageUploader from "../ImageUploader";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import PrimaryButton from "../Buttons/PrimaryButton";
 import { AutoComplete, ListSelector } from "../Event/PopOver";
-import { provinces, roles, roles2 } from "@/js/Position";
+import { provinces, municipalities, roles, roles2 } from "@/js/Position";
+import axios from "axios";
 
 export default function NewEmployee({
     show,
@@ -38,6 +39,8 @@ export default function NewEmployee({
         address: "",
         position: "",
         province: "",
+        municipality: "",
+        ip_affiliation: "",
         gender: "",
         profile: null,
         user_type: "Employee",
@@ -65,35 +68,34 @@ export default function NewEmployee({
     const getEmployeeData = async () => {
         //setLoading(true);
         let response = await axios.get(route("employee.view", employeeEdit.id));
-        let data = response.data;
+        let resData = response.data;
 
         response.status === 200
             ? setUpdateData({
-                  first_name: data.first_name,
-                  last_name: data.last_name,
-                  birthday: data.birthday,
-                  email: data.email,
-                  contact: data.contact,
-                  address: data.address,
-                  position: data.position,
-                  province: data.province,
-                  gender: data.gender,
-                  profile: data.profile
+                  first_name: resData.first_name,
+                  last_name: resData.last_name,
+                  birthday: resData.birthday,
+                  email: resData.email,
+                  contact: resData.contact,
+                  address: resData.address,
+                  position: resData.position,
+                  province: resData.province,
+                  municipality: resData.municipality??"",
+                  gender: resData.gender,
+                  profile: resData.profile
                       ? {
                             response: true,
-                            data: {
-                                base64: data.profile,
-                                extension: data.profile.split(".")[1],
+                            resData: {
+                                base64: resData.profile,
+                                extension: resData.profile.split(".")[1],
                             },
                         }
                       : null,
-                  status: data.status == "Active" ? "" : data.status,
-                  user_type: data.role,
-                  employment_status: data.employment_status??"Regular"
+                  status: resData.status == "Active" ? "Active" : resData.status,
+                  user_type: resData.role,
+                  employment_status: resData.employment_status??"Regular"
               })
             : "";
-
-        //setLoading(false);
     };
 
     useEffect(() => {
@@ -146,10 +148,9 @@ export default function NewEmployee({
                                 <ListSelector
                                     paddingHeight="py-4"
                                     list={[
-                                        { option: "" },
+                                        { option: "Active" },
                                         { option: "Resigned" },
                                         { option: "Non-renewal" },
-                                        { option: "Transfer program" },
                                     ]}
                                     optionPosition="bottom"
                                     borderColor=""
@@ -167,7 +168,7 @@ export default function NewEmployee({
                                 />
                                 <InputLabel
                                     htmlFor="status"
-                                    value="Employee Status"
+                                    value="Status"
                                     className={
                                         "after:content-['*'] after:ml-0.5 after:text-red-500 " +
                                         (errors.status && "!text-pink-600")
@@ -192,7 +193,7 @@ export default function NewEmployee({
                                 paddingHeight="py-4"
                                 list={[
                                     { option: "Regular" },
-                                    { option: "Contractual" },
+                                    { option: "Contract of Service" },
                                 ]}
                                 optionPosition="bottom"
                                 borderColor=""
@@ -286,80 +287,37 @@ export default function NewEmployee({
                         onInput={(input) => setData("address", input)}
                     />
 
-                    <div className="mb-4">
-                        <div
-                            className={
-                                "form-input-float " +
-                                (errors.position &&
-                                    "border-pink-600 focus-within:border-pink-600")
-                            }
-                        >
-                            <AutoComplete
-                                selectedOption={data.position}
-                                onSelect={(value) =>
-                                    setData("position", value.name)
-                                }
-                            />
+                    <SelectInput 
+                        data={data.position}
+                        errors={errors.position}
+                        id="position"
+                        label="Position / Designation"
+                        setData={(value) => setData('position', value)}
+                    />
+                    
+                    <div className={"rounded-md border p-1 px-4 mb-5 "+((errors.province || errors.municipality) ? ' border-pink-600 focus-within:border-pink-600':'')}>
+                        <div className="mb-4 mt-2 font-medium text-sm">Area of assignment</div>
+                        <SelectInput 
+                            array={provinces}
+                            data={data.province}
+                            errors={errors.province}
+                            id="province"
+                            label="Province"
+                            setData={(value) => setData({...data, province: value, municipality: ""})}
+                        />
 
-                            <input
-                                type="text"
-                                readOnly
-                                value={data.position}
-                                id="position"
-                                placeholder=""
-                                hidden
-                            />
-                            <InputLabel
-                                htmlFor="position"
-                                value="Position"
-                                className={
-                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
-                                    (errors.position && "!text-pink-600")
-                                }
-                            />
-                        </div>
-                        <div className="text-sm text-pink-700">
-                            {errors.position}
-                        </div>
+                        <SelectInput
+                            disabled={!data.province||data.province=='RPMO'}
+                            array={data.province?(data.province!='RPMO'?municipalities[data.province]:[{name: ""}]):[{name: ""}]}
+                            data={data.municipality}
+                            isRequired={data.province=='RPMO'?false:true}
+                            errors={errors.municipality}
+                            id="municipality"
+                            label="City/Municipality/Sub-district"
+                            setData={(value) => setData('municipality', value)}
+                        />
                     </div>
 
-                    <div className="mb-4">
-                        <div
-                            className={
-                                "form-input-float " +
-                                (errors.province &&
-                                    "border-pink-600 focus-within:border-pink-600")
-                            }
-                        >
-                            <AutoComplete
-                                list={provinces}
-                                maxHeight="max-h-48"
-                                selectedOption={data.province}
-                                onSelect={(value) =>
-                                    setData("province", value.name)
-                                }
-                            />
-                            <input
-                                type="text"
-                                readOnly
-                                value={data.province}
-                                id="province"
-                                placeholder=""
-                                hidden
-                            />
-                            <InputLabel
-                                htmlFor="province"
-                                value="Province"
-                                className={
-                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
-                                    (errors.province && "!text-pink-600")
-                                }
-                            />
-                        </div>
-                        <div className="text-sm text-pink-700">
-                            {errors.province}
-                        </div>
-                    </div>
 
                     <div className="mb-4">
                         <div
@@ -414,7 +372,7 @@ export default function NewEmployee({
                                     (errors.gender && "!text-pink-600")
                                 }
                             >
-                                Select Gender:{" "}
+                                Sex:{" "}
                             </div>
                             <div className="flex items-center w-full gap-3">
                                 <button
@@ -465,6 +423,16 @@ export default function NewEmployee({
                             {errors.gender}
                         </div>
                     </div>
+
+                    <InputBox
+                        space="mb-4"
+                        id="ip_affiliation"
+                        label="IP Affiliation"
+                        value={data.ip_affiliation}
+                        error={errors.ip_affiliation}
+                        onInput={(input) => setData("ip_affiliation", input)}
+                        required={false}
+                    />
 
                     <ImageUploader
                         image={data.profile}
@@ -550,6 +518,7 @@ const InputBox = ({
     id,
     label,
     space,
+    required = true,
     onInput = () => {},
     onBlur = () => {},
     onFocus = () => {},
@@ -574,7 +543,7 @@ const InputBox = ({
                     htmlFor={id}
                     value={label}
                     className={
-                        "capitalize after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                        `capitalize ${required ? 'after:content-[\'*\'] after:ml-0.5 after:text-red-500' : ''}  ` +
                         (error && "!text-pink-600")
                     }
                 />
@@ -583,6 +552,62 @@ const InputBox = ({
         </div>
     );
 };
+
+export const SelectInput = ({ data = '', errors, disabled = false, id, label, array, className = "", isRequired = true, setData }) => {
+    return (
+        <div className={"mb-4 "+className}>
+            <div
+                className={
+                    "form-input-float " +
+                    (errors &&
+                        "border-pink-600 focus-within:border-pink-600 ") + 
+                        (disabled?' opacity-60 ':'')
+                }
+            >
+
+                {
+                    id === 'position' ?
+                    <AutoComplete
+                        selectedOption={data}
+                        onSelect={(value) =>
+                            setData(value.name)
+                        }
+                        disabled={disabled}
+                    /> :
+                    <AutoComplete
+                        list={array}
+                        maxHeight="max-h-48"
+                        selectedOption={data}
+                        onSelect={(value) =>
+                            setData(value.name)
+                        }
+                        disabled={disabled}
+                    />
+                }
+
+                <input
+                    type="text"
+                    readOnly
+                    value={data}
+                    id={id}
+                    placeholder=""
+                    hidden
+                />
+                <InputLabel
+                    htmlFor={id}
+                    value={label}
+                    className={
+                        (isRequired?"after:content-['*'] after:ml-0.5 after:text-red-500 ":' ') +
+                        (errors && "!text-pink-600")
+                    }
+                />
+            </div>
+            <div className="text-sm text-pink-700">
+                {errors}
+            </div>
+        </div>
+    )
+}
 
 {
     /* <div className="mb-4">

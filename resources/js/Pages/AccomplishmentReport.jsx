@@ -100,29 +100,31 @@ export default function AccomplishmentReport({ auth, report, years }) {
 
             sendRequest(null, quarter).then((res) => {
                 let { data } = res;
-                let er = data.data[0];
-                if (er?.evaluation_rates) {
-                    er.evaluation_rates = er.evaluation_rates.map((rate) => {
-                        return {
-                            percent:
-                                (
-                                    (rate.rates / er.participant_count) *
-                                    100
-                                ).toFixed(2) + "%",
-                            count: rate.rates,
-                            level:
-                                rate.q12 == 5
-                                    ? "Excellent"
-                                    : rate.q12 == 4
-                                    ? "Very Satisfied"
-                                    : rate.q12 == 3
-                                    ? "Satisfied"
-                                    : rate.q12 == 2
-                                    ? "Fair"
-                                    : "Poor",
-                        };
-                    });
-                }
+                let er = data.data;
+                er.forEach(element => {
+                    if (element?.evaluation_rates) {
+                        element.evaluation_rates = element.evaluation_rates.map((rate) => {
+                            return {
+                                percent:
+                                    (
+                                        (rate.rates / element.participant_count) *
+                                        100 
+                                    ).toFixed(2) + "%",
+                                count: rate.rates,
+                                level:
+                                    rate.q12 == 5
+                                        ? "Excellent"
+                                        : rate.q12 == 4
+                                        ? "Very Satisfied"
+                                        : rate.q12 == 3
+                                        ? "Satisfied"
+                                        : rate.q12 == 2
+                                        ? "Fair"
+                                        : "Poor",
+                            };
+                        });
+                    }
+                });
                 setAccomplishmentData(data);
                 setLoadingSearch(false);
             });
@@ -322,7 +324,7 @@ export default function AccomplishmentReport({ auth, report, years }) {
                                                         <span className="font-gotham">
                                                             {rates.count}
                                                         </span>{" "}
-                                                        ({rates.percent})
+                                                        &#40; {rates.percent} &#41;
                                                     </span>
                                                 </div>
                                             )

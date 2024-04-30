@@ -16,6 +16,7 @@ class Event extends Model
         "platform",
         "venue",
         "title",
+        "activity_type",
         "objective",
         "fund",
         "is_range",

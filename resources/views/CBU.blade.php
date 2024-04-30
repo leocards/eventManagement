@@ -18,7 +18,7 @@
     <tbody>
         <tr>
             <x-table-cell colspan="3">Total</x-table-cell>
-            <x-table-cell></x-table-cell>
+            <x-table-cell>{{$totalAttended}}</x-table-cell>
             @foreach ($events as $event)
                 <x-table-cell>{{count($event->participant) > 0 ? $event->participant[0]->total : '0'}}</x-table-cell>
             @endforeach

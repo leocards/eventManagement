@@ -49,7 +49,7 @@ export default function ViewAccomplishment({ show, event_accomplishment, onClose
                                     </div>
                                 )}
 
-                                {event_accomplishment?.platform == "Virtual" && (
+                                {event_accomplishment?.platform == "Online Platform" && (
                                     <a
                                         href={event_accomplishment?.venue}
                                         target="_blank"

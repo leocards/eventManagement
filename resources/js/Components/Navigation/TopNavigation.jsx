@@ -50,7 +50,8 @@ export default function TopNavigation({ auth, showMenu, onClickMenu = () => {} }
                                 <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
 
                                 <div className="text-xl font-bold sm:block hidden">
-                                    CBU Attendance Monitoring System
+                                    <div className="lg:block hidden">{ (import.meta.env.VITE_APP_NAME).split('_').join(' ') }</div>
+                                    <div className="lg:hidden">TAMS Up</div>
                                 </div>
                             </Link>
                         </div>

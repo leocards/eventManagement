@@ -16,7 +16,7 @@ if (!function_exists('checkRemarkStatusOfTrainee')) {
 
 if (!function_exists('getTime')) {
     function getTime($time) {
-        return \Carbon\Carbon::parse($time)->format('h:i a');
+        return $time?\Carbon\Carbon::parse($time)->format('h:i a'):null;
     }
 }
 

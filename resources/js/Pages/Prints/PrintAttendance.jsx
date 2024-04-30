@@ -11,7 +11,7 @@ export default function PrintAttendance({ attendance, event }) {
             }
 
             * {
-                font-size: 12px;
+                font-size: 11px;
             }
         }
     `;
@@ -31,62 +31,68 @@ export default function PrintAttendance({ attendance, event }) {
     return (
         <div className="print:text-xs text-black p-2">
             <style dangerouslySetInnerHTML={{ __html: printStyle }}></style>
-            <div className="max-w-5xl w-full p- mx-auto my-auto">
+            <div className="max- w-6xl w-full p- mx-auto my-auto">
                 
                 <PrintHeader />
 
-                <div className="my-5">
+                <div className="">
+                    <div className="my-5">
                     <h1 className="font-gotham text-3xl w-fit mx-auto mb-5">Attendance Summary Report</h1>
 
-                    {event && <>
-                        <div className="max-w-2xl mx-auto text-center font-semibold"> {event.title} </div>
-                        <div className="w-fit mx-auto">
-                            <span>{ convertDate(event.dateStart, event.dateEnd) }</span> | 
-                            <span> { convertDate(null,null,event.time_in, event.time_out) }</span>
-                        </div>
-                        <div className="w-fit mx-auto">@ { event.platform == "Face-to-face" ? event.venue : "Virtual" }</div>
-                    </>}
-                </div>
-
-                <div className="border border-b-0 border-black/40">
-                    <div className="grid grid-cols-[10rem,11rem,24.8rem,6rem,6rem,6rem] border-black/40 border-b text-sm font-gotham">
-                        <div className="capitalize px-2 py-2 border-black/40 border-r">Date</div>
-                        <div className="capitalize px-2 py-2 border-black/40 border-r">Trainee</div>
-                        <div className="capitalize px-2 py-2 border-black/40 border-r">Event</div>
-                        <div className="capitalize px-2 py-2 border-black/40 border-r text-center">in</div>
-                        <div className="capitalize px-2 py-2 border-black/40 border-r text-center">out</div>
-                        <div className="capitalize px-2 py-2 border-black/40 text-center">remarks</div>
+                        {event && <>
+                            <div className="max-w-2xl mx-auto text-center font-semibold"> {event.title} </div>
+                            <div className="w-fit mx-auto">
+                                <span>{ convertDate(event.dateStart, event.dateEnd) }</span> | 
+                                <span> { convertDate(null,null,event.time_in, event.time_out) }</span>
+                            </div>
+                            <div className="w-fit mx-auto">@ { event.platform == "Face-to-face" ? event.venue : "Virtual" }</div>
+                        </>}
                     </div>
 
-                    {
-                        attendance.map((attendance, index) => (
-                            <div
-                                key={index}
-                                className={
-                                    "grid grid-cols-[10rem,11rem,24.8rem,6rem,6rem,6rem] border-black/40 border-b cursor-default text-sm"
-                                }
-                            >
-                                <div className="capitalize px-2.5 py-1.5 flex items-center border-black/40 border-r">
-                                    {moment(attendance.updated_at).format('LL')}
+                    <div className="border w-fit mx-auto border-b-0 border-black/30">
+                        <div className="grid w-fit print:grid-cols-[11rem,6rem,13.5rem,10rem,13.5rem,6rem,6rem] grid-cols-[11rem,6rem,13.5rem,10rem,13.5rem,6rem,6rem] border-black/30 border-b text-sm font-gotham">
+                            <div className="capitalize px-2 py-2 border-black/30 border-r">Name</div>
+                            <div className="capitalize px-2 py-2 border-black/30 border-r">Sex</div>
+                            <div className="capitalize px-2 py-2 border-black/30 border-r">Position/Designation</div>
+                            <div className="capitalize px-2 py-2 border-black/30 border-r">Area of Assignment</div>
+                            <div className="capitalize px-2 py-2 border-black/30 border-r">Email</div>
+                            <div className="capitalize px-2 py-2 border-black/30 border-r text-center">Time In</div>
+                            <div className="capitalize px-2 py-2 border-black/30 text-center">Time Out</div>
+                        </div>
+
+                        {
+                            attendance.map((attendance, index) => (
+                                <div
+                                    key={index}
+                                    className={
+                                        "grid w-fit print:grid-cols-[11rem,6rem,13.5rem,10rem,13.5rem,6rem,6rem] grid-cols-[11rem,6rem,13.5rem,10rem,13.5rem,6rem,6rem] border-black/30 border-b cursor-default text-sm"
+                                    }
+                                >
+                                    <div className="capitalize px-2.5 py-1.5 flex items-center border-black/30 border-r text-wrap">
+                                        {attendance.participants.name}
+                                    </div>
+                                    <div className="px-2.5 py-1.5 flex items-center border-black/30 border-r">
+                                        {attendance.participants.gender}
+                                    </div>
+                                    <div className="px-2.5 py-1.5 flex items-center border-black/30 border-r text-wrap">
+                                        {attendance.participants.position}
+                                    </div>
+                                    <div className="capitalize px-2.5 py-1.5 flex items-center border-black/30 border-r text-wrap">
+                                        {attendance.participants.province}
+                                    </div>
+                                    <div className="capitalize px-2.5 py-1.5 border-black/30 border-r text-wrap">
+                                        {attendance.participants.email}
+                                    </div>
+                                    <div className="px-2.5 py-1.5 flex items-center border-r border-black/30 justify-center">
+                                        {moment(attendance.time_in).format('LT')}
+                                    </div>
+                                    <div className="px-2.5 py-1.5 flex items-center justify-center">
+                                        {attendance.time_out && moment(attendance.time_out).format('LT')}
+                                    </div>
                                 </div>
-                                <div className="px-2.5 py-1.5 flex items-center border-black/40 border-r">
-                                    {attendance.participants.name}
-                                </div>
-                                <div className="px-2.5 py-1.5 flex items-center border-black/40 border-r">
-                                    {attendance.event.title}
-                                </div>
-                                <div className="capitalize px-2.5 py-1.5 flex items-center justify-center border-black/40 border-r">
-                                    {moment(attendance.time_in).format('LT')}
-                                </div>
-                                <div className="capitalize px-2.5 py-1.5 flex items-center justify-center border-black/40 border-r">
-                                    {attendance.time_out && moment(attendance.time_out).format('LT')}
-                                </div>
-                                <div className="px-2.5 py-1.5 flex items-center justify-center">
-                                    {checkRemarkStatus(attendance.time_in, attendance.event_time_in, attendance.time_in_cutoff)}
-                                </div>
-                            </div>
-                        ))
-                    }
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
         </div>

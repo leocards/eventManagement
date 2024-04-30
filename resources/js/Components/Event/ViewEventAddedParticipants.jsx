@@ -14,7 +14,7 @@ export default function ViewEventAddedParticipants({
 
     return (
         <Modal show={show} onClose={onClose}>
-            <div className="p-4">
+            <div className="p-4 pr-2">
                 <div className="flex items-center mb-5 font-semibold uppercase">
                     Event participants
                     <button
@@ -25,7 +25,7 @@ export default function ViewEventAddedParticipants({
                     </button>
                 </div>
 
-                <div className="max-h-[30rem] mt-4">
+                <div className="max-h-[30rem] mt-4 overflow-y-auto pr-2">
                     <div className="grid grid-cols-2 gap-2">
                         {paticipantsList.map((participant, index) => (
                             <Card

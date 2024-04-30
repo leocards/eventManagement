@@ -55,7 +55,7 @@ class CBUController extends Controller
             "cbu_summary" => $cbu,
             //"inactiveUser" => $inactives,
             "years" => $years->prepend(['year'=>null]),
-            "remarks" => collect(['All', 'Resigned', 'Non-Renewal', 'Transfer Program'])
+            "remarks" => collect(['All', 'Active Status', 'Resigned/Non-Renewal'])
         ]);
     }
 
@@ -86,7 +86,8 @@ class CBUController extends Controller
             ->where('role', 'Employee');
         })
         ->when($request->filter != 'All', function ($query) use ($request) {
-            $query->where('status', $request->filter);
+            $filter = $request->filter == "Active Status"? ["Active"] : ["Resigned", "Non-renewal"];
+            $query->whereIn('status', $filter);
         })
         ->where('role', 'Employee')
         ->select('id', 'first_name', 'last_name', 'status', 'created_at')

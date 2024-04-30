@@ -31,25 +31,24 @@ class AttendanceController extends Controller
     {
         $attendance = EventParticipants::with('event')
             ->join('attendances as a', 'a.event_participant_id', '=', 'event_participants.id')
-            ->when($request->search, function ($query) use ($request) {
-                return $query->where(function ($query) use ($request) {
-                    return $query->whereHas('event', function ($subquery) use ($request) {
-                        return $subquery->where('title', 'like', '%' . $request->search . '%');
-                    })->when(Auth::user()->role !== "Employee", function ($whenQuery) use ($request) {
-                        return $whenQuery->whereHas('participants', function ($subquery) use ($request) {
-                            return $subquery->orWhere('first_name', 'like', '%' . $request->search . '%')
-                                ->orWhere('last_name', 'like', '%' . $request->search . '%');
-                        });
-                    });
-                });
-            })
-            ->when(Auth::user()->role === "Employee", function ($query) {
-                return $query->where('user_id', Auth::id())
+            ->leftJoin('users as u', 'u.id', '=', 'event_participants.user_id')
+            ->when(Auth::user()->role === "Employee", function ($query) use ($request) {
+                return $query->when($request->search, function ($query) use ($request) {
+                    return $query
+                        ->leftJoin('events as e', 'e.id', '=', 'event_participants.event_id')
+                        ->where('title', 'like', '%' . $request->search . '%');
+                    })
+                    ->where('user_id', Auth::id())
                     ->whereNotNull('a.time_in')
                     ->latest('a.updated_at');
             })
             ->when(Auth::user()->role !== "Employee", function ($query) use ($request) {
                 return $query->with('participants')
+                    ->when($request->search, function ($query) use ($request) {
+                            return $query->where('first_name', 'like', '%' . $request->search . '%')
+                                ->orWhere('email', 'like', '%' . $request->search . '%')
+                                ->orWhere('province', 'like', '%' . $request->search . '%');
+                    })
                     // get the first occurence in event codes to set as a reference for the attendance remarks
                     ->leftJoin('event_codes AS ec', function ($join) {
                         $join->on('ec.event_id', '=', 'event_participants.event_id')

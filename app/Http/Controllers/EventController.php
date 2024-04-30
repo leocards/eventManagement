@@ -49,11 +49,16 @@ class EventController extends Controller
                 ->where('role', 'Employee')->where('status', 'Active')
                 ->groupBy('province')
                 ->get();
+            $resultsPosition = User::select('position', DB::raw('count(*) as count'))
+                ->where('role', 'Employee')->where('status', 'Active')
+                ->groupBy('position')
+                ->get();
             $events = [];
         } else {
             $resource_persons = [];
             $employees = [];
             $results = [];
+            $resultsPosition = [];
 
             $events = Event::with("eventCode")
                 ->select("id", "platform", "venue", "title", "objective", "fund", "dateStart", "dateEnd", "is_range", "remarks", "created_at")
@@ -67,6 +72,7 @@ class EventController extends Controller
             "resourcePersons" => $resource_persons,
             "participants" => $employees,
             "totalEmp" => $results,
+            "totalPosition" => $resultsPosition,
             "editId" => $request->event_id
         ]);
     }
@@ -139,6 +145,7 @@ class EventController extends Controller
                     "platform" => $request->platform,
                     "venue" => $request->venue,
                     "title" => $request->title,
+                    "activity_type" => $request->activityType,
                     "objective" => $request->objective,
                     "fund" => 'Php ' . number_format($request->fund),
                     "is_range" => $request->date['isRange'],
@@ -327,6 +334,7 @@ class EventController extends Controller
                 $event->platform = $request->platform;
                 $event->venue = $request->venue;
                 $event->title = $request->title;
+                $event->activity_type = $request->activity_type;
                 $event->objective = $request->objective;
                 $event->fund = 'Php ' . number_format($request->fund);
                 $event->is_range = $isEnded?$event->is_range:$request->date['isRange'];
@@ -559,9 +567,10 @@ class EventController extends Controller
 
         $validator = Validator::make($request->all(), [
             "venue" => [new ValidVirtualVenueUrl, "required"],
-            "platform" => ["required", "in:Virtual,Face-to-face"],
+            "platform" => ["required", "in:Online Platform,Face-to-face"],
             "title" => ["required", $event ? Rule::unique('events')->ignore($event->id) : "unique:events,title"],
             "objective" => ["required"],
+            "activityType" => ["required", "in:Technical Assistance,Training,Knowledge Sharing Session"],
             "fund" => ["required", "numeric"],
             "date" => [new ValidateEventDateRange],
             "timeIn" => ["required", new ValidateEventTimeInOut],

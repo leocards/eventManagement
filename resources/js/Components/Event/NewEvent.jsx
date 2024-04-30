@@ -1,6 +1,6 @@
 import { router, useForm } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
-import { DateType, Platform } from "./PopOver";
+import { DateType, ListSelector, Platform } from "./PopOver";
 import ResourcePerson from "./ResourcePerson";
 import SecondaryButton from "../Buttons/SecondaryButton";
 import PrimaryButton from "../Buttons/PrimaryButton";
@@ -11,8 +11,9 @@ import InputLabel from "../InputLabel";
 import EventTime from "./EventTime";
 import EventParticipants from "./EventParticipants";
 import { LoadOnSubmit } from "../LoadingSearch";
+import { SelectInput } from "../Employee/NewEmployee";
 
-export default function NewEvent({ initialListRp, initialParticipants, totalEmp, editId }) {
+export default function NewEvent({ initialListRp, initialParticipants, totalEmp, totalPosition, editId }) {
     const [allParticipants, setAllParticipants] = useState(false);
     const [listOfConflictSchedule, setListOfConflictSchedule] = useState([])
     const [loadingOnUpdate, setLoadingOnUpdate] = useState(false)
@@ -21,6 +22,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
         venue: "",
         platform: "Face-to-face",
         title: "",
+        activityType: "",
         objective: "",
         fund: "",
         date: {
@@ -37,6 +39,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
         trainee_list: {
             selectBy: [],
             filterBy: "All",
+            filterByDesignation: "All",
             list: [],
         },
         initialDate: null,
@@ -54,6 +57,12 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
         setData("trainee_list", {
             ...data.trainee_list,
             filterBy: province,
+        });
+
+    const onFilterByDesignation = (disignation) =>
+        setData("trainee_list", {
+            ...data.trainee_list,
+            filterByDesignation: disignation,
         });
 
     const onSubmit = () => {
@@ -98,7 +107,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
             },
             onError: (err) => {
                 let keys = Object.keys(err)
-                let doc = document.getElementById(keys[0])
+                let doc = document.getElementById(keys.includes('title')?'title':keys[0])
                 console.log(err)
                 if(doc) {
                     doc.scrollIntoView({
@@ -239,72 +248,6 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                 }
             >
                 <div className=" mb-4">
-                    <div className="flex">
-                        {data.platform == "Virtual" ? (
-                            <span
-                                className={
-                                    "shrink-0 px-3 text-sm border border-gray-300 border-r-0 flex items-center rounded-l-md bg-gray-200/50 " +
-                                    (errors.venue &&
-                                        " border-pink-600 focus-within:border-pink-600 ")
-                                }
-                            >
-                                https://
-                            </span>
-                        ) : (
-                            ""
-                        )}
-                        <div
-                            className={
-                                "form-input-float grow flex rounded-r-none " +
-                                (data.platform == "Virtual"
-                                    ? "rounded-l-none "
-                                    : "") +
-                                (errors.venue &&
-                                    " border-pink-600 focus-within:border-pink-600 ")
-                            }
-                        >
-                            <TextInput
-                                type={
-                                    data.platform == "Virtual" ? "url" : "text"
-                                }
-                                className={
-                                    data.platform == "Virtual"
-                                        ? "!rounded-none"
-                                        : ""
-                                }
-                                id="venue"
-                                placeholder="Name"
-                                value={data.venue}
-                                onInput={({ target }) =>
-                                    setData("venue", target.value)
-                                }
-                            />
-                            <InputLabel
-                                htmlFor="venue"
-                                className={
-                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
-                                    (errors.venue && "!text-pink-600")
-                                }
-                            >
-                                {data.platform == "Virtual" ? "URL" : "Venue"}
-                            </InputLabel>
-                        </div>
-                        <Platform
-                            platform={data.platform}
-                            onChange={(platform) => {
-                                setData("platform", platform);
-                                clearErrors("venue");
-                            }}
-                            className={
-                                errors.venue &&
-                                " border-pink-600 focus-within:border-pink-600 "
-                            }
-                        />
-                    </div>
-                    <div className="text-sm text-pink-700">{errors.venue}</div>
-                </div>
-
-                <div className=" mb-4">
                     <div
                         className={
                             "form-input-float " +
@@ -333,6 +276,115 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                     </div>
                     <div className="text-sm text-pink-700">{errors.title}</div>
                 </div>
+
+                <div className="flex flex-col lg:flex-row lg:gap-4">
+                    <div className="mb-4 w-full lg:w-72 shrink-0">
+                        <div
+                            className={
+                                "form-input-float " +
+                                (errors.activityType &&
+                                    "border-pink-600 focus-within:border-pink-600 ")
+                            }
+                        >
+                            <ListSelector
+                                paddingHeight="py-4"
+                                list={[{ option: "" }, { option: 'Training' }, { option: 'Knowledge Sharing Session' }, { option: 'Technical Assistance' } ]}
+                                optionPosition="bottom"
+                                borderColor=""
+                                opacityOnEmpty
+                                selectedOption={data.activityType}
+                                onSelect={selected => setData('activityType', selected)}
+                                preSelect
+                            />
+                            <input
+                                type="text"
+                                readOnly
+                                value={data.activityType}
+                                id="activity_type"
+                                placeholder=""
+                                hidden
+                            />
+                            <InputLabel
+                                htmlFor="activity_type"
+                                value="Activity Type"
+                                className={
+                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                                    (errors.activityType && "!text-pink-600")
+                                }
+                            />
+                        </div>
+                        <div className="text-sm text-pink-700">
+                            {errors.activityType}
+                        </div>
+                    </div>
+
+                    <div className="mb-4 w-full">
+                        <div className="flex">
+                            {data.platform == "Online Platform" ? (
+                                <span
+                                    className={
+                                        "shrink-0 px-3 text-sm border border-gray-300 border-r-0 flex items-center rounded-l-md bg-gray-200/50 " +
+                                        (errors.venue &&
+                                            " border-pink-600 focus-within:border-pink-600 ")
+                                    }
+                                >
+                                    https://
+                                </span>
+                            ) : (
+                                ""
+                            )}
+                            <div
+                                className={
+                                    "form-input-float grow flex rounded-r-none " +
+                                    (data.platform == "Online Platform"
+                                        ? "rounded-l-none "
+                                        : "") +
+                                    (errors.venue &&
+                                        " border-pink-600 focus-within:border-pink-600 ")
+                                }
+                            >
+                                <TextInput
+                                    type={
+                                        data.platform == "Online Platform" ? "url" : "text"
+                                    }
+                                    className={
+                                        data.platform == "Online Platform"
+                                            ? "!rounded-none"
+                                            : ""
+                                    }
+                                    id="venue"
+                                    placeholder="Name"
+                                    value={data.venue}
+                                    onInput={({ target }) =>
+                                        setData("venue", target.value)
+                                    }
+                                />
+                                <InputLabel
+                                    htmlFor="venue"
+                                    className={
+                                        "after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                                        (errors.venue && "!text-pink-600")
+                                    }
+                                >
+                                    {data.platform == "Online Platform" ? "URL" : "Venue"}
+                                </InputLabel>
+                            </div>
+                            <Platform
+                                platform={data.platform}
+                                onChange={(platform) => {
+                                    setData("platform", platform);
+                                    clearErrors("venue");
+                                }}
+                                className={
+                                    errors.venue &&
+                                    " border-pink-600 focus-within:border-pink-600 "
+                                }
+                            />
+                        </div>
+                        <div className="text-sm text-pink-700">{errors.venue}</div>
+                    </div>
+                </div>
+
 
                 <div className="mb-4">
                     <div
@@ -543,6 +595,7 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
 
             <EventParticipants 
                 provincesCount={totalEmp}
+                positionCount={totalPosition}
                 allEmployees={allParticipants}
                 initialList={initialParticipants}
                 listOfConflictSchedule={listOfConflictSchedule}
@@ -550,26 +603,25 @@ export default function NewEvent({ initialListRp, initialParticipants, totalEmp,
                 filterByProvince={data.trainee_list.filterBy}
                 selectedProvince={data.trainee_list.selectBy}
                 listOfAddedParticipants={data.trainee_list.list}
-
+                filterByDesignation={data.trainee_list.filterByDesignation}
+                
                 onFilterByProvince={onFilterByProvince}
-                onAddParticipant={(p, selectsAll) => 
+                onFilterByDesignation={onFilterByDesignation}
+                onAddParticipant={(p) => 
                     setData("trainee_list", {
                         ...data.trainee_list, 
-                        selectBy: selectsAll,
                         list: [...data.trainee_list.list, p]
                     })
                 }
-                onRemoveParticipant={(p, selectsAll) => 
+                onRemoveParticipant={(p) => 
                     setData("trainee_list", {
                         ...data.trainee_list, 
-                        selectBy: selectsAll,
                         list: p
                     })
                 }
-                onSelectAll={(filters, participants) => {
+                onSelectAll={(participants) => {
                     setData("trainee_list", {
                         ...data.trainee_list,
-                        selectBy: filters,
                         list: participants
                     })
                 }}

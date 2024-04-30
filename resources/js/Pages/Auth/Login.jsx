@@ -46,8 +46,8 @@ export default function Login({ status, canResetPassword }) {
             )}
 
             <img
-                src="/storage/dswddavao.png"
-                className="w-[13rem] mx-auto mb-4"
+                src="/storage/DSWD4PsBPLogo.png"
+                className="w-[20rem] mx-auto mb-5"
                 alt=""
             />
 

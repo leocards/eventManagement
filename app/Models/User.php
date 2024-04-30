@@ -28,6 +28,8 @@ class User extends Authenticatable
         "address",
         "position",
         "province",
+        "municipality",
+        "ip_affiliation",
         "gender",
         "profile",
         "password",

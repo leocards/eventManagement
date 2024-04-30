@@ -23,6 +23,7 @@ export default function Event({
     resourcePersons,
     participants,
     totalEmp,
+    totalPosition,
     editId,
 }) {
     const { url } = usePage();
@@ -222,6 +223,7 @@ export default function Event({
                     initialListRp={resourcePersons}
                     initialParticipants={participants}
                     totalEmp={totalEmp}
+                    totalPosition={totalPosition}
                     editId={editId}
                 />
             )}

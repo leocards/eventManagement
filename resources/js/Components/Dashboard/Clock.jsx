@@ -33,7 +33,7 @@ export default function Clock()
                 </div>
 
                 <div className="ml-3 flex md:flex-row flex-col md:items-center">
-                    <div className="md:text-2xl text-sm font-semibold md:w-36 ml-auto">
+                    <div className="md:text-2xl text-sm font-semibold md:w-40 ml-auto tabular-nums">
                         <span>{time}</span>
                     </div>
 

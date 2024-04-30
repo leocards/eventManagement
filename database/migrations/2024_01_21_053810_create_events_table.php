@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string("platform", 100);
             $table->string("venue", 1000);
             $table->string("title", 1000)->index();
+            $table->string("activity_type", 45)->nullable();
             $table->mediumText("objective");
             $table->string("fund");
             $table->boolean("is_range");

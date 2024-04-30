@@ -76,9 +76,15 @@ class UserController extends Controller
             "address" => ['required'],
             "position" => ['required'],
             "province" => ['required'],
+            "municipality" => ['exclude_if:province,RPMO', 'required'],
             "gender" => ['required', 'in:Male,Female'],
-            "employment_status" => ['required', 'in:Regular,Contractual']
+            "employment_status" => ['required', 'in:Regular,Contractual,Contract of Service']
+        ],[
+            "gender" => "The sex field is required",
+            "municipality" => "The City/Municipality/Sub-district field is required",
+            "position" => "The position/designation field is required",
         ]);
+
         try {
             $filename = null;
             if ($request->profile && $request->profile['response']) {
@@ -103,6 +109,8 @@ class UserController extends Controller
                     "address" => $request->address,
                     "position" => $request->position,
                     "province" => $request->province,
+                    "municipality" => $request->municipality,
+                    "ip_affiliation" => $request->ip_affiliation??null,
                     "gender" => $request->gender,
                     "profile" => $filename ?? null,
                     "password" => Hash::make("12345678"),
@@ -134,8 +142,13 @@ class UserController extends Controller
             "address" => ['required'],
             "position" => ['required'],
             "province" => ['required'],
+            "municipality" => ['required'],
             "gender" => ['required', 'in:Male,Female'],
             "employment_status" => ['required', 'in:Regular,Contractual']
+        ], [
+            "gender" => "The sex field is required",
+            "municipality" => "The City/Municipality/Sub-district field is required",
+            'position' => 'The position/designation field is required',
         ]);
         $validator->validate();
         
@@ -172,8 +185,10 @@ class UserController extends Controller
                     "address" => $request->address,
                     "position" => $request->position,
                     "province" => $request->province,
+                    "municipality" => $request->municipality,
+                    "ip_affiliation" => $request->ip_affiliation??null,
                     "gender" => $request->gender,
-                    "profile" => $filename ?? "/storage/profile/profile.png",
+                    "profile" => $filename ?? null,
                     "password" => Hash::make("12345678"),
                     "status" => !$request->status ? "Active" : $request->status,
                     "employment_status" => $request->employment_status,
@@ -203,8 +218,9 @@ class UserController extends Controller
     public function searchUser(Request $request)
     {
         try {
-            $filter = $request->filter??'';
+            $filter = $request->filter??($request->filterAreaOfAssign??'');
             $search = $request->search??'';
+            $filterDes = $request->filterByDesignation??($request->filterDesignation??'');
             $filterEmployment = $request->filterEmployment??'';
             
             $search = User::select("id", "first_name", "last_name", "email", "province", "position", "profile", "status", "role")
@@ -222,12 +238,20 @@ class UserController extends Controller
                             $query->where('role', 'Employee');
                         });
                 })
-                ->where('status', 'Active')
-                ->when($filter, function ($query) use ($filter) {
+                ->when($filter && $filter != 'All', function ($query) use ($filter) {
                     $query->where('province', $filter);
                 })
                 ->when($filterEmployment, function ($query) use ($filterEmployment) {
-                    $query->where('employment_status', $filterEmployment);
+                    if($filterEmployment == "Regular" || $filterEmployment == "Contract of Service") {
+                        $filter = $filterEmployment != "Regular" ? ["Contract of Service", "Contractual"] : ["Regular"];
+                        $query->whereIn('employment_status', $filter);
+                    } else {
+                        $filter = $filterEmployment == "Active Status"? ["Active"] : ["Resigned", "Non-renewal"];
+                        $query->whereIn('status', $filter);
+                    }
+                })
+                ->when($filterDes && $filterDes != 'All', function ($query) use ($filterDes) {
+                    $query->where('position', $filterDes);
                 })
                 ->latest()
                 ->paginate(25);

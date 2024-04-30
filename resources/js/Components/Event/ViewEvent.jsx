@@ -167,7 +167,7 @@ export default function ViewEvent({
                             </div>
                         )}
 
-                        {eventToView?.platform == "Virtual" && (
+                        {eventToView?.platform == "Online Platform" && (
                             <a
                                 href={eventToView?.venue}
                                 target="_blank"

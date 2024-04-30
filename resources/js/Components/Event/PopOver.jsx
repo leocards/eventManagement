@@ -1,4 +1,4 @@
-import PositionsTitles from "@/js/Position";
+import PositionsTitles, { provinces } from "@/js/Position";
 import {
     Menu,
     Transition,
@@ -9,6 +9,7 @@ import {
 import {
     CheckIcon,
     ChevronDownIcon,
+    ChevronRightIcon,
     EllipsisVerticalIcon,
 } from "@heroicons/react/20/solid";
 import { EyeIcon } from "@heroicons/react/24/outline";
@@ -18,7 +19,7 @@ export function Platform({ platform, className, onChange }) {
     return (
         <div
             className={
-                "w-40 flex shrink-0 items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-200/50 text-right " +
+                "w-40 flex shrink-0 items-center rounded-r-md border border-l-0 border-gray-300/60 bg-gray-200/50 text-right " +
                 className
             }
         >
@@ -53,10 +54,10 @@ export function Platform({ platform, className, onChange }) {
                             </Menu.Item>
                             <Menu.Item>
                                 <button
-                                    onClick={() => onChange("Virtual")}
+                                    onClick={() => onChange("Online Platform")}
                                     className={`hover:bg-gray-200 group flex w-full items-center px-2 py-2`}
                                 >
-                                    Virtual
+                                    Online Platform
                                 </button>
                             </Menu.Item>
                         </div>
@@ -71,7 +72,7 @@ export function DateType({ dateRange, className, onChange }) {
     return (
         <div
             className={
-                "w-40 shrink-0 flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-200/50 text-right " +
+                "w-40 shrink-0 flex items-center rounded-r-md border border-l-0 border-gray-300/60 bg-gray-200/50 text-right " +
                 className
             }
         >
@@ -128,17 +129,23 @@ export function FilterIcon({ className }) {
     );
 }
 
-export function FilterByProvince({ onSelect = () => {}, activeFilter = null }) {
-    const provinces = [
+export function FilterByProvince({
+    filter = null,
+    className = "",
+    onSelect = () => {},
+    activeFilter = null,
+}) {
+    const provinceList = filter ?? [
         "All",
-        "Davao City",
-        "Davao Del Norte",
-        "Davao Del Sur",
-        "Davao Occidental",
-        "Davao Oriental",
+        ...provinces.map(({name}) => name)
     ];
     return (
-        <div className="w-48 select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1">
+        <div
+            className={
+                "w-48 select-none shrink-0 flex items-center rounded-md border border-gray-300/60 text-right mr-1 " +
+                className
+            }
+        >
             <Menu as="div" className="relative inline-block text-left grow">
                 <div className="">
                     <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
@@ -163,7 +170,7 @@ export function FilterByProvince({ onSelect = () => {}, activeFilter = null }) {
                 >
                     <Menu.Items className="absolute z-30 right-0 mt-1 w-full text-sm origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                         <div className=" py-1 ">
-                            {provinces.map((p, index) => (
+                            {provinceList.map((p, index) => (
                                 <Menu.Item key={index}>
                                     {({ close }) => (
                                         <button
@@ -308,6 +315,8 @@ export function Filter({
     activeFilter = "All",
     filterList = null,
     withBorder = true,
+    className,
+    defaults = "All",
 }) {
     const filterDataList = filterList ?? [
         "All",
@@ -319,18 +328,20 @@ export function Filter({
     ];
     return (
         <div
-            className={`w-44 select-none shrink-0 flex items-center rounded-md text-right mr-1 ${
+            className={`w-44 select-none shrink-0 flex items-center rounded-md border-gray-300/60 text-right mr-1 ${
                 withBorder ? "border" : ""
-            }`}
+            } ${className}`}
         >
             <Menu
                 as="div"
                 className="relative inline-block text-left grow h-[2.20rem]"
             >
-                <div className=" h-full">
-                    <Menu.Button className="inline-flex items-center w-full h-full text-left text-nowrap relative focus:outline-none">
+                <div className="h-full">
+                    <Menu.Button className="flex items-center w-full h-full text-left relative focus:outline-none">
                         <FilterIcon className=" mt-0.5 ml-2.5 shrink-0" />
-                        <div className="grow ml-1.5">{activeFilter}</div>
+                        <div className={"grow ml-1.5 line-clamp-1 pr-6"}>
+                            {activeFilter}
+                        </div>
                         <ChevronDownIcon
                             className="h-5 w-5 text-gray-500 absolute right-1.5"
                             aria-hidden="true"
@@ -346,7 +357,7 @@ export function Filter({
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <Menu.Items className="absolute z-30 right-0 mt-1 w-full text-sm origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                    <Menu.Items className="absolute max-h-[20rem] overflow-y-auto z-30 right-0 mt-1 w-full text-sm origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                         <div className=" py-1 ">
                             {filterDataList.map((filterBy, index) => (
                                 <Menu.Item key={index}>
@@ -356,7 +367,7 @@ export function Filter({
                                                 onSelect(filterBy);
                                                 close();
                                             }}
-                                            className={`hover:bg-gray-200 group flex w-full items-center px-2 py-1.5`}
+                                            className={`hover:bg-gray-200 group flex w-full items-center px-2 py-1.5 text-left`}
                                         >
                                             <div className="w-4 shrink-0 mr-2">
                                                 {activeFilter == filterBy ? (
@@ -450,7 +461,7 @@ export function SelectSecurity({ questions, className, onSelect, position }) {
     return (
         <div
             className={
-                "w-12 flex shrink-0 items-center rounded-r-md border-l border-gray-300 bg-gray-200/50 text-right " +
+                "w-12 flex shrink-0 items-center rounded-r-md border-l border-gray-300/60 bg-gray-200/50 text-right " +
                 className
             }
         >
@@ -610,12 +621,12 @@ export function SelectByYear({
 
     return (
         <>
-            <div className="xs:w-44 w-full select-none shrink-0 flex items-center rounded border border-gray-300 text-right">
+            <div className="xs:w-44 w-full select-none shrink-0 flex items-center rounded-md border border-gray-300/60 text-right">
                 <Menu as="div" className="relative inline-block text-left grow">
                     <div className="">
-                        <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
+                        <Menu.Button className="inline-flex text-left items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
                             <FilterIcon className="absolute left-1.5 top-2.5" />
-                            <div className="grow ml-[1.20rem]">
+                            <div className="grow ml-[1.20rem] line-clamp-1">
                                 {selected && selected.year
                                     ? selected.year
                                     : eventYears.length > 1 && "All"}
@@ -639,7 +650,7 @@ export function SelectByYear({
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                     >
-                        <Menu.Items className="absolute z-30 right-0 mt-1 w-full tex t-sm origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        <Menu.Items className="absolute text-sm z-30 right-0 mt-1 w-full tex t-sm origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                             <div className="max-h-[15rem] overflow-y-auto py-1 ">
                                 {eventYears.map((event, index) => (
                                     <Menu.Item key={index}>
@@ -716,7 +727,7 @@ export function SlectQuestion({ questions = [], onSelectQuestion = () => {} }) {
                 onChange={setSelected}
             >
                 <div className="relative z-10">
-                    <Listbox.Button className="relative rounded-md w-full cursor-default text-left b order border-gray-300 bg-white py-4 pl-3 pr-10 disabled:pointer-events-none disabled:opacity-50 group">
+                    <Listbox.Button className="relative rounded-md w-full cursor-default text-left b order border-gray-300/60 bg-white py-4 pl-3 pr-10 disabled:pointer-events-none disabled:opacity-50 group">
                         <span className="block truncate">
                             {selected ?? "Select question"}
                         </span>
@@ -875,13 +886,13 @@ export function FilterByQuarter({
     ];
     return (
         <div
-            className={`${size} select-none shrink-0 flex items-center rounded border border-gray-300 text-right mr-1`}
+            className={`${size} select-none shrink-0 flex items-center rounded-md border border-gray-300/60 text-right mr-1`}
         >
             <Menu as="div" className="relative inline-block text-left grow">
                 <div className="">
-                    <Menu.Button className="inline-flex text-left text-nowrap items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
+                    <Menu.Button className="inline-flex text-left items-center w-full justify-between px-4 pl-2.5 py-1.5 focus:outline-none">
                         <FilterIcon className="absolute left-1.5 top-2.5" />
-                        <div className="grow ml-[1.20rem]   ">
+                        <div className="ml-[1.20rem] line-clamp-1">
                             {selectedQuarter}
                         </div>
                         <ChevronDownIcon
@@ -899,7 +910,7 @@ export function FilterByQuarter({
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <Menu.Items className="absolute z-30 right-0 mt-1 w-full tex t-sm origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                    <Menu.Items className="absolute text-sm z-30 right-0 mt-1 w-full tex t-sm origin-top-right divide-y divide-gray-100 rounded bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
                         <div className="max-h-[15rem] overflow-y-auto py-1 ">
                             {quarter.map((q, index) => (
                                 <Menu.Item key={index}>
@@ -913,7 +924,7 @@ export function FilterByQuarter({
                                                 selectedQuarter == q
                                                     ? "bg-blue-100/60"
                                                     : ""
-                                            } hover:bg-gray-200 transition duration-150 group flex w-full items-center px-2 py-1.5`}
+                                            } hover:bg-gray-200 transition duration-150 group flex w-full items-center px-2 py-1.5 text-left `}
                                         >
                                             <div className="w-4 shrink-0 mr-2">
                                                 {selectedQuarter == q ? (
@@ -939,6 +950,7 @@ const defaultList = PositionsTitles; // default as position list
 
 export function AutoComplete({
     selectedOption = "",
+    disabled = false,
     list = defaultList,
     maxHeight = "max-h-52",
     onSelect = () => {},
@@ -974,11 +986,15 @@ export function AutoComplete({
             );
             setSelected(findAutoComplete);
         }
-    }, []);
+    }, [selectedOption]);
 
     return (
         <div className="">
-            <Combobox value={selected} onChange={onChnageAutoComplete}>
+            <Combobox
+                value={selected}
+                onChange={onChnageAutoComplete}
+                disabled={disabled}
+            >
                 <div className="relative">
                     <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left focus:outline-none">
                         <Combobox.Input
@@ -1040,7 +1056,7 @@ export function AutoComplete({
                                                         className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                                                             active
                                                                 ? "text-white"
-                                                                : "text-teal-600"
+                                                                : "text-blue-600"
                                                         }`}
                                                     >
                                                         <CheckIcon
@@ -1158,7 +1174,11 @@ export function ListSelector({
     preSelect = false,
 }) {
     const [isInvisible, setIsInvisible] = useState(opacityOnEmpty);
-    const [selected, setSelected] = useState(list[0]);
+    const [selected, setSelected] = useState(
+        selectedOption
+            ? list.find(({ option }) => option === selectedOption) || list[0]
+            : list[0]
+    );
 
     const onChange = (option) => {
         onSelect(option.option);
@@ -1169,8 +1189,10 @@ export function ListSelector({
     }[optionPosition];
 
     useEffect(() => {
-        setSelected(list.find(({ option }) => option == selectedOption));
-    }, [selectedOption]);
+        setSelected(
+            list.find(({ option }) => option === selectedOption) || list[0]
+        );
+    }, [selectedOption, list]);
 
     return (
         <div className="w-full">
@@ -1214,15 +1236,15 @@ export function ListSelector({
                                 <Listbox.Option
                                     key={optionIdx}
                                     className={({ active }) =>
-                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                        `relative cursor-default select-none py-2 pl-10 pr-4 group ${
                                             active
-                                                ? "bg-blue-100 text-blue-900"
+                                                ? "bg-blue-600 text-white"
                                                 : "text-gray-900"
                                         }`
                                     }
                                     value={option}
                                 >
-                                    {({ selected }) => (
+                                    {({ selected, active }) => (
                                         <>
                                             <span
                                                 className={`block truncate ${
@@ -1237,7 +1259,13 @@ export function ListSelector({
                                                     : "--select--"}
                                             </span>
                                             {selected ? (
-                                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                                                <span
+                                                    className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                        active
+                                                            ? "text-white"
+                                                            : "text-blue-600"
+                                                    } `}
+                                                >
                                                     <CheckIcon
                                                         className="h-5 w-5"
                                                         aria-hidden="true"
@@ -1270,7 +1298,7 @@ export default function MenuOptions({
     onSelect = () => {},
 }) {
     return (
-        <div className={"text-right "+rootClass}>
+        <div className={"text-right " + rootClass}>
             <Menu as="div" className="relative inline-block text-left">
                 <div>
                     <Menu.Button
@@ -1297,7 +1325,9 @@ export default function MenuOptions({
                             />
                         )}
 
-                        <div className={`sm:block hidden ${btnLabelClass}`}>{label}</div>
+                        <div className={`sm:block hidden ${btnLabelClass}`}>
+                            {label}
+                        </div>
                     </Menu.Button>
                 </div>
                 <Transition
@@ -1319,40 +1349,216 @@ export default function MenuOptions({
                                     <Menu.Item key={index}>
                                         {({ active }) => {
                                             if (asLink) {
-                                                return <a 
-                                                    href={menuItem.link}
-                                                    className={`${
-                                                        active
-                                                            ? "bg-gray-200"
-                                                            : "text-gray-900"
-                                                    } group flex w-full items-center px-2.5 py-2 text-`}
-                                                >
-                                                    <div className="flex gap-2 items-center">
-                                                        {menuItem.icon}
-                                                        {menuItem.label}
-                                                    </div>
-                                                </a>;
+                                                return (
+                                                    <a
+                                                        href={menuItem.link}
+                                                        className={`${
+                                                            active
+                                                                ? "bg-gray-200"
+                                                                : "text-gray-900"
+                                                        } group flex w-full items-center px-2.5 py-2 text-`}
+                                                    >
+                                                        <div className="flex gap-2 items-center">
+                                                            {menuItem.icon}
+                                                            {menuItem.label}
+                                                        </div>
+                                                    </a>
+                                                );
                                             } else {
-                                                return <button
-                                                    onClick={() =>
-                                                        onSelect(menuItem.label)
-                                                    }
-                                                    className={`${
-                                                        active
-                                                            ? "bg-gray-200"
-                                                            : "text-gray-900"
-                                                    } group flex w-full items-center px-2.5 py-2 text-`}
-                                                >
-                                                    <div className="flex gap-2 items-center">
-                                                        {menuItem.icon}
-                                                        {menuItem.label}
-                                                    </div>
-                                                </button>;
+                                                return (
+                                                    <button
+                                                        onClick={() =>
+                                                            onSelect(
+                                                                menuItem.label
+                                                            )
+                                                        }
+                                                        className={`${
+                                                            active
+                                                                ? "bg-gray-200"
+                                                                : "text-gray-900"
+                                                        } group flex w-full items-center px-2.5 py-2 text-`}
+                                                    >
+                                                        <div className="flex gap-2 items-center">
+                                                            {menuItem.icon}
+                                                            {menuItem.label}
+                                                        </div>
+                                                    </button>
+                                                );
                                             }
                                         }}
                                     </Menu.Item>
                                 );
                             })}
+                        </div>
+                    </Menu.Items>
+                </Transition>
+            </Menu>
+        </div>
+    );
+}
+
+export function EmployeeFilters({
+    empStatus = "",
+    areaOfAssignment = "",
+    designation = "",
+    withBorder = true,
+    onSelectEmpStatus = () => {},
+    onSelectAOA = () => {},
+    onSelectDesignation = () => {},
+}) {
+    const statusList = ["Active Status", "Resigned/Non-renewal", "Regular", "Contract of Service"];
+    const aoa = [...provinces.map(({ name }) => name)];
+    const designations = [...PositionsTitles.map(({ name }) => name)].sort();
+    const desRef = useRef(null);
+    const [showDesignation, setShowDesignation] = useState(false);
+
+    useEffect(() => {
+        const clickOutside = (e) => {
+            if (desRef.current && !desRef.current.contains(e.target)) {
+                setShowDesignation(false);
+            }
+        };
+
+        document.addEventListener("click", clickOutside);
+
+        return () => {
+            document.removeEventListener("click", clickOutside);
+        };
+    }, []);
+
+    return (
+        <div
+            className={`select-none shrink-0 flex items-center rounded-md text-right border-slate-300/60 ${
+                withBorder ? "border" : ""
+            }`}
+        >
+            <Menu as="div" className="relative inline-block text-left grow">
+                <div className="h-full">
+                    <Menu.Button className="flex items-center justify-center text-left focus:outline-none p-[0.55rem] relative hover:bg-gray-100 rounded-md transition duration-200">
+                        <FilterIcon className="!leading-3" />
+                        {
+                            (empStatus||areaOfAssignment||designation) &&
+                            <span className="w-2.5 h-2.5 rounded-full absolute top-0 -right-1 bg-blue-500"></span>
+                        }
+                    </Menu.Button>
+                </div>
+                <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                >
+                    <Menu.Items className="absolute w-56 z-30 -top-16 left-10 text-sm origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">
+                        <div className=" py-1 ">
+                            <div className="text-xs font-medium opacity-50 pl-2">
+                                Status
+                            </div>
+                            {statusList.map((sort, index) => (
+                                <Menu.Item key={index}>
+                                    {({ close }) => (
+                                        <button
+                                            onClick={() => {
+                                                onSelectEmpStatus(sort);
+                                                close();
+                                            }}
+                                            className={`hover:bg-gray-200 group flex w-full items-center px-2 py-1.5`}
+                                        >
+                                            <div className="w-4 shrink-0 mr-2">
+                                                {empStatus == sort ? (
+                                                    <CheckIcon className="w-4 h-4 text-blue-500" />
+                                                ) : (
+                                                    ""
+                                                )}
+                                            </div>
+                                            {sort}
+                                        </button>
+                                    )}
+                                </Menu.Item>
+                            ))}
+                            <hr className="my-2" />
+                            <div className="text-xs font-medium opacity-50 pl-2">
+                                Positon/Designation
+                            </div>
+                            <div ref={desRef} className="relative">
+                                <div
+                                    onClick={() =>
+                                        setShowDesignation(!showDesignation)
+                                    }
+                                    title={designation}
+                                    className={`relative hover:bg-gray-200 group flex w-full items-center px-2 pr-8 py-1.5 group`}
+                                >
+                                    <div className="w-4 shrink-0 mr-2">
+                                        {designation? (
+                                            <CheckIcon className="w-4 h-4 text-blue-500" />
+                                        ) : (
+                                            ""
+                                        )}
+                                    </div>
+                                    <div className="line-clamp-1">
+                                        {designation?designation:"--select--"}
+                                    </div>
+                                    <ChevronRightIcon className="w-5 h-5 absolute right-2 sm:rotate-0 rotate-90" />
+                                </div>
+                                {showDesignation && (
+                                    <div className="absolute z-10 top-8 sm:-top-10 max-h-[20rem] overflow-y-auto -right-3 sm:-right-[14rem] w-60 bg-white p-1 px-0 rounded-md shadow-lg ring-1 ring-black/5">
+                                        {designations.map((pos, index) => (
+                                            <Menu.Item key={index}>
+                                                {({ close }) => (
+                                                    <button
+                                                        title={pos}
+                                                        onClick={() => {
+                                                            onSelectDesignation(pos)
+                                                            close()
+                                                            setShowDesignation(false)
+                                                        }}
+                                                        className={`hover:bg-gray-200 group flex w-full items-center text-left px-2 py-1.5`}
+                                                    >
+                                                        <div className="w-4 shrink-0 mr-2">
+                                                            {designation == pos ? (
+                                                                <CheckIcon className="w-4 h-4 text-blue-500" />
+                                                            ) : (
+                                                                ""
+                                                            )}
+                                                        </div>
+                                                        <div className="">
+                                                            {pos}
+                                                        </div>
+                                                    </button>
+                                                )}
+                                            </Menu.Item>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <hr className="my-2" />
+                            <div className="text-xs font-medium opacity-50 pl-2">
+                                Area of Assignment
+                            </div>
+                            {aoa.map((area, index) => (
+                                <Menu.Item key={index}>
+                                    {({ close }) => (
+                                        <button
+                                            onClick={() => {
+                                                onSelectAOA(area);
+                                                close();
+                                            }}
+                                            className={`hover:bg-gray-200 group flex w-full items-center px-2 py-1.5`}
+                                        >
+                                            <div className="w-4 shrink-0 mr-2">
+                                                {areaOfAssignment == area ? (
+                                                    <CheckIcon className="w-4 h-4 text-blue-500" />
+                                                ) : (
+                                                    ""
+                                                )}
+                                            </div>
+                                            {area}
+                                        </button>
+                                    )}
+                                </Menu.Item>
+                            ))}
                         </div>
                     </Menu.Items>
                 </Transition>
