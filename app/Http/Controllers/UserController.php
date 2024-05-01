@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -130,6 +131,7 @@ class UserController extends Controller
     public function view(User $user) 
     {
         if($user->profile) {
+            $original = $user->profile;
             $path = public_path($user->profile);
     
             if (!file_exists($path)) {
@@ -149,7 +151,8 @@ class UserController extends Controller
                 "data" => collect([
                     "base64" => 'data:image/'.$extList[$ext].';base64,'.$base64Image,
                     "extension" => $ext,
-                    "size" => $this->formatBytes(filesize($path))
+                    "size" => $this->formatBytes(filesize($path)),
+                    "original" => $original
                 ])
             ]);
         }
@@ -203,16 +206,18 @@ class UserController extends Controller
             }
 
             $filename = null;
-            if ($request->profile && $request->profile['response'] && isBase64($request->profile["data"]["base64"])) {
-                $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->profile["data"]["base64"]));
-                $filename = 'image_' . time() . '.' . $request->profile["data"]["extension"];
-
-                Storage::disk('public')->put('profile/' . $filename, $imageData);
-
-                $imagePath = public_path('app/public/profile/' . $filename);
-                if (!$imagePath)
-                    return back()->withErrors('file', $imagePath);
-                else $filename = '/storage/profile/' . $filename;
+            if(!Arr::has($request->profile, 'data.original')) {
+                if ($request->profile && $request->profile['response'] && isBase64($request->profile["data"]["base64"])) {
+                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->profile["data"]["base64"]));
+                    $filename = 'image_' . time() . '.' . $request->profile["data"]["extension"];
+    
+                    Storage::disk('public')->put('profile/' . $filename, $imageData);
+    
+                    $imagePath = public_path('app/public/profile/' . $filename);
+                    if (!$imagePath)
+                        return back()->withErrors('file', $imagePath);
+                    else $filename = '/storage/profile/' . $filename;
+                }
             }
 
             DB::transaction(function () use ($request, $user, $filename) {
@@ -229,7 +234,7 @@ class UserController extends Controller
                     "municipality" => $request->municipality,
                     "ip_affiliation" => $request->ip_affiliation??null,
                     "gender" => $request->gender,
-                    "profile" => $filename ?? null,
+                    "profile" => $filename ?? $user->profile,
                     "password" => Hash::make("12345678"),
                     "status" => !$request->status ? "Active" : $request->status,
                     "employment_status" => $request->employment_status,
