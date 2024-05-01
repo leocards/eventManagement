@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use stdClass;
 
 class UserController extends Controller
 {
@@ -128,7 +129,47 @@ class UserController extends Controller
 
     public function view(User $user) 
     {
+        if($user->profile) {
+            $path = public_path($user->profile);
+    
+            if (!file_exists($path)) {
+                $user->profile = null;
+            }
+    
+            $fileContents = file_get_contents($path);
+    
+            $base64Image = base64_encode($fileContents);
+    
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+    
+            $extList = collect(['jpg' => 'jpg', 'jpeg' => 'jpeg', 'png' => 'png', 'svg+xml' => 'svg+xml']);
+    
+            $user->profile = collect([
+                "response" => true,
+                "data" => collect([
+                    "base64" => 'data:image/'.$extList[$ext].';base64,'.$base64Image,
+                    "extension" => $ext,
+                    "size" => $this->formatBytes(filesize($path))
+                ])
+            ]);
+        }
+
         return response()->json($user);
+    }
+
+    private function formatBytes($bytes, $precision = 2)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        // Uncomment one of the following alternatives
+        // $bytes /= pow(1024, $pow);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
     public function update(Request $request, User $user)
@@ -142,7 +183,7 @@ class UserController extends Controller
             "address" => ['required'],
             "position" => ['required'],
             "province" => ['required'],
-            "municipality" => ['required'],
+            "municipality" => ['exclude_if:province,RPMO', 'required'],
             "gender" => ['required', 'in:Male,Female'],
             "employment_status" => ['required', 'in:Regular,Contractual']
         ], [

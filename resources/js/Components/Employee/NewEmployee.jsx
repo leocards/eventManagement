@@ -82,15 +82,7 @@ export default function NewEmployee({
                   province: resData.province,
                   municipality: resData.municipality??"",
                   gender: resData.gender,
-                  profile: resData.profile
-                      ? {
-                            response: true,
-                            resData: {
-                                base64: resData.profile,
-                                extension: resData.profile.split(".")[1],
-                            },
-                        }
-                      : null,
+                  profile: resData.profile,
                   status: resData.status == "Active" ? "Active" : resData.status,
                   user_type: resData.role,
                   employment_status: resData.employment_status??"Regular"

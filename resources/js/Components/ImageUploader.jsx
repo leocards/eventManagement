@@ -46,7 +46,7 @@ export default function ImageUploader({
                     <div className="rounded-md overflow-hidden w-fit mx-auto h-[15rem] border relative">
                         <img
                             className="w-fit h-full object-contain"
-                            src={image.data.base64}
+                            src={image.data?.base64}
                         />
 
                         <div className="absolute top-0 right-0 p-2 flex gap-3">
