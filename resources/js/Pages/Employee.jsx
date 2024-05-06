@@ -389,7 +389,7 @@ export default function Employee({ auth, initialEmployeeList }) {
                 <div className="mt-5 text-center">
                     <div className="h-20 w-20 mx-auto rounded-full border overflow-hidden">
                         <img
-                            src={selected?.profile}
+                            src={selected?.profile||'/storage/profile/profile.png'}
                             onError={(event) =>
                             (event.target.src =
                                 "/storage/profile/profile.png")

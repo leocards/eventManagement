@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ResourcePerson;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -55,6 +57,11 @@ class ResourcePersonController extends Controller
                     'position' => $request->position,
                     'profile' => $filename??null
                 ]);
+
+                UserLog::create([
+                    "user_id" => Auth::id(),
+                    "description" => "added new resource person: ".$request->name
+                ]);
             });
 
             return back();
@@ -67,31 +74,39 @@ class ResourcePersonController extends Controller
     public function update(Request $request, ResourcePerson $resourcePerson)
     {
         try {
-            function isBase64($string) {
-                if (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string) && base64_decode($string, true) !== false) {
-                    return true;
-                } else {
-                    return false;
+
+            DB::transaction(function () use ($request, $resourcePerson) {
+                function isBase64($string) {
+                    if (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string) && base64_decode($string, true) !== false) {
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
-            }
-            
-            $filename = $resourcePerson->profile;
-            if(isBase64($request->profile["data"]["base64"])) {
-                $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->profile["data"]["base64"]));
-                $filename = 'image_' . time() . '.'.$request->profile["data"]["extension"];
-    
-                Storage::disk('public')->put('profile/'.$filename, $imageData);
-    
-                $imagePath = public_path('app/public/profile/' . $filename);
-                if(!$imagePath)
-                    return back()->withErrors('file', $imagePath);
-                else $filename = '/storage/profile/'.$filename;
-            }
-    
-            $resourcePerson->name = $request->name;
-            $resourcePerson->position = $request->position;
-            $resourcePerson->profile = $filename;
-            $resourcePerson->save();
+                
+                $filename = $resourcePerson->profile;
+                if(isBase64($request->profile["data"]["base64"])) {
+                    $imageData = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $request->profile["data"]["base64"]));
+                    $filename = 'image_' . time() . '.'.$request->profile["data"]["extension"];
+        
+                    Storage::disk('public')->put('profile/'.$filename, $imageData);
+        
+                    $imagePath = public_path('app/public/profile/' . $filename);
+                    if(!$imagePath)
+                        return back()->withErrors('file', $imagePath);
+                    else $filename = '/storage/profile/'.$filename;
+                }
+        
+                $resourcePerson->name = $request->name;
+                $resourcePerson->position = $request->position;
+                $resourcePerson->profile = $filename;
+                $resourcePerson->save();
+
+                UserLog::create([
+                    "user_id" => Auth::id(),
+                    "description" => "updated resource person details: ".$request->name
+                ]);
+            });
 
             return back();
 

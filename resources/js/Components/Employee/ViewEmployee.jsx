@@ -12,7 +12,7 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
         async function getEmployeeData() {
             setLoading(true);
             let response = await axios.get(
-                route("employee.view", viewEmployee.id)
+                route("employee.view", [viewEmployee.id])
             );
             let data = response.data
 
@@ -21,7 +21,7 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
             setLoading(false);
         }
 
-        viewEmployee ? getEmployeeData() : "";
+        viewEmployee && viewEmployee.id ? getEmployeeData() : "";
     }, [viewEmployee]);
 
     return (
@@ -43,7 +43,7 @@ export default function ViewEmployee({ show, viewEmployee, onClose }) {
                             <div className="flex items-center w-full justify-center">
                                 <div className="h-[4rem] w-[4rem] rounded-full overflow-hidden bg-white shrink-0">
                                     <img 
-                                        src={employee.profile ??
+                                        src={employee.profile?.data?.base64 ??
                                             "/storage/profile/profile.png"} 
                                         onError={(event) =>
                                             (event.target.src =

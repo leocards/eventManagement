@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserLog;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -120,6 +122,13 @@ class UserController extends Controller
                     "employment_status" => $request->employment_status,
                     "role" => $request->user_type ?? "Employee",
                 ]);
+
+                if($request->isAdmin) {
+                    UserLog::create([
+                        "user_id" => Auth::id(),
+                        "description" => "added new employee: ".$request->first_name.' '.$request->last_name
+                    ]);
+                }
             });
 
             return redirect()->back()->with("success", true);
@@ -188,7 +197,7 @@ class UserController extends Controller
             "province" => ['required'],
             "municipality" => ['exclude_if:province,RPMO', 'required'],
             "gender" => ['required', 'in:Male,Female'],
-            "employment_status" => ['required', 'in:Regular,Contractual']
+            "employment_status" => ['required', 'in:Regular,Contractual,Contract of Service']
         ], [
             "gender" => "The sex field is required",
             "municipality" => "The City/Municipality/Sub-district field is required",
@@ -221,25 +230,57 @@ class UserController extends Controller
             }
 
             DB::transaction(function () use ($request, $user, $filename) {
-                User::where('id', $user->id)
-                ->update([
-                    "first_name" => $request->first_name,
-                    "last_name" => $request->last_name,
-                    "birthday" => $request->birthday,
-                    "email" => $request->email,
-                    "contact" => $request->contact,
-                    "address" => $request->address,
-                    "position" => $request->position,
-                    "province" => $request->province,
-                    "municipality" => $request->municipality,
-                    "ip_affiliation" => $request->ip_affiliation??null,
-                    "gender" => $request->gender,
-                    "profile" => $filename ?? $user->profile,
-                    "password" => Hash::make("12345678"),
-                    "status" => !$request->status ? "Active" : $request->status,
-                    "employment_status" => $request->employment_status,
-                    "role" => $request->user_type ?? "Employee",
-                ]);
+                $userUpdate = User::find($user->id);
+                $userUpdate->first_name = $request->first_name;
+                $userUpdate->last_name = $request->last_name;
+                $userUpdate->birthday = $request->birthday;
+                $userUpdate->email = $request->email;
+                $userUpdate->contact = $request->contact;
+                $userUpdate->address = $request->address;
+                $userUpdate->position = $request->position;
+                $userUpdate->province = $request->province;
+                $userUpdate->municipality = $request->municipality;
+                $userUpdate->ip_affiliation = $request->ip_affiliation??null;
+                $userUpdate->gender = $request->gender;
+                $userUpdate->profile = $filename ?? $user->profile;
+                $userUpdate->status = !$request->status ? "Active" : $request->status;
+                $userUpdate->employment_status = $request->employment_status;
+                $userUpdate->role = $request->user_type ?? "Employee";
+
+                $updatedAttributes = [];
+                foreach ($userUpdate->getDirty() as $attribute => $value) {
+                    $key = $attribute;
+
+                    if(Str::contains($attribute, '_')) {
+                        $key = Str::title(Str::replace('_', ' ', $attribute));
+                    } else {
+                        if($attribute == "position") {
+                            $key = "Position/Designation";
+                        }else if($attribute == "municipality") {
+                            $key = "City/Municipality/Sub-district";
+                        }else if($attribute == "ip_affiliation") {
+                            $key = "IP Affiliation";
+                        }else if($attribute == "role") {
+                            $key = "User Role";
+                        } else {
+                            $key = Str::ucfirst($attribute);
+                        }
+                    }
+
+                    $updatedAttributes[] = '- <b>'.$key.':</b> Before <i>\''.$user->$attribute??'None'.'\'</i>, After <i>\''.$value??'None'.'\'</i>';
+                }
+
+                $updatedAttributes = implode("\n", $updatedAttributes);
+
+                $userUpdate->save();
+
+                if($request->isAdmin) {
+                    UserLog::create([
+                        "user_id" => Auth::id(),
+                        "description" => "updated employee details: ".$request->first_name.' '.$request->last_name.
+                        ".\nThe following changes were made: \n".$updatedAttributes
+                    ]);
+                }
             });
 
             return redirect()->back()->with("success", true);
@@ -306,5 +347,9 @@ class UserController extends Controller
         } catch (\Throwable $th) {
             return response()->json($th->getMessage());
         }
+    }
+
+    function userUpdatesChecker($old, $new) {
+        return $old !== $new;
     }
 }

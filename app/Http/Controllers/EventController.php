@@ -230,6 +230,7 @@ class EventController extends Controller
                 $eventTimeOut = $event->eventCode->first();
                 $timeOut = Carbon::parse(explode(' ', $eventTimeOut->time_out)[1]);
                 $isEnded = false;
+                $dateChanges = false;
 
                 if($event->is_range) {
                     // Restrict update of event if it has been ended
@@ -246,16 +247,17 @@ class EventController extends Controller
                 }
 
                 $updatedRp = $this->checkUpdatedRp($request, $event, $isEnded);
-                if($updatedRp) {
+                if($updatedRp['status']) {
                     throw new Exception("Cannot update trainees when event has ended. !!!eventEnded");
                 }
 
                 $updatedParticipants = $this->checkUpdatedParticipants($request, $event, $isEnded);
-                if($updatedParticipants) {
+                if($updatedParticipants['status']) {
                     throw new Exception("Cannot update resource person when event has ended. !!!eventEnded");
                 }
                 
                 if ($request->initialDate['withTimeChanges'] || $request->initialDate['withDateChanges']) {
+                    $dateChanges = true;
                     $dateRange = collect([]);
                     $period = CarbonPeriod::create($userDateStart, $userDateEnd);
 
@@ -334,14 +336,57 @@ class EventController extends Controller
                 $event->platform = $request->platform;
                 $event->venue = $request->venue;
                 $event->title = $request->title;
-                $event->activity_type = $request->activity_type;
+                $event->activity_type = $request->activityType;
                 $event->objective = $request->objective;
                 $event->fund = 'Php ' . number_format($request->fund);
                 $event->is_range = $isEnded?$event->is_range:$request->date['isRange'];
                 $event->dateStart = $request->date['start'];
                 $event->dateEnd = $request->date['isRange']?$request->date['end']:null;
                 $event->total_rp = $request->resourcePerson;
+
+                $updatedAttributes = [];
+                foreach ($event->getDirty() as $attribute => $value) {
+                    $key = $attribute;
+
+                    if(Str::contains($attribute, '_')) {
+                        if($attribute == "total_rp") {
+                            $key = "Number of Resource Person";
+                        } else if($attribute != "is_range"){
+                            $key = Str::title(Str::replace('_', ' ', $attribute));
+                        }
+                    } else {
+                        if($attribute == "platform") {
+                            $key = "Event platform (Face-to-face/Online Platform)";
+                        } else {
+                            if($attribute != "is_range" && $attribute != "dateStart" && $attribute != "dateEnd")
+                                $key = Str::ucfirst($attribute);
+                        }
+                    }
+
+                    $attribute != "is_range" ? $updatedAttributes[] = $key : '';
+                }
+
+                if($dateChanges) {
+                    $updatedAttributes[] = "Event Date";
+                }
+
+                if($updatedRp['hasChanges']) {
+                    $updatedAttributes[] = "Event Resource Person/s";
+                }
+
+                if($updatedParticipants['hasChanges']) {
+                    $updatedAttributes[] = "Event Participants";
+                }
+
+                $updatedAttributes = implode(", ", $updatedAttributes);
+
                 $event->save();
+
+                UserLog::create([
+                    "event_id" => $event->id,
+                    "user_id" => Auth::id(),
+                    "description" => "updated details of the event ###. The updated details are the following: ".$updatedAttributes
+                ]);
             });
 
             return back();
@@ -635,6 +680,11 @@ class EventController extends Controller
 
     function checkUpdatedRp(Request $request, Event $event, $hasEnded = false)
     {
+        $status = collect([
+            "status" => false,
+            "hasChanges" => false
+        ]);
+
         $rp_list = collect($request->rp_list)->map(function ($rp) {
             return collect($rp);
         });
@@ -646,8 +696,11 @@ class EventController extends Controller
 
         if(count($newly_added) > 0 || count($deleted_rp) > 0) {
             if($hasEnded) {
-                return true;
+                $status->put('status', true);
+                return $status;
             }
+
+            $status->put('hasChanges', true);
         }
 
         foreach ($newly_added as $rp) {
@@ -661,11 +714,16 @@ class EventController extends Controller
             $rp->delete();
         }
 
-        return false;
+        return $status;
     }
 
     function checkUpdatedParticipants(Request $request, Event $event, $hasEnded = false)
     {
+        $status = collect([
+            "status" => false,
+            "hasChanges" => false
+        ]);
+
         $participant_list = collect($request->trainee_list['list'])->map(function ($participant) {
             return collect($participant);
         });
@@ -677,8 +735,11 @@ class EventController extends Controller
 
         if(count($newly_added) > 0 || count($deleted_participants) > 0) {
             if($hasEnded) {
-                return true;
+                $status->put('status', true);
+                return $status;
             }
+
+            $status->put('hasChanges', true);
         }
 
         foreach ($newly_added as $participant) {
@@ -692,7 +753,7 @@ class EventController extends Controller
             $participant->delete();
         }
 
-        return false;
+        return $status;
     }
 
     function generateEventCode($date)

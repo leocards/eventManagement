@@ -1406,7 +1406,7 @@ export function EmployeeFilters({
     onSelectAOA = () => {},
     onSelectDesignation = () => {},
 }) {
-    const statusList = ["Active Status", "Resigned/Non-renewal", "Regular", "Contract of Service"];
+    const statusList = ["Active Status", "Resigned/Non-renewal", "Regular", "Contractual", "Contract of Service"];
     const aoa = [...provinces.map(({ name }) => name)];
     const designations = [...PositionsTitles.map(({ name }) => name)].sort();
     const desRef = useRef(null);
@@ -1440,6 +1440,7 @@ export function EmployeeFilters({
                             (empStatus||areaOfAssignment||designation) &&
                             <span className="w-2.5 h-2.5 rounded-full absolute top-0 -right-1 bg-blue-500"></span>
                         }
+                        <span className="text-sm leading-3 ml-2 font-medium xs:block hidden">Filter employee</span>
                     </Menu.Button>
                 </div>
                 <Transition

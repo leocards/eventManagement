@@ -18,7 +18,6 @@ const PositionsTitles = [
     {name: "Administrative Officer II"},
     {name: "Administrative Assistant II"},
     {name: "Administrative Assistant"},
-    {name: "Administrative Aide IV"},
     {name: "Administrative Assistant III"},
     {name: "Regional Case Management Focal"},
     {name: "Case Management Technical Support"},

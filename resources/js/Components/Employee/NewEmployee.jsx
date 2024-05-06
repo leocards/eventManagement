@@ -46,6 +46,7 @@ export default function NewEmployee({
         user_type: "Employee",
         status: "",
         employment_status: "Regular",
+        isAdmin: true,
     });
     const [updateData, setUpdateData] = useState(null);
 
@@ -72,20 +73,22 @@ export default function NewEmployee({
 
         response.status === 200
             ? setUpdateData({
-                  first_name: resData.first_name,
-                  last_name: resData.last_name,
-                  birthday: resData.birthday,
-                  email: resData.email,
-                  contact: resData.contact,
-                  address: resData.address,
-                  position: resData.position,
-                  province: resData.province,
-                  municipality: resData.municipality??"",
-                  gender: resData.gender,
-                  profile: resData.profile,
-                  status: resData.status == "Active" ? "Active" : resData.status,
-                  user_type: resData.role,
-                  employment_status: resData.employment_status??"Regular"
+                ...data,
+                first_name: resData.first_name,
+                last_name: resData.last_name,
+                birthday: resData.birthday,
+                email: resData.email,
+                contact: resData.contact,
+                address: resData.address,
+                position: resData.position,
+                province: resData.province,
+                municipality: resData.municipality ?? "",
+                gender: resData.gender,
+                profile: resData.profile,
+                status:
+                    resData.status == "Active" ? "Active" : resData.status,
+                user_type: resData.role,
+                employment_status: resData.employment_status ?? "Regular",
               })
             : "";
     };
@@ -120,7 +123,7 @@ export default function NewEmployee({
             <div className="p-4 pr-2">
                 <ModalHeader
                     showCloseButton={false}
-                    label={((employeeEdit ? "Update" : "New") + " Employee")}
+                    label={(employeeEdit ? "Update" : "New") + " Employee"}
                 ></ModalHeader>
 
                 <div className="max-h-[66vh] overflow-y-auto pr-1.5 py-1 mb-10">
@@ -148,7 +151,9 @@ export default function NewEmployee({
                                     borderColor=""
                                     opacityOnEmpty
                                     selectedOption={data.status}
-                                    onSelect={selectedStatus => setData('status', selectedStatus)}
+                                    onSelect={(selectedStatus) =>
+                                        setData("status", selectedStatus)
+                                    }
                                 />
                                 <input
                                     type="text"
@@ -185,13 +190,16 @@ export default function NewEmployee({
                                 paddingHeight="py-4"
                                 list={[
                                     { option: "Regular" },
+                                    { option: "Contractual" },
                                     { option: "Contract of Service" },
                                 ]}
                                 optionPosition="bottom"
                                 borderColor=""
                                 opacityOnEmpty
                                 selectedOption={data.employment_status}
-                                onSelect={selectedStatus => setData('employment_status', selectedStatus)}
+                                onSelect={(selectedStatus) =>
+                                    setData("employment_status", selectedStatus)
+                                }
                                 preSelect
                             />
                             <input
@@ -207,7 +215,8 @@ export default function NewEmployee({
                                 value="Employment Status"
                                 className={
                                     "after:content-['*'] after:ml-0.5 after:text-red-500 " +
-                                    (errors.employment_status && "!text-pink-600")
+                                    (errors.employment_status &&
+                                        "!text-pink-600")
                                 }
                             />
                         </div>
@@ -279,37 +288,57 @@ export default function NewEmployee({
                         onInput={(input) => setData("address", input)}
                     />
 
-                    <SelectInput 
+                    <SelectInput
                         data={data.position}
                         errors={errors.position}
                         id="position"
                         label="Position / Designation"
-                        setData={(value) => setData('position', value)}
+                        setData={(value) => setData("position", value)}
                     />
-                    
-                    <div className={"rounded-md border p-1 px-4 mb-5 "+((errors.province || errors.municipality) ? ' border-pink-600 focus-within:border-pink-600':'')}>
-                        <div className="mb-4 mt-2 font-medium text-sm">Area of assignment</div>
-                        <SelectInput 
+
+                    <div
+                        className={
+                            "rounded-md border p-1 px-4 mb-5 " +
+                            (errors.province || errors.municipality
+                                ? " border-pink-600 focus-within:border-pink-600"
+                                : "")
+                        }
+                    >
+                        <div className="mb-4 mt-2 font-medium text-sm">
+                            Area of assignment
+                        </div>
+                        <SelectInput
                             array={provinces}
                             data={data.province}
                             errors={errors.province}
                             id="province"
                             label="Province"
-                            setData={(value) => setData({...data, province: value, municipality: ""})}
+                            setData={(value) =>
+                                setData({
+                                    ...data,
+                                    province: value,
+                                    municipality: "",
+                                })
+                            }
                         />
 
                         <SelectInput
-                            disabled={!data.province||data.province=='RPMO'}
-                            array={data.province?(data.province!='RPMO'?municipalities[data.province]:[{name: ""}]):[{name: ""}]}
+                            disabled={!data.province || data.province == "RPMO"}
+                            array={
+                                data.province
+                                    ? data.province != "RPMO"
+                                        ? municipalities[data.province]
+                                        : [{ name: "" }]
+                                    : [{ name: "" }]
+                            }
                             data={data.municipality}
-                            isRequired={data.province=='RPMO'?false:true}
+                            isRequired={data.province == "RPMO" ? false : true}
                             errors={errors.municipality}
                             id="municipality"
                             label="City/Municipality/Sub-district"
-                            setData={(value) => setData('municipality', value)}
+                            setData={(value) => setData("municipality", value)}
                         />
                     </div>
-
 
                     <div className="mb-4">
                         <div
@@ -535,8 +564,11 @@ const InputBox = ({
                     htmlFor={id}
                     value={label}
                     className={
-                        `capitalize ${required ? 'after:content-[\'*\'] after:ml-0.5 after:text-red-500' : ''}  ` +
-                        (error && "!text-pink-600")
+                        `capitalize ${
+                            required
+                                ? "after:content-['*'] after:ml-0.5 after:text-red-500"
+                                : ""
+                        }  ` + (error && "!text-pink-600")
                     }
                 />
             </div>
@@ -545,37 +577,42 @@ const InputBox = ({
     );
 };
 
-export const SelectInput = ({ data = '', errors, disabled = false, id, label, array, className = "", isRequired = true, setData }) => {
+export const SelectInput = ({
+    data = "",
+    errors,
+    disabled = false,
+    id,
+    label,
+    array,
+    className = "",
+    isRequired = true,
+    setData,
+}) => {
     return (
-        <div className={"mb-4 "+className}>
+        <div className={"mb-4 " + className}>
             <div
                 className={
                     "form-input-float " +
                     (errors &&
-                        "border-pink-600 focus-within:border-pink-600 ") + 
-                        (disabled?' opacity-60 ':'')
+                        "border-pink-600 focus-within:border-pink-600 ") +
+                    (disabled ? " opacity-60 " : "")
                 }
             >
-
-                {
-                    id === 'position' ?
+                {id === "position" ? (
                     <AutoComplete
                         selectedOption={data}
-                        onSelect={(value) =>
-                            setData(value.name)
-                        }
+                        onSelect={(value) => setData(value.name)}
                         disabled={disabled}
-                    /> :
+                    />
+                ) : (
                     <AutoComplete
                         list={array}
                         maxHeight="max-h-48"
                         selectedOption={data}
-                        onSelect={(value) =>
-                            setData(value.name)
-                        }
+                        onSelect={(value) => setData(value.name)}
                         disabled={disabled}
                     />
-                }
+                )}
 
                 <input
                     type="text"
@@ -589,17 +626,16 @@ export const SelectInput = ({ data = '', errors, disabled = false, id, label, ar
                     htmlFor={id}
                     value={label}
                     className={
-                        (isRequired?"after:content-['*'] after:ml-0.5 after:text-red-500 ":' ') +
-                        (errors && "!text-pink-600")
+                        (isRequired
+                            ? "after:content-['*'] after:ml-0.5 after:text-red-500 "
+                            : " ") + (errors && "!text-pink-600")
                     }
                 />
             </div>
-            <div className="text-sm text-pink-700">
-                {errors}
-            </div>
+            <div className="text-sm text-pink-700">{errors}</div>
         </div>
-    )
-}
+    );
+};
 
 {
     /* <div className="mb-4">

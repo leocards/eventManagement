@@ -9,7 +9,9 @@ export default function RecentActivity({ user }) {
     const [loading, setLoading] = useState(false);
     const [filtered, setFiltered] = useState("");
     const activityRefs = useRef();
-    const { props: { message } } = usePage()
+    const {
+        props: { message },
+    } = usePage();
 
     const getActivity = async (route) => {
         setRecentActivity([]);
@@ -55,16 +57,20 @@ export default function RecentActivity({ user }) {
                     position="right-0 !font-normal !text-gray-700"
                 />
             </div>
-            {filtered && <div className="flex items-center gap-2 my-1">
-                Filter: {filtered}
-
-                <button
-                    onClick={() => {setFiltered(""); getActivity(route("dashboard.activity"));}}
-                    className="text-xs ml-auto font-semibold hover:bg-gray-100 p-1 px-2 transition duration-150 rounded uppercase flex items-center gap-1"
-                >
-                    Clear
-                </button>
-            </div>}
+            {filtered && (
+                <div className="flex items-center gap-2 my-1">
+                    Filter: {filtered}
+                    <button
+                        onClick={() => {
+                            setFiltered("");
+                            getActivity(route("dashboard.activity"));
+                        }}
+                        className="text-xs ml-auto font-semibold hover:bg-gray-100 p-1 px-2 transition duration-150 rounded uppercase flex items-center gap-1"
+                    >
+                        Clear
+                    </button>
+                </div>
+            )}
             <div className="overflow-y-auto overscroll-contain h-[22.5rem] mt-3 pt-1">
                 {loading && (
                     <div className="font-medium text-sm text-center mt-3">
@@ -85,14 +91,32 @@ export default function RecentActivity({ user }) {
                             }
                         >
                             <div className="p-2 py-2.5">
-                                <div className="text-sm">
-                                    <span className="font-semibold">
-                                        {user.role !== "Employee" && (recent.user.id == user.id ? "You" : (recent.user.first_name+' '+recent.user.last_name))} {" "}
-                                    </span>
-                                    {recent.description}:
-                                    <span className="font-semibold text-base text-green-70 0 leading-5 line-clamp-1 mb-1">
-                                        {recent.event?.title}
-                                    </span>
+                                <div
+                                    className={
+                                        "text-sm " +
+                                        (!recent.event
+                                            ? "whitespace-pre break-words line-clamp-3"
+                                            : "")
+                                    }
+                                >
+                                    {
+                                        <span className="font-semibold mr-1">
+                                            {user.role !== "Employee" &&
+                                                (recent.user.id == user.id
+                                                    ? "You"
+                                                    : recent.user.first_name +
+                                                      " " +
+                                                      recent.user.last_name)}
+                                        </span>
+                                    }
+                                    {recent.event ? (
+                                        <EventRecentActivity des={recent.description||''} title={recent.event?.title||''} />
+                                    ) : recent.description.length > 50 ? (
+                                        recent.description.substring(0, 40) +
+                                        "..."
+                                    ) : (
+                                        recent.description
+                                    )}
                                 </div>
 
                                 <div className="text-sm">
@@ -111,7 +135,7 @@ export default function RecentActivity({ user }) {
             </div>
             <div className="pt-3 border-t flex items-center justify-center">
                 <div
-                    onClick={() => router.get(route('dashboard.activities'))}
+                    onClick={() => router.get(route("dashboard.activities"))}
                     className="text-sm hover:underline cursor-pointer text-gray-700"
                 >
                     Show more
@@ -120,3 +144,33 @@ export default function RecentActivity({ user }) {
         </div>
     );
 }
+
+export const EventRecentActivity = ({des = '', title}) => {
+    const [description, setDescription] = useState({
+        d1: "",
+        d2: "",
+    });
+    useEffect(() => {
+        const desc = des.split("###.");
+        setDescription({
+            d1: desc[0],
+            d2: desc[1],
+        });
+    }, []);
+    return des.includes("###") ? (
+        <>
+            <span>{description.d1}: </span>{" "}
+            <span className="font-semibold text-base break-words whitespace-pre leading-5 mb-1">
+                {title}.
+            </span><br />
+            <span>{description.d2}</span>
+        </>
+    ) : (
+        <>
+            <span>{des}: </span>{" "}
+            <span className="font-semibold text-base text-green-70 0 leading-5 line-clamp-1 mb-1">
+                {title}
+            </span>
+        </>
+    );
+};

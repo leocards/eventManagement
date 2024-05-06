@@ -72,7 +72,7 @@ export default function NewResourcePerson({ show = false, rpEdit = null, onClose
                     {rpEdit?"Update":"New"} Resource Person
                 </div>
                 <div className="mb-4">
-                    <div className={"form-input-float "+(errors.name && "border-pink-600 focus-within:border-pink-600 " )}>
+                    <div className={"form-input-float  "+(errors.name && "border-pink-600 focus-within:border-pink-600 " )}>
                         <TextInput
                             id="name"
                             placeholder="name"
@@ -80,7 +80,7 @@ export default function NewResourcePerson({ show = false, rpEdit = null, onClose
                             onInput={({target}) => setData("name", target.value)}
                         />
 
-                        <InputLabel htmlFor="name" value="Name" className={errors.name && "!text-pink-600"} />
+                        <InputLabel htmlFor="name" value="Names" className={'after:content-[\'*\'] after:ml-0.5 after:text-red-500 ' + (errors.name && "!text-pink-600")} />
                     </div>
                     <div className="text-sm text-pink-700">{errors.name}</div>
                 </div>
@@ -93,7 +93,7 @@ export default function NewResourcePerson({ show = false, rpEdit = null, onClose
                             onInput={({target}) => setData("position", target.value)}
                         />
 
-                        <InputLabel htmlFor="Position" value="Position" className={errors.position && "!text-pink-600"} />
+                        <InputLabel htmlFor="Position" value="Position" className={'after:content-[\'*\'] after:ml-0.5 after:text-red-500 ' + (errors.position && "!text-pink-600")} />
                     </div>
                     <div className="text-sm text-pink-700">
                         {errors.position}
