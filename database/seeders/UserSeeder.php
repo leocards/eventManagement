@@ -23,7 +23,9 @@ class UserSeeder extends Seeder
                 "contact" => "09999999999",
                 "address" => "Panabo City",
                 "position" => "Division Chief",
-                "province" => "Davao del Norte",
+                "province" => "Davao Del Norte",
+                "municipality" => "City Operations Office of Panabo",
+                "ip_affiliation" => null,
                 "gender" => "Male",
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
@@ -42,6 +44,8 @@ class UserSeeder extends Seeder
                 "address" => "Digos City",
                 "position" => "Project Development Officer III",
                 "province" => "Davao City",
+                "municipality" => "Operations Office of Agdao District",
+                "ip_affiliation" => null,
                 "gender" => "Male",
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
@@ -60,6 +64,8 @@ class UserSeeder extends Seeder
                 "address" => "Panabo City",
                 "position" => "Financial Analyst II",
                 "province" => "Davao City",
+                "municipality" => "Operations Office of Agdao District",
+                "ip_affiliation" => null,
                 "gender" => "Female",
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
@@ -78,6 +84,8 @@ class UserSeeder extends Seeder
                 "address" => "123 Main Street",
                 "position" => "Information Communication and Technology Administrator",
                 "province" => "Davao City",
+                "municipality" => "Operations Office of Agdao District",
+                "ip_affiliation" => null,
                 "gender" => "Male",
                 "profile" => null,
                 "password" => Hash::make("12345678"), //12345678
@@ -87,7 +95,7 @@ class UserSeeder extends Seeder
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
             ],
-            [
+        /* [
                 "first_name" => "Alice",
                 "last_name" => "Smith",
                 "birthday" => "1985-08-20",
@@ -158,10 +166,11 @@ class UserSeeder extends Seeder
                 "role" => "Employee",
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
-            ]
+            ] 
+        */
         ]);
 
-        User::insert([
+       /*  User::insert([
             [
                 "first_name" => "Jane",
                 "last_name" => "Smith",
@@ -576,6 +585,6 @@ class UserSeeder extends Seeder
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s')
             ]
-        ]);
+        ]); */
     }
 }

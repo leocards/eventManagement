@@ -22,7 +22,7 @@ class ResourcePersonSeeder extends Seeder
                     "created_at" => now()->format('Y-m-d H:i:s'),
                     "updated_at" => now()->format('Y-m-d H:i:s'),
                 ],
-                [
+                /* [
                     "name" => "Peter Doe",
                     "position" => "Analyst",
                     "profile" => null,
@@ -35,7 +35,7 @@ class ResourcePersonSeeder extends Seeder
                     "profile" => null,
                     "created_at" => now()->format('Y-m-d H:i:s'),
                     "updated_at" => now()->format('Y-m-d H:i:s'),
-                ],
+                ], */
                 [
                     "name" => "Ram Roel",
                     "position" => "Specialist",
@@ -43,7 +43,7 @@ class ResourcePersonSeeder extends Seeder
                     "created_at" => now()->format('Y-m-d H:i:s'),
                     "updated_at" => now()->format('Y-m-d H:i:s'),
                 ],
-                [
+                /* [
                     "name" => "Leo",
                     "position" => "Vice",
                     "profile" => null,
@@ -70,11 +70,11 @@ class ResourcePersonSeeder extends Seeder
                     "profile" => null,
                     "created_at" => now()->format('Y-m-d H:i:s'),
                     "updated_at" => now()->format('Y-m-d H:i:s'),
-                ]
+                ] */
             ]
         );
 
-        ResourcePerson::insert([
+        /* ResourcePerson::insert([
             [
                 "name" => "Alice Smith",
                 "position" => "Software Engineer",
@@ -250,6 +250,6 @@ class ResourcePersonSeeder extends Seeder
                 "created_at" => now()->format('Y-m-d H:i:s'),
                 "updated_at" => now()->format('Y-m-d H:i:s'),
             ]
-        ]);
+        ]); */
     }
 }
