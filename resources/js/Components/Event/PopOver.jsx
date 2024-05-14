@@ -985,6 +985,8 @@ export function AutoComplete({
                 (title) => title.name == selectedOption
             );
             setSelected(findAutoComplete);
+        } else {
+            setSelected({ name: "" })
         }
     }, [selectedOption]);
 

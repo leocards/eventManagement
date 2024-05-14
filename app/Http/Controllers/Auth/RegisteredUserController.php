@@ -42,6 +42,7 @@ class RegisteredUserController extends Controller
             "address" => ['required'],
             "position" => ['required'],
             "province" => ['required'],
+            "municipality" => ['exclude_if:province,RPMO', 'required'],
             "password_confirmation" => ['required'],
             "gender" => ['required', 'in:Male,Female'],
             'password' => ['required', 
@@ -53,6 +54,10 @@ class RegisteredUserController extends Controller
                     ->symbols()
                     ->uncompromised()
             ],
+        ], [
+            "gender" => "The sex field is required",
+            "municipality" => "The City/Municipality/Sub-district field is required",
+            "position" => "The position/designation field is required",
         ]);
 
         try {
@@ -79,8 +84,10 @@ class RegisteredUserController extends Controller
                     "address" => $request->address,
                     "position" => $request->position,
                     "province" => $request->province,
+                    "municipality" => $request->municipality,
+                    "ip_affiliation" => $request->ip_affiliation,
                     "gender" => $request->gender,
-                    "profile" => $filename ?? "/storage/profile/profile.png",
+                    "profile" => $filename ?? null,
                     "password" => Hash::make($request->password),
                     "status" => "Active",
                     "role" => "Employee",

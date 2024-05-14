@@ -79,7 +79,7 @@ export default function Welcome({
                                 </span>
                             </div>
                             <div className="max-w-xl md:text-lg text-center md:text-left mt-4 mx-auto md:mx-0">
-                                Training Attendance Monitoring System - Updgrade for 4ps
+                                Training Attendance Monitoring System - Upgrade for 4ps
                                 Employees in Davao Region that streamlines
                                 managing and recording of attendance during
                                 training sessions.

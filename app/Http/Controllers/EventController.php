@@ -274,7 +274,8 @@ class EventController extends Controller
                         if ($request->initialDate['withDateChanges']) {
                             EventCode::where('event_id', $event->id)->delete();
                             foreach ($dateRange as $date) {
-                                $codes = $this->generateEventCode($date);
+                                $stringDate = Carbon::parse($date['time_in'])->format('Y-m-d');
+                                $codes = $this->generateEventCode($stringDate);
                                 EventCode::create([
                                     "event_id" => $event->id,
                                     "time_in" => $date['time_in'],
@@ -360,6 +361,10 @@ class EventController extends Controller
                         } else {
                             if($attribute != "is_range" && $attribute != "dateStart" && $attribute != "dateEnd")
                                 $key = Str::ucfirst($attribute);
+                            else if($attribute == "dateStart" || $attribute == "dateEnd")
+                                if($attribute == "dateStart")
+                                    $key = "Date from";
+                                else $key = "Date to";
                         }
                     }
 

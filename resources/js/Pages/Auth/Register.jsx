@@ -13,8 +13,9 @@ import {
     XMarkIcon,
 } from "@heroicons/react/20/solid";
 import ImageUploader from "@/Components/ImageUploader";
-import { AutoComplete } from "@/Components/Event/PopOver";
-import { provinces } from "@/js/Position";
+import { AutoComplete, ListSelector } from "@/Components/Event/PopOver";
+import { municipalities, provinces } from "@/js/Position";
+import { SelectInput } from "@/Components/Employee/NewEmployee";
 
 export default function Register({ show, onClose }) {
     const {
@@ -35,8 +36,11 @@ export default function Register({ show, onClose }) {
         address: "",
         position: "",
         province: "",
+        municipality: "",
+        ip_affiliation: "",
         gender: "",
         profile: null,
+        employment_status: "Regular",
         password: "",
         password_confirmation: "",
     });
@@ -189,40 +193,48 @@ export default function Register({ show, onClose }) {
                         </div>
                     </div>
 
-                    <div className="mt-5">
-                        <div
-                            className={
-                                "form-input-float " +
-                                (errors.province &&
-                                    "border-pink-600 focus-within:border-pink-600")
+                    <div
+                        className={
+                            "rounded-md border p-1 px-4 mt-5 " +
+                            (errors.province || errors.municipality
+                                ? " border-pink-600 focus-within:border-pink-600"
+                                : "")
+                        }
+                    >
+                        <div className="mb-4 mt-2 font-medium text-sm">
+                            Area of assignment
+                        </div>
+                        <SelectInput
+                            array={provinces}
+                            data={data.province}
+                            errors={errors.province}
+                            id="province"
+                            label="Province"
+                            setData={(value) =>
+                                setData({
+                                    ...data,
+                                    province: value,
+                                    municipality: "",
+                                })
                             }
-                        >
-                            <AutoComplete
-                                list={provinces}
-                                maxHeight="max-h-48"
-                                selectedOption={data.province}
-                                onSelect={(value) => setData("province", value.name)}
-                            />
-                            <input
-                                type="text"
-                                readOnly
-                                value={data.province}
-                                id="province"
-                                placeholder=""
-                                hidden
-                            />
-                            <InputLabel
-                                htmlFor="province"
-                                value="Province"
-                                className={
-                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
-                                    (errors.province && "!text-pink-600")
-                                }
-                            />
-                        </div>
-                        <div className="text-sm text-pink-700">
-                            {errors.province}
-                        </div>
+                        />
+
+                        <SelectInput
+                            disabled={ !data.province || data.province == "RPMO" }
+                            array={
+                                data.province
+                                    ? data.province != "RPMO"
+                                        ? municipalities[data.province]
+                                        : [{ name: "" }]
+                                    : [{ name: "" }]
+                            }
+                            data={data.municipality}
+                            isRequired={data.province == "RPMO" ? false : true}
+                            errors={errors.municipality}
+                            id="municipality"
+                            label="City/Municipality/Sub-district"
+                            setData={(value) => setData("municipality", value)}
+                        />
                     </div>
 
                     <div className=" mt-5">
@@ -260,6 +272,53 @@ export default function Register({ show, onClose }) {
                         </div>
                         <InputError message={errors.gender} className="mt-2" />
                     </div>
+
+                    {/* <div className="mt-5">
+                        <div
+                            className={
+                                "form-input-float " +
+                                (errors.employment_status &&
+                                    "border-pink-600 focus-within:border-pink-600 ")
+                            }
+                        >
+                            <ListSelector
+                                paddingHeight="py-4"
+                                list={[
+                                    { option: "Regular" },
+                                    { option: "Contractual" },
+                                    { option: "Contract of Service" },
+                                ]}
+                                optionPosition="bottom"
+                                borderColor=""
+                                opacityOnEmpty
+                                selectedOption={data.employment_status}
+                                onSelect={(selectedStatus) =>
+                                    setData("employment_status", selectedStatus)
+                                }
+                                preSelect
+                            />
+                            <input
+                                type="text"
+                                readOnly
+                                value={data.employment_status}
+                                id="employment_status"
+                                placeholder=""
+                                hidden
+                            />
+                            <InputLabel
+                                htmlFor="employment_status"
+                                value="Employment Status"
+                                className={
+                                    "after:content-['*'] after:ml-0.5 after:text-red-500 " +
+                                    (errors.employment_status &&
+                                        "!text-pink-600")
+                                }
+                            />
+                        </div>
+                        <div className="text-sm text-pink-700">
+                            {errors.employment_status}
+                        </div>
+                    </div> */}
 
                     <hr className="my-3 mt-4 border-gray-400" />
 

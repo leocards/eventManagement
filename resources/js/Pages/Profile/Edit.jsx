@@ -73,7 +73,7 @@ export default function Edit({
                                         (target.src =
                                             "/storage/profile/profile.png")
                                     }
-                                    className="w-full h-full"
+                                    className="w-full h-full object-cover"
                                     alt=""
                                 />
                             </div>

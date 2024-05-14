@@ -160,7 +160,7 @@ export const EventRecentActivity = ({des = '', title}) => {
     return des.includes("###") ? (
         <>
             <span>{description.d1}: </span>{" "}
-            <span className="font-semibold text-base break-words whitespace-pre leading-5 mb-1">
+            <span className="font-semibold text-base break-words whitespace-pre-line leading-5 mb-1">
                 {title}.
             </span><br />
             <span>{description.d2}</span>

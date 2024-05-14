@@ -171,7 +171,6 @@ export default function PrintCBU({ years, printYear, layout, eventCount }) {
                                         Total
                                     </Columns>
                                     <Columns $center className="w-28 !py-1 border-r !text-sm font-medium">
-                                        {totalAttended}
                                     </Columns>
                                     {events.map((event, index) => (
                                         <Columns
