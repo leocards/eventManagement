@@ -6,10 +6,7 @@ import { useEffect } from "react";
 import ElementComponent from "../ElementComponent";
 
 export default function ViewActiveEvent({ show, event, onClose = () => {} }) {
-    useEffect(() => {
-        if(show) 
-            console.log(event)
-    }, [show])
+
     return (
         <Modal show={show} maxWidth="lg" onClose={onClose}>
             <div className="p-4">
